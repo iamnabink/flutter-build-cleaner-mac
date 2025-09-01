@@ -7,8 +7,6 @@ A powerful macOS desktop application built with Flutter that helps you find and 
 Flutter Build Cleaner is a macOS utility designed specifically for Flutter developers. When working on multiple Flutter projects, build files quickly accumulate across apps and consume large amounts of storage. Developers often forget to run flutter clean or lose track of where these build artifacts are located. Flutter Build Cleaner scans your system, finds all build directories across your Flutter apps, shows how much space they occupy, and lets you clean them up easily, helping you reclaim valuable disk space with just a few clicks.
 
 
-
-
 ![macOS](https://img.shields.io/badge/macOS-10.14+-blue.svg)
 ![Flutter](https://img.shields.io/badge/Flutter-3.10+-blue.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
