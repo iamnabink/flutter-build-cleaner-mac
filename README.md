@@ -77,6 +77,35 @@ flutter build macos --release
 
 The built app will be located at `build/macos/Build/Products/Release/apk_build_cleaner.app`
 
+### 🚀 How to Create a Release
+
+1. **Make sure your code is ready**:
+   ```bash
+   # Commit and push all your changes
+   git add .
+   git commit -m "feat: prepare for v1.0.0 release"
+   git push origin main
+   ```
+
+2. **Create and push a tag**:
+   ```bash
+   # Create a tag for your version (must start with 'v')
+   git tag v1.0.0
+   
+   # Push the tag to GitHub (this triggers the workflow)
+   git push origin v1.0.0
+   ```
+
+3. **Watch it build**:
+   - Go to your GitHub repository
+   - Click "Actions" tab to see the workflow running
+   - Takes about 5-10 minutes to complete
+
+4. **Check your release**:
+   - Go to "Releases" tab in your repo
+   - Your new release will appear with DMG download
+   - Release notes are auto-generated from commits
+
 ## 🎯 Usage
 
 ### First Launch & Permissions

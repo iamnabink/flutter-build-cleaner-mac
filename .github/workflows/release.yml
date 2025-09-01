@@ -25,7 +25,7 @@ jobs:
       run: flutter pub get
     
     - name: Build macOS app
-      run: flutter build macos --release
+      run: flutter build macos --release --dart-define=DISABLE_CODE_SIGNING=true
     
     - name: Install create-dmg
       run: brew install create-dmg
