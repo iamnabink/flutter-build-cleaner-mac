@@ -33,7 +33,7 @@ jobs:
     - name: Get app name from pubspec
       id: app_info
       run: |
-        APP_NAME=$(grep '^name:' pubspec.yaml | cut -d' ' -f2)
+        APP_NAME="Flutter Cleaner"
         echo "app_name=$APP_NAME" >> $GITHUB_OUTPUT
         echo "App name: $APP_NAME"
     
