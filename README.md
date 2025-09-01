@@ -2,6 +2,9 @@
 
 A powerful macOS desktop application built with Flutter that helps you find and remove unnecessary APK files, AAB files, and Flutter build folders from your system to free up disk space.
 
+Flutter Build Cleaner is a macOS utility designed specifically for Flutter developers. When working on multiple Flutter projects, build files quickly accumulate across apps and consume large amounts of storage. Developers often forget to run flutter clean or lose track of where these build artifacts are located. Flutter Build Cleaner scans your system, finds all build directories across your Flutter apps, shows how much space they occupy, and lets you clean them up easily, helping you reclaim valuable disk space with just a few clicks.
+
+
 ![macOS](https://img.shields.io/badge/macOS-10.14+-blue.svg)
 ![Flutter](https://img.shields.io/badge/Flutter-3.10+-blue.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
@@ -169,20 +172,7 @@ flutter build macos --release
 
 2. **Create DMG** (using tools like `create-dmg` or manually)
 ```bash
-# Install create-dmg if you don't have it
-brew install create-dmg
-
-# Create DMG
-create-dmg \
-  --volname "APK & Build Cleaner" \
-  --window-pos 200 120 \
-  --window-size 800 600 \
-  --icon-size 100 \
-  --icon "APK & Build Cleaner.app" 200 190 \
-  --hide-extension "APK & Build Cleaner.app" \
-  --app-drop-link 600 185 \
-  "APK-Build-Cleaner.dmg" \
-  "build/macos/Build/Products/Release/"
+./create_dmg.sh
 ```
 
 ### Code Signing (for distribution)
@@ -250,7 +240,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 If you encounter any issues:
 
-1. Check the [Issues](https://github.com/yourusername/apk-build-cleaner/issues) page
+1. Check the [Issues](https://github.com/iamnabink/flutter-build-cleaner-mac/issues) page
 2. Create a new issue with:
    - macOS version
    - Flutter version (`flutter --version`)
