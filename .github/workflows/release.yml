@@ -1,0 +1,144 @@
+name: Build and Release macOS App
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for git log
+    
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.x'
+        channel: 'stable'
+    
+    - name: Get dependencies
+      run: flutter pub get
+    
+    - name: Build macOS app
+      run: flutter build macos --release
+    
+    - name: Install create-dmg
+      run: brew install create-dmg
+    
+    - name: Get app name from pubspec
+      id: app_info
+      run: |
+        APP_NAME=$(grep '^name:' pubspec.yaml | cut -d' ' -f2)
+        echo "app_name=$APP_NAME" >> $GITHUB_OUTPUT
+        echo "App name: $APP_NAME"
+    
+    - name: Create DMG
+      run: |
+        APP_NAME="${{ steps.app_info.outputs.app_name }}"
+        VERSION=${GITHUB_REF#refs/tags/}
+        
+        create-dmg \
+          --volname "$APP_NAME" \
+          --window-pos 200 120 \
+          --window-size 600 400 \
+          --icon-size 100 \
+          --icon "$APP_NAME.app" 175 120 \
+          --hide-extension "$APP_NAME.app" \
+          --app-drop-link 425 120 \
+          "$APP_NAME-$VERSION.dmg" \
+          "build/macos/Build/Products/Release/"
+    
+    - name: Generate Release Notes
+      id: generate_notes
+      run: |
+        VERSION=${GITHUB_REF#refs/tags/}
+        APP_NAME="${{ steps.app_info.outputs.app_name }}"
+        
+        # Get the previous tag
+        PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+        
+        echo "# 🚀 $APP_NAME $VERSION" > release_notes.md
+        echo "" >> release_notes.md
+        
+        if [ -z "$PREVIOUS_TAG" ]; then
+          echo "## 🎉 Initial Release" >> release_notes.md
+          echo "" >> release_notes.md
+          echo "This is the first release of $APP_NAME!" >> release_notes.md
+          echo "" >> release_notes.md
+          echo "### 📝 All Changes" >> release_notes.md
+          git log --pretty=format:"- %s" --reverse | head -20 >> release_notes.md
+        else
+          echo "## 📝 Changes since $PREVIOUS_TAG" >> release_notes.md
+          echo "" >> release_notes.md
+          
+          # Categorize commits
+          FEATURES=$(git log --pretty=format:"%s" $PREVIOUS_TAG..HEAD | grep -i "^feat\|^add\|^new" | sed 's/^/- /' || echo "")
+          FIXES=$(git log --pretty=format:"%s" $PREVIOUS_TAG..HEAD | grep -i "^fix\|^bug\|^patch" | sed 's/^/- /' || echo "")
+          OTHERS=$(git log --pretty=format:"%s" $PREVIOUS_TAG..HEAD | grep -iv "^feat\|^add\|^new\|^fix\|^bug\|^patch" | sed 's/^/- /' || echo "")
+          
+          if [ ! -z "$FEATURES" ]; then
+            echo "### ✨ New Features" >> release_notes.md
+            echo "$FEATURES" >> release_notes.md
+            echo "" >> release_notes.md
+          fi
+          
+          if [ ! -z "$FIXES" ]; then
+            echo "### 🐛 Bug Fixes" >> release_notes.md
+            echo "$FIXES" >> release_notes.md
+            echo "" >> release_notes.md
+          fi
+          
+          if [ ! -z "$OTHERS" ]; then
+            echo "### 🔧 Other Changes" >> release_notes.md
+            echo "$OTHERS" >> release_notes.md
+            echo "" >> release_notes.md
+          fi
+        fi
+        
+        # Add installation instructions
+        echo "## 📥 Installation" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "1. **Download** the DMG file from the assets below" >> release_notes.md
+        echo "2. **Open** the downloaded DMG file" >> release_notes.md
+        echo "3. **Drag** the app to your Applications folder" >> release_notes.md
+        echo "4. **Right-click** the app and select \"Open\" (first time only)" >> release_notes.md
+        echo "" >> release_notes.md
+        echo "## ⚠️ Security Note" >> release_notes.md
+        echo "This app is not code-signed. macOS will show a security warning on first launch." >> release_notes.md
+        echo "This is normal - just right-click the app and choose \"Open\" to bypass the warning." >> release_notes.md
+        echo "" >> release_notes.md
+        echo "## 💻 System Requirements" >> release_notes.md
+        echo "- macOS 10.15 (Catalina) or later" >> release_notes.md
+        echo "- 64-bit Intel or Apple Silicon Mac" >> release_notes.md
+        echo "" >> release_notes.md
+        
+        if [ ! -z "$PREVIOUS_TAG" ]; then
+          echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREVIOUS_TAG...$VERSION" >> release_notes.md
+        fi
+        
+        echo "Generated release notes:"
+        cat release_notes.md
+    
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: "*.dmg"
+        name: "${{ steps.app_info.outputs.app_name }} ${GITHUB_REF#refs/tags/}"
+        body_path: release_notes.md
+        draft: false
+        prerelease: false
+        make_latest: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Upload DMG as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: "dmg-${{ github.ref_name }}"
+        path: "*.dmg"
+        retention-days: 30

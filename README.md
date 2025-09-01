@@ -1,8 +1,12 @@
-# APK & Build Cleaner for macOS
+# Flutter Build Cleaner for macOS
+
+![App Screenshot](assets/images/screenshot1.png)
 
 A powerful macOS desktop application built with Flutter that helps you find and remove unnecessary APK files, AAB files, and Flutter build folders from your system to free up disk space.
 
 Flutter Build Cleaner is a macOS utility designed specifically for Flutter developers. When working on multiple Flutter projects, build files quickly accumulate across apps and consume large amounts of storage. Developers often forget to run flutter clean or lose track of where these build artifacts are located. Flutter Build Cleaner scans your system, finds all build directories across your Flutter apps, shows how much space they occupy, and lets you clean them up easily, helping you reclaim valuable disk space with just a few clicks.
+
+
 
 
 ![macOS](https://img.shields.io/badge/macOS-10.14+-blue.svg)
@@ -24,7 +28,7 @@ Flutter Build Cleaner is a macOS utility designed specifically for Flutter devel
 
 ### Option 1: Download DMG (Recommended)
 
-1. **Download the latest DMG** from the [Releases](https://github.com/yourusername/apk-build-cleaner/releases) page
+1. **Download the latest DMG** from the [Releases](https://github.com/iamnabink/flutter-build-cleaner-mac/releases) page
 2. **Open the DMG file** by double-clicking it
 3. **Drag the app** to your Applications folder
 4. **Launch the app** from Applications or Spotlight
@@ -81,7 +85,7 @@ The built app will be located at `build/macos/Build/Products/Release/apk_build_c
 
 1. **Launch the app** - You'll see the main interface with a "Grant Permission" button
 2. **Click "Grant Permission"** - This opens a native macOS folder picker
-3. **Select your home directory** - Navigate to and select `/Users/nex` (or your username)
+3. **Select your home directory** - Navigate to and select `path` (or your username)
 4. **Grant access** - macOS will automatically grant the app access to scan that directory
 
 ### Scanning for Files
@@ -206,7 +210,7 @@ codesign --force --deep --sign "Developer ID Application: Your Name" \
 3. Make sure to select your actual home directory in the picker
 4. Check System Preferences > Security & Privacy > Files and Folders
 
-### App Won't Launch
+### App Won't Launch [Due to un-signed app]
 
 **Problem**: macOS blocks the app from opening
 **Solution**:
