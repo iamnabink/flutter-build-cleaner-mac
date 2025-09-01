@@ -256,16 +256,6 @@ If you encounter any issues:
    - Flutter version (`flutter --version`)
    - Error messages or screenshots
    - Steps to reproduce
-
-## 🎯 Roadmap
-
-- [ ] Support for additional file types (e.g., `.ipa` files)
-- [ ] Custom scan path configuration
-- [ ] Scheduled cleaning reminders
-- [ ] Export scan results to CSV
-- [ ] Dark mode preference setting
-- [ ] Duplicate file detection
-
 ---
 
-**Made with ❤️ using Flutter for macOS**
+**Made by Nabraj Khadka with ❤️ using Flutter for macOS**
