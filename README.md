@@ -47,7 +47,7 @@ Flutter Build Cleaner is a macOS utility designed specifically for Flutter devel
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/apk-build-cleaner.git
+git clone https://github.com/iamnabink/flutter-build-cleaner-mac.git
 cd apk-build-cleaner
 ```
 
