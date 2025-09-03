@@ -1,4 +1,4 @@
-# Flutter Build Cleaner for macOS
+# Flutter/Node Build Cleaner for macOS
 
 ![App Screenshot](assets/images/screenshot1.png)
 
