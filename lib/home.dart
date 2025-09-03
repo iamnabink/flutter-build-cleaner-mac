@@ -37,7 +37,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
   String _selectedPath = '';
 
   static const platform = MethodChannel(
-    'com.nabrajkhadka.flutterCleaner.macos/permissions',
+    'com.nabrajkhadka.devCleaner.macos/permissions',
   );
 
   @override
@@ -145,7 +145,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                     ),
                     const SizedBox(height: 8),
                     const Text('• Scan for .apk and .aab files'),
-                    const Text('• Find Flutter build/ folders'),
+                    const Text('• Find Flutter build/node_modules folders'),
                     const Text('• Calculate file and folder sizes'),
                     const Text('• Allow you to delete unwanted files'),
                   ],
@@ -236,7 +236,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
         followLinks: false,
       )) {
         if (entity is Directory &&
-            !_shouldSkipDirectory(path.basename(entity.path))) {
+            !_shouldSkipFlutterDirectory(path.basename(entity.path))) {
           count++;
         }
       }
@@ -377,6 +377,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
             }
           } else if (entity is Directory) {
             final dirName = path.basename(entity.path);
+
             if (dirName == 'build' && await _isFlutterBuildDirectory(entity)) {
               final size = await _getDirectorySize(entity);
               final stat = await entity.stat();
@@ -385,6 +386,23 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                 size: size,
                 isDirectory: true,
                 type: 'build',
+                lastModified: stat.modified,
+              );
+
+              setState(() {
+                _scanResults.add(result);
+                _foldersFound++;
+                _totalSizeScanned += size;
+              });
+            } else if (dirName == 'node_modules' &&
+                await _isNodeModulesDirectory(entity)) {
+              final size = await _getDirectorySize(entity);
+              final stat = await entity.stat();
+              final result = ScanResult(
+                path: entity.path,
+                size: size,
+                isDirectory: true,
+                type: 'node_modules',
                 lastModified: stat.modified,
               );
 
@@ -420,6 +438,11 @@ class _CleanerHomePageState extends State<CleanerHomePage>
   }
 
   bool _shouldSkipDirectory(String dirName) {
+    return _shouldSkipFlutterDirectory(dirName) ||
+        _shouldSkipNodeDirectory(dirName);
+  }
+
+  bool _shouldSkipFlutterDirectory(String dirName) {
     const skipDirs = {
       '.git', '.svn', '.hg', // Version control
       'node_modules', '.npm', // Node.js
@@ -435,6 +458,30 @@ class _CleanerHomePageState extends State<CleanerHomePage>
     return skipDirs.contains(dirName) || dirName.startsWith('.');
   }
 
+  bool _shouldSkipNodeDirectory(String dirName) {
+    const skipDirs = {
+      // Version control
+      '.git', '.svn', '.hg',
+
+      // Node.js / npm / yarn / pnpm
+      '.npm', '.yarn', '.pnpm-store',
+
+      // Build / dist / cache
+      'dist', 'build', '.cache', '.tmp', '.turbo', '.next', '.nuxt', '.output',
+
+      // IDEs / editors
+      '.vscode', '.idea',
+
+      // OS / system
+      'Library', 'Applications', 'System', '.Trash',
+
+      // Testing / coverage
+      'coverage', '.nyc_output',
+    };
+
+    return skipDirs.contains(dirName) || dirName.startsWith('.');
+  }
+
   Future<bool> _isFlutterBuildDirectory(Directory buildDir) async {
     try {
       // Check if parent directory contains pubspec.yaml
@@ -446,6 +493,31 @@ class _CleanerHomePageState extends State<CleanerHomePage>
         final content = await pubspecFile.readAsString();
         return content.contains('flutter:') || content.contains('sdk: flutter');
       }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> _isNodeModulesDirectory(Directory nodeModulesDir) async {
+    try {
+      // Check if the directory is named node_modules
+      if (path.basename(nodeModulesDir.path) != 'node_modules') {
+        return false;
+      }
+
+      // Check if parent directory has package.json
+      final parentDir = nodeModulesDir.parent;
+      final packageJsonFile = File(path.join(parentDir.path, 'package.json'));
+
+      if (await packageJsonFile.exists()) {
+        // Optional: verify package.json really looks like Node project
+        final content = await packageJsonFile.readAsString();
+
+        return content.contains('"dependencies"') ||
+            content.contains('"devDependencies"');
+      }
+
       return false;
     } catch (e) {
       return false;
@@ -644,7 +716,11 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                 if (!_hasPermission) {
                   await _showPermissionDialog();
                 } else {
-                  await _scanSystem();
+                  if (_selectedPath.isEmpty) {
+                    _requestFileAccess();
+                  } else {
+                    await _scanSystem();
+                  }
                 }
               },
         icon: _isScanning
@@ -662,7 +738,9 @@ class _CleanerHomePageState extends State<CleanerHomePage>
           _isScanning
               ? 'Scanning...'
               : _hasPermission
-              ? 'Scan Directory'
+              ? _selectedPath.isNotEmpty
+                    ? 'Scan Directory'
+                    : 'Select Directory'
               : 'Grant Permission',
           style: const TextStyle(fontSize: 16),
         ),
@@ -1051,7 +1129,9 @@ class _CleanerHomePageState extends State<CleanerHomePage>
             Center(
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 10),
-                child: const Text("No Flutter build folders/artifacts found."),
+                child: const Text(
+                  "No Flutter build folders/artifacts or Node node_modules found.",
+                ),
               ),
             ),
             ListView.builder(
@@ -1500,7 +1580,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
               color: Theme.of(context).colorScheme.onPrimaryContainer,
             ),
             const SizedBox(width: 8),
-            const Text('Flutter Build Cleaner'),
+            const Text('Flutter/Node Cleaner'),
           ],
         ),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
@@ -1573,7 +1653,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Scans $_selectedPath for IPA/APK files, AAB files, and Flutter build folders',
+                        'Scans $_selectedPath for IPA/APK files, AAB files, Flutter build and Node node_modules folders',
                         style: Theme.of(context).textTheme.bodyMedium,
                         textAlign: TextAlign.center,
                       ),
@@ -1632,7 +1712,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
           children: [
             Icon(Icons.info),
             SizedBox(width: 8),
-            Text('About Flutter Cleaner'),
+            Text('About Flutter/Node Cleaner'),
           ],
         ),
         content: SizedBox(
@@ -1649,7 +1729,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
               const Text('• APK files (Android packages)'),
               const Text('• IPA files (iOS Bundles)'),
               const Text('• AAB files (Android App Bundles)'),
-              const Text('• Flutter build/ folders'),
+              const Text('• Flutter build or Node node_modules folders'),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(12),
