@@ -1,6 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_cleaner/home.dart';
+import 'package:flutter_cleaner/constants.dart';
 
 class APKBuildCleanerApp extends StatelessWidget {
   const APKBuildCleanerApp({super.key});
@@ -8,7 +8,7 @@ class APKBuildCleanerApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Build Cleaner',
+      title: AppConstants.appName,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,

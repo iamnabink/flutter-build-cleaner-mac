@@ -1,10 +1,10 @@
-# Flutter/Node Build Cleaner for macOS
+# AppBuild Dev Cleaner - Mobile Development Artifact Cleaner
 
 ![App Screenshot](assets/images/screenshot1.png)
 
-A powerful macOS desktop application built with Flutter that helps you find and remove unnecessary APK files, AAB files, and Flutter build folders from your system to free up disk space.
+A powerful macOS desktop application built with Flutter that helps mobile developers clean up unnecessary build artifacts from their system to free up disk space.
 
-Flutter Build Cleaner is a macOS utility designed specifically for Flutter developers. When working on multiple Flutter projects, build files quickly accumulate across apps and consume large amounts of storage. Developers often forget to run flutter clean or lose track of where these build artifacts are located. Flutter Build Cleaner scans your system, finds all build directories across your Flutter apps, shows how much space they occupy, and lets you clean them up easily, helping you reclaim valuable disk space with just a few clicks.
+AppBuild Dev Cleaner is a macOS utility designed specifically for mobile developers working with Flutter and React Native. When working on multiple mobile projects, build files quickly accumulate across apps and consume large amounts of storage. Developers often forget to run `flutter clean` or lose track of where these build artifacts are located. AppBuild Dev Cleaner scans your system, finds all mobile development artifacts across your projects, shows how much space they occupy, and lets you clean them up easily, helping you reclaim valuable disk space with just a few clicks.
 
 
 ![macOS](https://img.shields.io/badge/macOS-10.14+-blue.svg)
@@ -13,7 +13,7 @@ Flutter Build Cleaner is a macOS utility designed specifically for Flutter devel
 
 ## 🚀 Features
 
-- **🔍 Smart Scanning**: Recursively scans directories for APK, AAB files and Flutter build folders
+- **🔍 Smart Scanning**: Recursively scans directories for APK, AAB, IPA files, Flutter build folders, and React Native node_modules
 - **📊 Real-time Progress**: Live updates with progress percentage, file counts, and sizes
 - **🎨 Beautiful UI**: Modern Material 3 design with smooth animations
 - **🔐 Permission Handling**: Native macOS file access with system permission dialogs
@@ -126,7 +126,7 @@ The built app will be located at `build/macos/Build/Products/Release/apk_build_c
 
 ### Reviewing Results
 
-- **Summary Cards**: View counts of APK files, AAB files, and build folders
+- **Summary Cards**: View counts of APK files, AAB files, IPA files, Flutter build folders, and React Native node_modules
 - **Detailed List**: See all found items with:
   - File/folder names and full paths
   - File sizes in human-readable format
@@ -153,8 +153,10 @@ The built app will be located at `build/macos/Build/Products/Release/apk_build_c
 ### What the App Finds
 
 - **APK Files**: Android application packages (`.apk`)
-- **AAB Files**: Android App Bundles (`.aab`) 
+- **AAB Files**: Android App Bundles (`.aab`)
+- **IPA Files**: iOS application bundles (`.ipa`)
 - **Flutter Build Folders**: Only legitimate Flutter build directories (validates with `pubspec.yaml`)
+- **React Native node_modules**: Node.js dependencies for React Native projects (validates with `package.json`)
 
 ### What the App Skips
 

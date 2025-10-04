@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cleaner/scan_result.dart';
+import 'package:flutter_cleaner/constants.dart';
 import 'package:path/path.dart' as path;
 import 'package:file_picker/file_picker.dart';
 
@@ -144,8 +145,9 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text('• Scan for .apk and .aab files'),
-                    const Text('• Find Flutter build/node_modules folders'),
+                    const Text('• Scan for APK, AAB, and IPA files'),
+                    const Text('• Find Flutter build folders'),
+                    const Text('• Find React Native node_modules folders'),
                     const Text('• Calculate file and folder sizes'),
                     const Text('• Allow you to delete unwanted files'),
                   ],
@@ -164,7 +166,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: const Text(AppConstants.cancelButton),
           ),
           FilledButton.icon(
             onPressed: () => Navigator.of(context).pop(true),
@@ -346,7 +348,9 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                 path: entity.path,
                 size: stat.size,
                 isDirectory: false,
-                type: fileName.endsWith('.apk') ? 'apk' : 'aab',
+                type: fileName.endsWith('.apk')
+                    ? AppConstants.apkIndicator
+                    : AppConstants.aabIndicator,
                 lastModified: stat.modified,
               );
 
@@ -365,7 +369,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                 path: entity.path,
                 size: stat.size,
                 isDirectory: false,
-                type: fileName.endsWith('.ipa') ? 'ipa' : 'Unknown',
+                type: AppConstants.ipaIndicator,
                 lastModified: stat.modified,
               );
 
@@ -378,6 +382,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
           } else if (entity is Directory) {
             final dirName = path.basename(entity.path);
 
+            // Check for Flutter build directories
             if (dirName == 'build' && await _isFlutterBuildDirectory(entity)) {
               final size = await _getDirectorySize(entity);
               final stat = await entity.stat();
@@ -385,7 +390,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                 path: entity.path,
                 size: size,
                 isDirectory: true,
-                type: 'build',
+                type: AppConstants.flutterBuildIndicator,
                 lastModified: stat.modified,
               );
 
@@ -394,7 +399,102 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                 _foldersFound++;
                 _totalSizeScanned += size;
               });
-            } else if (dirName == 'node_modules' &&
+            }
+            // Check for React Native build directories
+            else if (dirName == 'build' &&
+                await _isReactNativeBuildDirectory(entity)) {
+              final size = await _getDirectorySize(entity);
+              final stat = await entity.stat();
+              final result = ScanResult(
+                path: entity.path,
+                size: size,
+                isDirectory: true,
+                type: AppConstants.reactNativeBuildIndicator,
+                lastModified: stat.modified,
+              );
+
+              setState(() {
+                _scanResults.add(result);
+                _foldersFound++;
+                _totalSizeScanned += size;
+              });
+            }
+            // Check for Android build directories
+            else if (dirName == 'build' &&
+                await _isAndroidBuildDirectory(entity)) {
+              final size = await _getDirectorySize(entity);
+              final stat = await entity.stat();
+              final result = ScanResult(
+                path: entity.path,
+                size: size,
+                isDirectory: true,
+                type: AppConstants.androidBuildIndicator,
+                lastModified: stat.modified,
+              );
+
+              setState(() {
+                _scanResults.add(result);
+                _foldersFound++;
+                _totalSizeScanned += size;
+              });
+            }
+            // Check for iOS build directories
+            else if (dirName == 'build' && await _isIOSBuildDirectory(entity)) {
+              final size = await _getDirectorySize(entity);
+              final stat = await entity.stat();
+              final result = ScanResult(
+                path: entity.path,
+                size: size,
+                isDirectory: true,
+                type: AppConstants.iosBuildIndicator,
+                lastModified: stat.modified,
+              );
+
+              setState(() {
+                _scanResults.add(result);
+                _foldersFound++;
+                _totalSizeScanned += size;
+              });
+            }
+            // Check for Runner directories (iOS)
+            else if (dirName == 'Runner' && await _isRunnerDirectory(entity)) {
+              final size = await _getDirectorySize(entity);
+              final stat = await entity.stat();
+              final result = ScanResult(
+                path: entity.path,
+                size: size,
+                isDirectory: true,
+                type: AppConstants.runnerIndicator,
+                lastModified: stat.modified,
+              );
+
+              setState(() {
+                _scanResults.add(result);
+                _foldersFound++;
+                _totalSizeScanned += size;
+              });
+            }
+            // Check for Archives directories (iOS)
+            else if (dirName == 'Archives' &&
+                await _isArchivesDirectory(entity)) {
+              final size = await _getDirectorySize(entity);
+              final stat = await entity.stat();
+              final result = ScanResult(
+                path: entity.path,
+                size: size,
+                isDirectory: true,
+                type: AppConstants.archivesIndicator,
+                lastModified: stat.modified,
+              );
+
+              setState(() {
+                _scanResults.add(result);
+                _foldersFound++;
+                _totalSizeScanned += size;
+              });
+            }
+            // Check for node_modules directories
+            else if (dirName == 'node_modules' &&
                 await _isNodeModulesDirectory(entity)) {
               final size = await _getDirectorySize(entity);
               final stat = await entity.stat();
@@ -402,7 +502,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                 path: entity.path,
                 size: size,
                 isDirectory: true,
-                type: 'node_modules',
+                type: AppConstants.nodeModulesIndicator,
                 lastModified: stat.modified,
               );
 
@@ -524,6 +624,87 @@ class _CleanerHomePageState extends State<CleanerHomePage>
     }
   }
 
+  Future<bool> _isReactNativeBuildDirectory(Directory buildDir) async {
+    try {
+      // Check if parent directory contains package.json with React Native dependencies
+      final parentDir = buildDir.parent;
+      final packageJsonFile = File(path.join(parentDir.path, 'package.json'));
+
+      if (await packageJsonFile.exists()) {
+        final content = await packageJsonFile.readAsString();
+        return content.contains('"react-native"') ||
+            content.contains('"@react-native"') ||
+            content.contains('"react-native-cli"');
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> _isAndroidBuildDirectory(Directory buildDir) async {
+    try {
+      // Check if parent directory contains Android-specific files
+      final parentDir = buildDir.parent;
+      final gradleFile = File(path.join(parentDir.path, 'build.gradle'));
+      final gradleKtsFile = File(path.join(parentDir.path, 'build.gradle.kts'));
+      final androidManifestFile = File(
+        path.join(parentDir.path, 'src', 'main', 'AndroidManifest.xml'),
+      );
+
+      return await gradleFile.exists() ||
+          await gradleKtsFile.exists() ||
+          await androidManifestFile.exists();
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> _isIOSBuildDirectory(Directory buildDir) async {
+    try {
+      // Check if parent directory contains iOS-specific files
+      final parentDir = buildDir.parent;
+      final xcodeProjectFile = File(
+        path.join(parentDir.path, 'project.pbxproj'),
+      );
+      final infoPlistFile = File(path.join(parentDir.path, 'Info.plist'));
+      final podfileFile = File(path.join(parentDir.path, 'Podfile'));
+
+      return await xcodeProjectFile.exists() ||
+          await infoPlistFile.exists() ||
+          await podfileFile.exists();
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> _isRunnerDirectory(Directory runnerDir) async {
+    try {
+      // Check if this is an iOS Runner directory
+      final infoPlistFile = File(path.join(runnerDir.path, 'Info.plist'));
+      final xcodeProjectFile = File(
+        path.join(runnerDir.path, 'project.pbxproj'),
+      );
+
+      return await infoPlistFile.exists() || await xcodeProjectFile.exists();
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<bool> _isArchivesDirectory(Directory archivesDir) async {
+    try {
+      // Check if this is an iOS Archives directory (usually contains .xcarchive files)
+      final entities = await archivesDir.list().toList();
+      return entities.any(
+        (entity) =>
+            entity is File && entity.path.toLowerCase().endsWith('.xcarchive'),
+      );
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future<void> _cleanAll() async {
     if (_scanResults.isEmpty) return;
 
@@ -574,7 +755,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
     _animationController.reverse();
 
     String message =
-        'Successfully deleted $deletedCount items, freed ${_formatFileSize(totalSize)}';
+        '${AppConstants.successfullyCleaned} $deletedCount ${AppConstants.itemsFreed} ${_formatFileSize(totalSize)}';
     if (failedCount > 0) {
       message += '\n$failedCount items could not be deleted';
     }
@@ -605,7 +786,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Are you sure you want to delete the following items?',
+                    AppConstants.confirmDeletionContent,
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                   const SizedBox(height: 12),
@@ -671,7 +852,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Cancel'),
+                child: const Text(AppConstants.cancelButton),
               ),
               FilledButton(
                 onPressed: () => Navigator.of(context).pop(true),
@@ -736,12 +917,12 @@ class _CleanerHomePageState extends State<CleanerHomePage>
             : Icon(_hasPermission ? Icons.search : Icons.lock),
         label: Text(
           _isScanning
-              ? 'Scanning...'
+              ? AppConstants.scanningButtonText
               : _hasPermission
               ? _selectedPath.isNotEmpty
-                    ? 'Scan Directory'
-                    : 'Select Directory'
-              : 'Grant Permission',
+                    ? AppConstants.scanButtonText
+                    : AppConstants.selectDirectoryButtonText
+              : AppConstants.grantPermissionButtonText,
           style: const TextStyle(fontSize: 16),
         ),
         style: FilledButton.styleFrom(
@@ -772,7 +953,9 @@ class _CleanerHomePageState extends State<CleanerHomePage>
               )
             : const Icon(Icons.delete_sweep),
         label: Text(
-          _isDeleting ? 'Deleting...' : 'Clean All',
+          _isDeleting
+              ? AppConstants.deletingButtonText
+              : AppConstants.cleanAllButtonText,
           style: const TextStyle(fontSize: 16),
         ),
         style: FilledButton.styleFrom(
@@ -826,8 +1009,8 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                     children: [
                       Text(
                         _isDeleting
-                            ? 'Deleting Files...'
-                            : 'Scanning System...',
+                            ? AppConstants.deletingFiles
+                            : AppConstants.scanningSystem,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -841,7 +1024,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                             color: Theme.of(context).colorScheme.primary,
                           ),
                           const SizedBox(width: 4),
-                          Text('Files: $_filesFound'),
+                          Text('${AppConstants.filesLabel} $_filesFound'),
                           const SizedBox(width: 16),
                           Icon(
                             Icons.inventory,
@@ -849,7 +1032,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                             color: Theme.of(context).colorScheme.primary,
                           ),
                           const SizedBox(width: 4),
-                          Text('Folders: $_foldersFound'),
+                          Text('${AppConstants.foldersLabel} $_foldersFound'),
                         ],
                       ),
                       const SizedBox(height: 4),
@@ -861,7 +1044,9 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                             color: Theme.of(context).colorScheme.primary,
                           ),
                           const SizedBox(width: 4),
-                          Text('Size: ${_formatFileSize(_totalSizeScanned)}'),
+                          Text(
+                            '${AppConstants.sizeLabel} ${_formatFileSize(_totalSizeScanned)}',
+                          ),
                         ],
                       ),
                     ],
@@ -879,7 +1064,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
               ),
               const SizedBox(height: 8),
               Text(
-                'Current: ${_currentScanPath.replaceFirst(_selectedPath, '~')}',
+                '${AppConstants.currentScanPath} ${_currentScanPath.replaceFirst(_selectedPath, '~')}',
                 style: Theme.of(context).textTheme.bodySmall,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 2,
@@ -908,14 +1093,16 @@ class _CleanerHomePageState extends State<CleanerHomePage>
               ),
               const SizedBox(height: 16),
               Text(
-                _hasPermission ? 'No scan results yet' : 'Permission Required',
+                _hasPermission
+                    ? AppConstants.noScanResultsYet
+                    : AppConstants.permissionRequired,
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 8),
               Text(
                 _hasPermission
-                    ? 'Click "Scan System" to find IPA files, APK files, AAB files, and Flutter build folders'
-                    : 'Grant permission to access your home directory to start scanning',
+                    ? AppConstants.clickToScanMessage
+                    : AppConstants.grantPermissionMessage,
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
@@ -929,7 +1116,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                 ),
                 child: Text(
                   _selectedPath.isEmpty
-                      ? "Select a directory/path to scan"
+                      ? AppConstants.selectDirectoryMessage
                       : 'Scan Path: $_selectedPath',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: _hasPermission
@@ -944,7 +1131,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                 FilledButton.icon(
                   onPressed: _requestFileAccess,
                   icon: const Icon(Icons.folder_open),
-                  label: const Text('Select Directory & Grant Access'),
+                  label: const Text(AppConstants.selectDirectoryButtonText),
                   style: FilledButton.styleFrom(backgroundColor: Colors.orange),
                 ),
               ],
@@ -960,10 +1147,36 @@ class _CleanerHomePageState extends State<CleanerHomePage>
       0,
       (sum, result) => sum + result.size,
     );
-    final apkCount = _scanResults.where((r) => r.type == 'apk').length;
-    final aabCount = _scanResults.where((r) => r.type == 'aab').length;
-    final ipaCount = _scanResults.where((r) => r.type == 'ipa').length;
-    final buildCount = _scanResults.where((r) => r.type == 'build').length;
+    final apkCount = _scanResults
+        .where((r) => r.type == AppConstants.apkIndicator)
+        .length;
+    final aabCount = _scanResults
+        .where((r) => r.type == AppConstants.aabIndicator)
+        .length;
+    final ipaCount = _scanResults
+        .where((r) => r.type == AppConstants.ipaIndicator)
+        .length;
+    final flutterBuildCount = _scanResults
+        .where((r) => r.type == AppConstants.flutterBuildIndicator)
+        .length;
+    final reactNativeBuildCount = _scanResults
+        .where((r) => r.type == AppConstants.reactNativeBuildIndicator)
+        .length;
+    final androidBuildCount = _scanResults
+        .where((r) => r.type == AppConstants.androidBuildIndicator)
+        .length;
+    final iosBuildCount = _scanResults
+        .where((r) => r.type == AppConstants.iosBuildIndicator)
+        .length;
+    final nodeModulesCount = _scanResults
+        .where((r) => r.type == AppConstants.nodeModulesIndicator)
+        .length;
+    final archivesCount = _scanResults
+        .where((r) => r.type == AppConstants.archivesIndicator)
+        .length;
+    final runnerCount = _scanResults
+        .where((r) => r.type == AppConstants.runnerIndicator)
+        .length;
 
     return FadeTransition(
       opacity: _fadeAnimation,
@@ -980,32 +1193,98 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                 ),
               ),
               const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              // Create a more comprehensive summary with multiple rows
+              Column(
                 children: [
-                  _buildSummaryItem(
-                    'APK Files',
-                    apkCount,
-                    Icons.android,
-                    Colors.green,
+                  // First row - Mobile app files
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      if (apkCount > 0)
+                        _buildSummaryItem(
+                          AppConstants.apkType,
+                          apkCount,
+                          Icons.android,
+                          Colors.green,
+                        ),
+                      if (aabCount > 0)
+                        _buildSummaryItem(
+                          AppConstants.aabType,
+                          aabCount,
+                          Icons.inventory,
+                          Colors.blue,
+                        ),
+                      if (ipaCount > 0)
+                        _buildSummaryItem(
+                          AppConstants.ipaType,
+                          ipaCount,
+                          Icons.phone_iphone,
+                          Colors.purple,
+                        ),
+                    ],
                   ),
-                  _buildSummaryItem(
-                    'AAB Files',
-                    aabCount,
-                    Icons.inventory,
-                    Colors.blue,
+                  const SizedBox(height: 16),
+                  // Second row - Build directories
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      if (flutterBuildCount > 0)
+                        _buildSummaryItem(
+                          AppConstants.flutterBuildType,
+                          flutterBuildCount,
+                          Icons.build,
+                          Colors.blue,
+                        ),
+                      if (reactNativeBuildCount > 0)
+                        _buildSummaryItem(
+                          AppConstants.reactNativeBuildType,
+                          reactNativeBuildCount,
+                          Icons.build,
+                          Colors.cyan,
+                        ),
+                      if (androidBuildCount > 0)
+                        _buildSummaryItem(
+                          AppConstants.androidBuildType,
+                          androidBuildCount,
+                          Icons.build,
+                          Colors.green,
+                        ),
+                      if (iosBuildCount > 0)
+                        _buildSummaryItem(
+                          AppConstants.iosBuildType,
+                          iosBuildCount,
+                          Icons.build,
+                          Colors.grey,
+                        ),
+                    ],
                   ),
-                  _buildSummaryItem(
-                    'IPA Files',
-                    ipaCount,
-                    Icons.inventory,
-                    Colors.blue,
-                  ),
-                  _buildSummaryItem(
-                    'Build Folders',
-                    buildCount,
-                    Icons.folder,
-                    Colors.orange,
+                  const SizedBox(height: 16),
+                  // Third row - Other directories
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      if (nodeModulesCount > 0)
+                        _buildSummaryItem(
+                          AppConstants.nodeModulesType,
+                          nodeModulesCount,
+                          Icons.folder,
+                          Colors.orange,
+                        ),
+                      if (runnerCount > 0)
+                        _buildSummaryItem(
+                          AppConstants.runnerType,
+                          runnerCount,
+                          Icons.play_arrow,
+                          Colors.red,
+                        ),
+                      if (archivesCount > 0)
+                        _buildSummaryItem(
+                          AppConstants.archivesType,
+                          archivesCount,
+                          Icons.archive,
+                          Colors.brown,
+                        ),
+                    ],
                   ),
                 ],
               ),
@@ -1034,7 +1313,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      'Total space to free: ${_formatFileSize(totalSize)}',
+                      '${AppConstants.spaceToFreeUp} ${_formatFileSize(totalSize)}',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         color: Theme.of(context).colorScheme.onPrimaryContainer,
                         fontWeight: FontWeight.bold,
@@ -1129,9 +1408,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
             Center(
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 10),
-                child: const Text(
-                  "No Flutter build folders/artifacts or Node node_modules found.",
-                ),
+                child: const Text(AppConstants.noArtifactsFound),
               ),
             ),
             ListView.builder(
@@ -1162,9 +1439,37 @@ class _CleanerHomePageState extends State<CleanerHomePage>
         icon = Icons.inventory;
         iconColor = Colors.blue;
         break;
-      case 'build':
+      case 'ipa':
+        icon = Icons.phone_iphone;
+        iconColor = Colors.purple;
+        break;
+      case AppConstants.flutterBuildIndicator:
+        icon = Icons.build;
+        iconColor = Colors.blue;
+        break;
+      case AppConstants.reactNativeBuildIndicator:
+        icon = Icons.build;
+        iconColor = Colors.cyan;
+        break;
+      case AppConstants.androidBuildIndicator:
+        icon = Icons.build;
+        iconColor = Colors.green;
+        break;
+      case AppConstants.iosBuildIndicator:
+        icon = Icons.build;
+        iconColor = Colors.grey;
+        break;
+      case AppConstants.nodeModulesIndicator:
         icon = Icons.folder;
         iconColor = Colors.orange;
+        break;
+      case AppConstants.runnerIndicator:
+        icon = Icons.play_arrow;
+        iconColor = Colors.red;
+        break;
+      case AppConstants.archivesIndicator:
+        icon = Icons.archive;
+        iconColor = Colors.brown;
         break;
       default:
         icon = Icons.file_present;
@@ -1360,7 +1665,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+            child: const Text(AppConstants.closeButton),
           ),
           FilledButton.icon(
             onPressed: () async {
@@ -1424,12 +1729,12 @@ class _CleanerHomePageState extends State<CleanerHomePage>
       });
 
       _showSnackBar(
-        'Deleted ${path.basename(result.path)} (${_formatFileSize(result.size)})',
+        '${AppConstants.cleanedItem} ${path.basename(result.path)} (${_formatFileSize(result.size)})',
         isError: false,
       );
     } catch (e) {
       _showSnackBar(
-        'Failed to delete ${path.basename(result.path)}: ${e.toString()}',
+        '${AppConstants.failedToClean} ${path.basename(result.path)}: ${e.toString()}',
         isError: true,
       );
     }
@@ -1580,7 +1885,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
               color: Theme.of(context).colorScheme.onPrimaryContainer,
             ),
             const SizedBox(width: 8),
-            const Text('Flutter/Node Cleaner'),
+            const Text(AppConstants.appName),
           ],
         ),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
@@ -1603,12 +1908,12 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                 _animationController.reverse();
               },
               icon: const Icon(Icons.clear),
-              tooltip: 'Clear Results',
+              tooltip: AppConstants.clearResultsButtonText,
             ),
           IconButton(
             onPressed: () => _showAboutDialog(),
             icon: const Icon(Icons.info_outline),
-            tooltip: 'About',
+            tooltip: AppConstants.aboutButtonText,
           ),
         ],
       ),
@@ -1647,13 +1952,13 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'macOS System Cleaner',
+                        AppConstants.appName,
                         style: Theme.of(context).textTheme.headlineMedium
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Scans $_selectedPath for IPA/APK files, AAB files, Flutter build and Node node_modules folders',
+                        AppConstants.mainDescription,
                         style: Theme.of(context).textTheme.bodyMedium,
                         textAlign: TextAlign.center,
                       ),
@@ -1712,7 +2017,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
           children: [
             Icon(Icons.info),
             SizedBox(width: 8),
-            Text('About Flutter/Node Cleaner'),
+            Text(AppConstants.aboutTitle),
           ],
         ),
         content: SizedBox(
@@ -1722,14 +2027,20 @@ class _CleanerHomePageState extends State<CleanerHomePage>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'This app helps you find and remove unnecessary files from your macOS system:',
+                AppConstants.aboutContent,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(height: 12),
-              const Text('• APK files (Android packages)'),
-              const Text('• IPA files (iOS Bundles)'),
-              const Text('• AAB files (Android App Bundles)'),
-              const Text('• Flutter build or Node node_modules folders'),
+              const Text(AppConstants.apkFiles),
+              const Text(AppConstants.ipaFiles),
+              const Text(AppConstants.aabFiles),
+              const Text(AppConstants.flutterBuildFolders),
+              const Text(AppConstants.reactNativeBuildFolders),
+              const Text(AppConstants.androidBuildFolders),
+              const Text(AppConstants.iosBuildFolders),
+              const Text(AppConstants.runnerFolders),
+              const Text(AppConstants.archivesFolders),
+              const Text(AppConstants.reactNativeNodeModules),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(12),
@@ -1743,13 +2054,15 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Current Scan Location:',
+                      AppConstants.currentScanLocation,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      _selectedPath.isEmpty ? 'N/A' : _selectedPath,
+                      _selectedPath.isEmpty
+                          ? AppConstants.notAvailable
+                          : _selectedPath,
                       style: Theme.of(
                         context,
                       ).textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
@@ -1759,7 +2072,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
               ),
               const SizedBox(height: 12),
               Text(
-                'The app safely skips system directories and handles permission errors gracefully.',
+                AppConstants.safetyMessage,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(
                     context,
@@ -1767,14 +2080,14 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                 ),
               ),
               const SizedBox(height: 12),
-              Center(child: Text("Build with Love by Nabraj Khadka ♥️")),
+              Center(child: Text(AppConstants.madeWithLove)),
             ],
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+            child: const Text(AppConstants.closeButton),
           ),
         ],
       ),
