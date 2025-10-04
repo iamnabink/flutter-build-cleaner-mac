@@ -1,284 +1,99 @@
 # AppBuild Dev Cleaner - Mobile Development Artifact Cleaner
 
-![App Screenshot](assets/images/screenshot1.png)
+<div align="center">
+  <img src="assets/images/screenshot1.png" alt="App Screenshot 1" width="45%">
+  <img src="assets/images/screenshot2.png" alt="App Screenshot 2" width="45%">
+</div>
 
 A powerful macOS desktop application built with Flutter that helps mobile developers clean up unnecessary build artifacts from their system to free up disk space.
 
-AppBuild Dev Cleaner is a macOS utility designed specifically for mobile developers working with Flutter and React Native. When working on multiple mobile projects, build files quickly accumulate across apps and consume large amounts of storage. Developers often forget to run `flutter clean` or lose track of where these build artifacts are located. AppBuild Dev Cleaner scans your system, finds all mobile development artifacts across your projects, shows how much space they occupy, and lets you clean them up easily, helping you reclaim valuable disk space with just a few clicks.
+## Why I Built This App
 
+As a mobile developer working with Flutter and React Native, I constantly faced the problem of **massive build artifacts consuming gigabytes of disk space**. Here's why this app was necessary:
 
-![macOS](https://img.shields.io/badge/macOS-10.14+-blue.svg)
-![Flutter](https://img.shields.io/badge/Flutter-3.10+-blue.svg)
-![License](https://img.shields.io/badge/License-MIT-green.svg)
+### The Problem
+- **Flutter builds** accumulate quickly across multiple projects
+- **React Native node_modules** folders grow to hundreds of MBs each
+- **iOS Archives** in DerivedData can reach several GBs
+- **Android APK/AAB files** pile up in build folders
+- **Manual cleanup** is tedious and error-prone
+- **Developers forget** to run `flutter clean` or `npm clean`
+- **Disk space** becomes a constant concern
 
-## 🚀 Features
+### The Solution
+AppBuild Dev Cleaner automatically:
+- **Scans** your entire system for mobile development artifacts
+- **Identifies** Flutter builds, React Native builds, iOS Archives, Android builds, and more
+- **Shows** exactly how much space each artifact consumes
+- **Safely removes** only build artifacts (never source code)
+- **Saves hours** of manual cleanup work
 
-- **🔍 Smart Scanning**: Recursively scans directories for APK, AAB, IPA files, Flutter build folders, and React Native node_modules
-- **📊 Real-time Progress**: Live updates with progress percentage, file counts, and sizes
-- **🎨 Beautiful UI**: Modern Material 3 design with smooth animations
-- **🔐 Permission Handling**: Native macOS file access with system permission dialogs
-- **📈 Size Analysis**: Automatically highlights largest files and shows total space to free
-- **⚡ Async Operations**: Non-blocking scanning and deletion with progress indicators
-- **🛡️ Safe Operations**: Confirmation dialogs and error handling for all file operations
-- **📱 Responsive Design**: Optimized for macOS desktop with proper window sizing
+## Installation
 
-## 📦 Installation Options
-
-### Option 1: Download DMG (Recommended)
+### Download & Install
 
 1. **Download the latest DMG** from the [Releases](https://github.com/iamnabink/flutter-build-cleaner-mac/releases) page
-2. **Open the DMG file** by double-clicking it
-3. **Drag the app** to your Applications folder
-4. **Launch the app** from Applications or Spotlight
-5. **Grant permissions** when prompted (see Usage section below)
-
-> **Note**: On first launch, macOS may show a security warning. Right-click the app and select "Open" to bypass this.
-
-### Option 2: Build from Source
-
-#### Prerequisites
-
-- macOS 10.14 or later
-- [Flutter SDK](https://flutter.dev/docs/get-started/install/macos) 3.10+
-- Xcode (latest version recommended)
-- Git
-
-#### Setup Steps
-
-1. **Clone the repository**
-```bash
-git clone https://github.com/iamnabink/flutter-build-cleaner-mac.git
-cd apk-build-cleaner
-```
-
-2. **Enable macOS desktop support**
-```bash
-flutter config --enable-macos-desktop
-```
-
-3. **Install dependencies**
-```bash
-flutter pub get
-```
-
-4. **Configure macOS permissions** (already set up in the project)
-   - The app includes proper entitlements for file system access
-   - No additional configuration needed
-
-5. **Run the app**
-```bash
-flutter run -d macos
-```
-
-6. **Build for distribution** (optional)
-```bash
-flutter build macos --release
-```
+2. **Open the DMG file**
+3. **Drag AppBuild Dev Cleaner** to your Applications folder
+4. **Launch** from Applications or Spotlight
 
-The built app will be located at `build/macos/Build/Products/Release/apk_build_cleaner.app`
+### First Launch
 
-### 🚀 How to Create a Release
+1. **Grant permission** when prompted to access your home directory
+2. **Select a directory** to scan (or scan your entire home directory)
+3. **Review** the found artifacts and their sizes
+4. **Clean** unwanted files with one click
 
-1. **Make sure your code is ready**:
-   ```bash
-   # Commit and push all your changes
-   git add .
-   git commit -m "feat: prepare for v1.0.0 release"
-   git push origin main
-   ```
-
-2. **Create and push a tag**:
-   ```bash
-   # Create a tag for your version (must start with 'v')
-   git tag v1.0.0
-   
-   # Push the tag to GitHub (this triggers the workflow)
-   git push origin v1.0.0
-   ```
-
-3. **Watch it build**:
-   - Go to your GitHub repository
-   - Click "Actions" tab to see the workflow running
-   - Takes about 5-10 minutes to complete
-
-4. **Check your release**:
-   - Go to "Releases" tab in your repo
-   - Your new release will appear with DMG download
-   - Release notes are auto-generated from commits
-
-## 🎯 Usage
-
-### First Launch & Permissions
-
-1. **Launch the app** - You'll see the main interface with a "Grant Permission" button
-2. **Click "Grant Permission"** - This opens a native macOS folder picker
-3. **Select your home directory** - Navigate to and select `path` (or your username)
-4. **Grant access** - macOS will automatically grant the app access to scan that directory
+## What It Cleans
 
-### Scanning for Files
-
-1. **Click "Scan System"** - The app will start scanning your selected directory
-2. **Watch progress** - Real-time updates show:
-   - Scanning percentage with animated progress bar
-   - Number of files and folders found
-   - Current directory being scanned
-   - Total size of files found
+- **APK files** (Android packages)
+- **AAB files** (Android App Bundles)  
+- **IPA files** (iOS app bundles)
+- **Flutter build folders** (`build/` directories)
+- **React Native build folders** (`android/app/build/`, `ios/build/`)
+- **Android build folders** (`build/` directories)
+- **iOS build folders** (`build/` directories)
+- **iOS Archives** (DerivedData `.xcarchive` files)
+- **node_modules folders** (React Native dependencies)
 
-### Reviewing Results
-
-- **Summary Cards**: View counts of APK files, AAB files, IPA files, Flutter build folders, and React Native node_modules
-- **Detailed List**: See all found items with:
-  - File/folder names and full paths
-  - File sizes in human-readable format
-  - Last modified dates
-  - Type indicators (APK, AAB, BUILD)
-  - **Largest items highlighted** in red
+## Safety Features
 
-### Cleaning Files
+- ✅ **Never deletes source code** - Only targets build artifacts
+- ✅ **Skips system directories** - Protects important system files
+- ✅ **Permission handling** - Graceful error handling
+- ✅ **Preview before delete** - See exactly what will be removed
+- ✅ **Open in Finder** - Right-click any item to inspect it
 
-1. **Review items** - Click any item to see detailed information
-2. **Delete individual items** - Use the delete button in item details
-3. **Clean all at once** - Click "Clean All" for bulk deletion
-4. **Confirm deletion** - Review the confirmation dialog showing total size to be freed
-5. **Track progress** - Watch deletion progress with live updates
+## System Requirements
 
-### Permission Warnings
+- **macOS 10.14** or later
+- **50MB** free disk space for the app
+- **File system access** permission (granted on first launch)
 
-- The app will show warnings for directories it cannot access
-- This is normal due to macOS security restrictions
-- The scan will continue and find accessible files
+## Made With Love
 
-## 🔧 Technical Details
+**AppBuild Dev Cleaner** was created by **Nabraj Khadka** - Mobile Developer & Flutter Enthusiast
 
-### What the App Finds
+### About the Developer
 
-- **APK Files**: Android application packages (`.apk`)
-- **AAB Files**: Android App Bundles (`.aab`)
-- **IPA Files**: iOS application bundles (`.ipa`)
-- **Flutter Build Folders**: Only legitimate Flutter build directories (validates with `pubspec.yaml`)
-- **React Native node_modules**: Node.js dependencies for React Native projects (validates with `package.json`)
+I'm a passionate mobile developer who loves building apps that solve real-world problems. As someone who works extensively with Flutter and React Native, I understand the pain points of managing build artifacts across multiple projects. This app was born out of my own frustration with constantly running out of disk space due to accumulated build files.
 
-### What the App Skips
+**My Expertise:**
+- 🚀 **Flutter Development** - Cross-platform mobile apps
+- 📱 **React Native** - Native mobile development
+- 🎨 **UI/UX Design** - Creating beautiful, intuitive interfaces
+- 🔧 **DevOps** - CI/CD pipelines and automation
+- ☁️ **Cloud Technologies** - AWS, Firebase, and more
 
-- System directories (`.git`, `.svn`, `node_modules`, etc.)
-- macOS system folders (`Library`, `Applications`, `System`)
-- Cache and temporary directories
-- Hidden directories (starting with `.`)
+**Connect with me:**
+- 🔗 [LinkedIn](https://linkedin.com/in/iamnabink) - Professional networking
+- 💻 [GitHub](https://github.com/iamnabink) - Open source projects
+- 📧 **Email** - Available through LinkedIn
 
-### Performance Optimizations
+*Building tools that make developers' lives easier, one app at a time!* ✨
 
-- **Async Scanning**: Non-blocking operations with proper state management
-- **Smart Directory Counting**: Pre-calculates progress for accurate percentage
-- **Efficient Size Calculation**: Optimized recursive directory size computation
-- **Memory Management**: Proper disposal of animation controllers and resources
-
-## 🛠️ Development
-
-### Project Structure
-
-```
-apk_build_cleaner/
-├── lib/
-│   └── main.dart              # Main application code
-├── macos/
-│   └── Runner/
-│       ├── DebugProfile.entitlements    # Debug permissions
-│       └── Release.entitlements         # Release permissions
-├── pubspec.yaml               # Dependencies and configuration
-└── README.md                 # This file
-```
-
-### Dependencies
-
-- `flutter`: Flutter SDK
-- `path`: Path manipulation utilities
-- `file_picker`: Native file/directory picker for permissions
-
-### Building for Distribution
-
-To create a DMG for distribution:
-
-1. **Build release version**
-```bash
-flutter build macos --release
-```
-
-2. **Create DMG** (using tools like `create-dmg` or manually)
-```bash
-./create_dmg.sh
-```
-
-### Code Signing (for distribution)
-
-For distributing outside the App Store:
-
-1. **Get a Developer ID certificate** from Apple
-2. **Sign the app**
-```bash
-codesign --force --deep --sign "Developer ID Application: Your Name" \
-  build/macos/Build/Products/Release/apk_build_cleaner.app
-```
-3. **Notarize with Apple** (required for macOS 10.15+)
-
-## 🔒 Security & Privacy
-
-- **No Data Collection**: The app doesn't collect or transmit any personal data
-- **Local Operations**: All scanning and deletion happens locally on your machine
-- **Permission Transparency**: Clear explanation of what permissions are needed and why
-- **Sandboxed**: Runs in macOS app sandbox for security
-- **Open Source**: Full source code available for review
-
-## 🐛 Troubleshooting
-
-### Permission Issues
-
-**Problem**: "Permission denied" errors during scanning
-**Solution**: 
-1. Restart the app
-2. Click "Grant Permission" again
-3. Make sure to select your actual home directory in the picker
-4. Check System Preferences > Security & Privacy > Files and Folders
-
-### App Won't Launch [Due to un-signed app]
-
-**Problem**: macOS blocks the app from opening
-**Solution**:
-1. Right-click the app and select "Open"
-2. Or go to System Preferences > Security & Privacy > General
-3. Click "Open Anyway" next to the blocked app warning
-
-### Build Issues
-
-**Problem**: Flutter build fails
-**Solution**:
-1. Ensure you have the latest Flutter SDK: `flutter upgrade`
-2. Clean and rebuild: `flutter clean && flutter pub get`
-3. Check that macOS desktop is enabled: `flutter doctor`
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly on macOS
-5. Submit a pull request
-
-## 📞 Support
-
-If you encounter any issues:
-
-1. Check the [Issues](https://github.com/iamnabink/flutter-build-cleaner-mac/issues) page
-2. Create a new issue with:
-   - macOS version
-   - Flutter version (`flutter --version`)
-   - Error messages or screenshots
-   - Steps to reproduce
 ---
 
-**Made by Nabraj Khadka with ❤️ using Flutter for macOS**
+**Version 1.0.0 • Build 1**
+
+*Free up your disk space and focus on what matters - building amazing mobile apps!* 🚀

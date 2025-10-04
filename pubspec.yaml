@@ -11,6 +11,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   path: ^1.8.3
   file_picker: ^10.3.2
+  url_launcher: ^6.2.5
 
 flutter_launcher_icons:
   macos:

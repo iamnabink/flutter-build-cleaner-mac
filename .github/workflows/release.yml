@@ -34,7 +34,7 @@ jobs:
     - name: Get app name from pubspec
       id: app_info
       run: |
-        APP_NAME="Flutter Cleaner"
+        APP_NAME="AppBuild Dev Cleaner"
         echo "app_name=$APP_NAME" >> $GITHUB_OUTPUT
         echo "App name: $APP_NAME"
     

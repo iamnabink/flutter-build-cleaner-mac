@@ -5,12 +5,13 @@ class AppConstants {
       'Clean up mobile development artifacts for Flutter and React Native developers';
 
   static const String mainDescription =
-      'Clean up mobile development artifacts: APK, AAB, IPA files, Flutter builds, React Native builds, Android builds, iOS builds, Runner directories, Archives, and node_modules';
+      'Clean up mobile development artifacts: APK, AAB, IPA files, Flutter builds, React Native builds, Android builds, iOS builds, iOS Archives (DerivedData), and node_modules';
 
   // Buttons
   static const String scanButtonText = 'Scan Directory';
   static const String scanningButtonText = 'Scanning...';
   static const String selectDirectoryButtonText = 'Select Directory';
+  static const String changeDirectoryButtonText = 'Change Directory';
   static const String grantPermissionButtonText = 'Grant Permission';
   static const String cleanAllButtonText = 'Clean All';
   static const String deletingButtonText = 'Deleting...';
@@ -21,13 +22,14 @@ class AppConstants {
   static const String noScanResultsYet = 'No scan results yet';
   static const String permissionRequired = 'Permission Required';
   static const String noArtifactsFound =
-      'No mobile development artifacts found (APK, AAB, IPA, Flutter builds, React Native builds, Android builds, iOS builds, Runner directories, Archives, node_modules).';
+      'No mobile development artifacts found (APK, AAB, IPA, Flutter builds, React Native builds, Android builds, iOS builds, iOS Archives in DerivedData, node_modules).';
   static const String clickToScanMessage =
-      'Click "Scan Directory" to find mobile development artifacts: APK, AAB, IPA files, Flutter builds, React Native builds, Android builds, iOS builds, Runner directories, Archives, and node_modules';
+      'Click "Scan Directory" to find mobile development artifacts: APK, AAB, IPA files, Flutter builds, React Native builds, Android builds, iOS builds, iOS Archives in DerivedData, and node_modules';
   static const String grantPermissionMessage =
       'Grant permission to access your home directory to start scanning';
   static const String selectDirectoryMessage =
       'Select a directory/path to scan';
+  static const String changeDirectoryMessage = 'Tap to change scan location';
 
   // Permission Dialog
   static const String permissionDialogTitle = 'Permission Required';
@@ -77,15 +79,19 @@ class AppConstants {
   static const String reactNativeBuildFolders = '• React Native build folders';
   static const String androidBuildFolders = '• Android build folders';
   static const String iosBuildFolders = '• iOS build folders';
-  static const String runnerFolders = '• iOS Runner directories';
-  static const String archivesFolders = '• iOS Archives directories';
+  static const String archivesFolders = '• iOS Archives in DerivedData';
   static const String reactNativeNodeModules =
       '• React Native node_modules folders';
   static const String currentScanLocation = 'Current Scan Location:';
   static const String notAvailable = 'N/A';
   static const String safetyMessage =
       'The app safely skips system directories and handles permission errors gracefully.';
-  static const String madeWithLove = 'Build with Love by Nabraj Khadka ♥️';
+  static const String madeWithLove = 'Made with Love by Nabraj Khadka ♥️';
+  static const String developerTitle = 'Mobile Developer & Flutter Enthusiast';
+  static const String linkedinUrl = 'https://linkedin.com/in/iamnabink';
+  static const String githubUrl = 'https://github.com/iamnabink';
+  static const String appVersion = 'Version 1.0.0';
+  static const String buildNumber = 'Build 1';
   static const String closeButton = 'Close';
 
   // File Types
@@ -97,8 +103,7 @@ class AppConstants {
   static const String androidBuildType = 'Android Build';
   static const String iosBuildType = 'iOS Build';
   static const String nodeModulesType = 'Node Modules';
-  static const String archivesType = 'Archives';
-  static const String runnerType = 'Runner';
+  static const String archivesType = 'iOS Archives (DerivedData)';
 
   // Labels
   static const String filesLabel = 'Files:';
@@ -136,7 +141,6 @@ class AppConstants {
   static const String iosBuildIndicator = 'IOS_BUILD';
   static const String nodeModulesIndicator = 'NODE_MODULES';
   static const String archivesIndicator = 'ARCHIVES';
-  static const String runnerIndicator = 'RUNNER';
 
   // Detail Labels
   static const String typeLabel = 'Type';

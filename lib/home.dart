@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_cleaner/scan_result.dart';
 import 'package:flutter_cleaner/constants.dart';
 import 'package:path/path.dart' as path;
@@ -456,24 +457,6 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                 _totalSizeScanned += size;
               });
             }
-            // Check for Runner directories (iOS)
-            else if (dirName == 'Runner' && await _isRunnerDirectory(entity)) {
-              final size = await _getDirectorySize(entity);
-              final stat = await entity.stat();
-              final result = ScanResult(
-                path: entity.path,
-                size: size,
-                isDirectory: true,
-                type: AppConstants.runnerIndicator,
-                lastModified: stat.modified,
-              );
-
-              setState(() {
-                _scanResults.add(result);
-                _foldersFound++;
-                _totalSizeScanned += size;
-              });
-            }
             // Check for Archives directories (iOS)
             else if (dirName == 'Archives' &&
                 await _isArchivesDirectory(entity)) {
@@ -678,23 +661,23 @@ class _CleanerHomePageState extends State<CleanerHomePage>
     }
   }
 
-  Future<bool> _isRunnerDirectory(Directory runnerDir) async {
-    try {
-      // Check if this is an iOS Runner directory
-      final infoPlistFile = File(path.join(runnerDir.path, 'Info.plist'));
-      final xcodeProjectFile = File(
-        path.join(runnerDir.path, 'project.pbxproj'),
-      );
-
-      return await infoPlistFile.exists() || await xcodeProjectFile.exists();
-    } catch (e) {
-      return false;
-    }
-  }
-
   Future<bool> _isArchivesDirectory(Directory archivesDir) async {
     try {
-      // Check if this is an iOS Archives directory (usually contains .xcarchive files)
+      // Check if this is an iOS Archives directory in DerivedData
+      // DerivedData structure: ~/Library/Developer/Xcode/DerivedData/ProjectName-xxx/Archives/
+      final path = archivesDir.path.toLowerCase();
+
+      // Must be in DerivedData path
+      if (!path.contains('deriveddata')) {
+        return false;
+      }
+
+      // Must be in Archives subfolder
+      if (!path.contains('archives')) {
+        return false;
+      }
+
+      // Check if contains .xcarchive files
       final entities = await archivesDir.list().toList();
       return entities.any(
         (entity) =>
@@ -702,6 +685,101 @@ class _CleanerHomePageState extends State<CleanerHomePage>
       );
     } catch (e) {
       return false;
+    }
+  }
+
+  Future<void> _launchUrl(String url) async {
+    try {
+      final Uri uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Could not launch $url'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error launching URL: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _showContextMenu(BuildContext context, ScanResult result) async {
+    final RenderBox renderBox = context.findRenderObject() as RenderBox;
+    final Offset offset = renderBox.localToGlobal(Offset.zero);
+
+    await showMenu<String>(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        offset.dx,
+        offset.dy + renderBox.size.height,
+        offset.dx + renderBox.size.width,
+        offset.dy + renderBox.size.height + 100,
+      ),
+      items: [
+        const PopupMenuItem<String>(
+          value: 'open',
+          child: Row(
+            children: [
+              Icon(Icons.folder_open, size: 20),
+              SizedBox(width: 8),
+              Text('Open in Finder'),
+            ],
+          ),
+        ),
+        const PopupMenuItem<String>(
+          value: 'details',
+          child: Row(
+            children: [
+              Icon(Icons.info_outline, size: 20),
+              SizedBox(width: 8),
+              Text('Show Details'),
+            ],
+          ),
+        ),
+      ],
+    ).then((value) {
+      if (value == 'open') {
+        _openInFinder(result.path);
+      } else if (value == 'details') {
+        _showItemDetails(result);
+      }
+    });
+  }
+
+  Future<void> _openInFinder(String path) async {
+    try {
+      if (Platform.isMacOS) {
+        // Use 'open' command to open in Finder
+        await Process.run('open', ['-R', path]);
+      } else if (Platform.isWindows) {
+        // Use 'explorer' command to open in Windows Explorer
+        await Process.run('explorer', ['/select,', path]);
+      } else if (Platform.isLinux) {
+        // Use 'xdg-open' command to open in Linux file manager
+        await Process.run('xdg-open', [path]);
+      }
+    } catch (e) {
+      // Show error message if opening fails
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to open in Finder: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
 
@@ -886,24 +964,102 @@ class _CleanerHomePageState extends State<CleanerHomePage>
     );
   }
 
+  Widget _buildActionButtons() {
+    // If no permission, show grant permission button
+    if (!_hasPermission) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildGrantPermissionButton(),
+          const SizedBox(width: 20),
+          _buildCleanButton(),
+        ],
+      );
+    }
+
+    // If no directory selected, show select directory button
+    if (_selectedPath.isEmpty) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildSelectDirectoryButton(),
+          const SizedBox(width: 20),
+          _buildCleanButton(),
+        ],
+      );
+    }
+
+    // If directory selected, show both change directory and scan buttons
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _buildChangeDirectoryButton(),
+        const SizedBox(width: 20),
+        _buildScanButton(),
+        const SizedBox(width: 20),
+        _buildCleanButton(),
+      ],
+    );
+  }
+
+  Widget _buildGrantPermissionButton() {
+    return SizedBox(
+      width: 200,
+      height: 50,
+      child: FilledButton.icon(
+        onPressed: _isScanning || _isDeleting ? null : _showPermissionDialog,
+        icon: const Icon(Icons.lock),
+        label: Text(
+          AppConstants.grantPermissionButtonText,
+          style: const TextStyle(fontSize: 16),
+        ),
+        style: FilledButton.styleFrom(backgroundColor: Colors.orange),
+      ),
+    );
+  }
+
+  Widget _buildSelectDirectoryButton() {
+    return SizedBox(
+      width: 200,
+      height: 50,
+      child: FilledButton.icon(
+        onPressed: _isScanning || _isDeleting ? null : _requestFileAccess,
+        icon: const Icon(Icons.folder_open),
+        label: Text(
+          AppConstants.selectDirectoryButtonText,
+          style: const TextStyle(fontSize: 16),
+        ),
+        style: FilledButton.styleFrom(
+          backgroundColor: Theme.of(context).colorScheme.primary,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildChangeDirectoryButton() {
+    return SizedBox(
+      width: 180,
+      height: 50,
+      child: FilledButton.icon(
+        onPressed: _isScanning || _isDeleting ? null : _requestFileAccess,
+        icon: const Icon(Icons.folder_open),
+        label: Text(
+          AppConstants.changeDirectoryButtonText,
+          style: const TextStyle(fontSize: 14),
+        ),
+        style: FilledButton.styleFrom(
+          backgroundColor: Theme.of(context).colorScheme.secondary,
+        ),
+      ),
+    );
+  }
+
   Widget _buildScanButton() {
     return SizedBox(
       width: 200,
       height: 50,
       child: FilledButton.icon(
-        onPressed: _isScanning || _isDeleting
-            ? null
-            : () async {
-                if (!_hasPermission) {
-                  await _showPermissionDialog();
-                } else {
-                  if (_selectedPath.isEmpty) {
-                    _requestFileAccess();
-                  } else {
-                    await _scanSystem();
-                  }
-                }
-              },
+        onPressed: _isScanning || _isDeleting ? null : _scanSystem,
         icon: _isScanning
             ? AnimatedBuilder(
                 animation: _rotationAnimation,
@@ -918,11 +1074,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
         label: Text(
           _isScanning
               ? AppConstants.scanningButtonText
-              : _hasPermission
-              ? _selectedPath.isNotEmpty
-                    ? AppConstants.scanButtonText
-                    : AppConstants.selectDirectoryButtonText
-              : AppConstants.grantPermissionButtonText,
+              : AppConstants.scanButtonText,
           style: const TextStyle(fontSize: 16),
         ),
         style: FilledButton.styleFrom(
@@ -1174,9 +1326,6 @@ class _CleanerHomePageState extends State<CleanerHomePage>
     final archivesCount = _scanResults
         .where((r) => r.type == AppConstants.archivesIndicator)
         .length;
-    final runnerCount = _scanResults
-        .where((r) => r.type == AppConstants.runnerIndicator)
-        .length;
 
     return FadeTransition(
       opacity: _fadeAnimation,
@@ -1269,13 +1418,6 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                           nodeModulesCount,
                           Icons.folder,
                           Colors.orange,
-                        ),
-                      if (runnerCount > 0)
-                        _buildSummaryItem(
-                          AppConstants.runnerType,
-                          runnerCount,
-                          Icons.play_arrow,
-                          Colors.red,
                         ),
                       if (archivesCount > 0)
                         _buildSummaryItem(
@@ -1463,10 +1605,6 @@ class _CleanerHomePageState extends State<CleanerHomePage>
         icon = Icons.folder;
         iconColor = Colors.orange;
         break;
-      case AppConstants.runnerIndicator:
-        icon = Icons.play_arrow;
-        iconColor = Colors.red;
-        break;
       case AppConstants.archivesIndicator:
         icon = Icons.archive;
         iconColor = Colors.brown;
@@ -1494,120 +1632,144 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                 ),
               ),
       ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: iconColor.withOpacity(0.15),
-            borderRadius: BorderRadius.circular(10),
+      child: GestureDetector(
+        onSecondaryTap: () => _showContextMenu(context, result),
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
           ),
-          child: Icon(icon, color: iconColor, size: 24),
-        ),
-        title: Row(
-          children: [
-            Expanded(
-              child: Text(
-                path.basename(result.path),
-                style: TextStyle(
-                  fontWeight: isLargest ? FontWeight.bold : FontWeight.w500,
-                  fontSize: 16,
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
+          leading: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: iconColor.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(10),
             ),
-            if (isLargest)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.error,
-                  borderRadius: BorderRadius.circular(12),
-                ),
+            child: Icon(icon, color: iconColor, size: 24),
+          ),
+          title: Row(
+            children: [
+              Expanded(
                 child: Text(
-                  'LARGEST',
+                  path.basename(result.path),
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onError,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: isLargest ? FontWeight.bold : FontWeight.w500,
+                    fontSize: 16,
                   ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-          ],
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 4),
-            Text(
-              relativePath,
-              style: Theme.of(
-                context,
-              ).textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
+              if (isLargest)
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
+                    horizontal: 8,
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: iconColor.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(4),
+                    color: Theme.of(context).colorScheme.error,
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    result.type.toUpperCase(),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: iconColor,
-                      fontWeight: FontWeight.bold,
+                    'LARGEST',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onError,
                       fontSize: 10,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  result.isDirectory ? 'Folder' : 'File',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '• Modified: ${_formatDate(result.lastModified)}',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            ],
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 4),
+              Text(
+                relativePath,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(fontFamily: 'monospace'),
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: iconColor.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Text(
+                      result.type.toUpperCase(),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: iconColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    result.isDirectory ? 'Folder' : 'File',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '• Modified: ${_formatDate(result.lastModified)}',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.6),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          trailing: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    _formatFileSize(result.size),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: isLargest
+                          ? Theme.of(context).colorScheme.error
+                          : Theme.of(context).colorScheme.primary,
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Icon(
+                    Icons.more_vert,
+                    size: 16,
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withOpacity(0.6),
+                    ).colorScheme.onSurface.withOpacity(0.4),
                   ),
+                ],
+              ),
+              Text(
+                result.isDirectory ? 'FOLDER' : 'FILE',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.6),
+                  fontSize: 10,
                 ),
-              ],
-            ),
-          ],
-        ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              _formatFileSize(result.size),
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: isLargest
-                    ? Theme.of(context).colorScheme.error
-                    : Theme.of(context).colorScheme.primary,
-                fontSize: 16,
               ),
-            ),
-            Text(
-              result.isDirectory ? 'FOLDER' : 'FILE',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                fontSize: 10,
-              ),
-            ),
-          ],
+            ],
+          ),
+          onTap: () => _showItemDetails(result),
         ),
-        onTap: () => _showItemDetails(result),
       ),
     );
   }
@@ -1968,14 +2130,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                 const SizedBox(height: 24),
 
                 // Action buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildScanButton(),
-                    const SizedBox(width: 20),
-                    _buildCleanButton(),
-                  ],
-                ),
+                _buildActionButtons(),
                 const SizedBox(height: 24),
 
                 // Stats bar (only during scanning)
@@ -2004,6 +2159,43 @@ class _CleanerHomePageState extends State<CleanerHomePage>
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSocialButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: Theme.of(
+            context,
+          ).colorScheme.primaryContainer.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: Theme.of(context).colorScheme.primary),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -2038,7 +2230,6 @@ class _CleanerHomePageState extends State<CleanerHomePage>
               const Text(AppConstants.reactNativeBuildFolders),
               const Text(AppConstants.androidBuildFolders),
               const Text(AppConstants.iosBuildFolders),
-              const Text(AppConstants.runnerFolders),
               const Text(AppConstants.archivesFolders),
               const Text(AppConstants.reactNativeNodeModules),
               const SizedBox(height: 12),
@@ -2080,7 +2271,68 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                 ),
               ),
               const SizedBox(height: 12),
-              Center(child: Text(AppConstants.madeWithLove)),
+              Center(
+                child: Column(
+                  children: [
+                    Text(
+                      AppConstants.madeWithLove,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    Text(
+                      AppConstants.developerTitle,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.7),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surfaceVariant.withOpacity(0.5),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        '${AppConstants.appVersion} • ${AppConstants.buildNumber}',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.8),
+                          fontWeight: FontWeight.w500,
+                          fontFamily: 'monospace',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildSocialButton(
+                          icon: Icons.link,
+                          label: 'LinkedIn',
+                          onTap: () => _launchUrl(AppConstants.linkedinUrl),
+                        ),
+                        const SizedBox(width: 16),
+                        _buildSocialButton(
+                          icon: Icons.code,
+                          label: 'GitHub',
+                          onTap: () => _launchUrl(AppConstants.githubUrl),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),

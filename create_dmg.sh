@@ -10,7 +10,7 @@ flutter pub get
 flutter build macos --release
 
 # Check if build was successful
-if [ ! -d "build/macos/Build/Products/Release/Flutter Cleaner.app" ]; then
+if [ ! -d "build/macos/Build/Products/Release/AppBuild Dev Cleaner.app" ]; then
     echo "❌ Build failed - app not found!"
     exit 1
 fi
@@ -24,20 +24,20 @@ fi
 # Create DMG
 echo "🔨 Creating DMG..."
 create-dmg \
-  --volname "Flutter Cleaner" \
+  --volname "AppBuild Dev Cleaner" \
   --window-pos 200 120 \
   --window-size 800 600 \
   --icon-size 100 \
-  --icon "Flutter Cleaner.app" 200 190 \
-  --hide-extension "Flutter Cleaner.app" \
+  --icon "AppBuild Dev Cleaner.app" 200 190 \
+  --hide-extension "AppBuild Dev Cleaner.app" \
   --app-drop-link 600 185 \
-  "Flutter-Cleaner.dmg" \
+  "AppBuild-Dev-Cleaner.dmg" \
   "build/macos/Build/Products/Release/"
 
 # Show DMG location
-if [ -f "Flutter-Cleaner.dmg" ]; then
-    DMG_PATH=$(pwd)/Flutter-Cleaner.dmg
-    DMG_SIZE=$(du -h "Flutter-Cleaner.dmg" | cut -f1)
+if [ -f "AppBuild-Dev-Cleaner.dmg" ]; then
+    DMG_PATH=$(pwd)/AppBuild-Dev-Cleaner.dmg
+    DMG_SIZE=$(du -h "AppBuild-Dev-Cleaner.dmg" | cut -f1)
     
     echo "✅ DMG created successfully!"
     echo "📍 Location: $DMG_PATH"
