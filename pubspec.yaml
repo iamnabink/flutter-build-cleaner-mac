@@ -1,7 +1,7 @@
 name: flutter_cleaner
 description: "AppBuild Dev Cleaner - Clean up mobile development artifacts for Flutter and React Native developers"
 
-version: 1.0.0+1
+version: 3.0.0+3
 
 environment:
   sdk: ^3.8.1
