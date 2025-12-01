@@ -25,6 +25,11 @@ jobs:
     - name: Get dependencies
       run: flutter pub get
     
+    - name: Disable code signing
+      run: |
+        sed -i '' 's/CODE_SIGN_IDENTITY = "Apple Development";/CODE_SIGN_IDENTITY = "";/g' macos/Runner.xcodeproj/project.pbxproj
+        sed -i '' 's/"CODE_SIGN_IDENTITY\[sdk=macosx\*\]" = "Apple Development";/"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";/g' macos/Runner.xcodeproj/project.pbxproj
+    
     - name: Build macOS app
       run: flutter build macos --release
     
