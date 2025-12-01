@@ -317,6 +317,6 @@ For detailed information about our development workflow, code standards, and PR 
 
 ---
 
-**Version 5.0.0 • Build 5**
+**Version 6.0.0 • Build 6**
 
 *Free up your disk space and focus on what matters - building amazing mobile apps!* 🚀

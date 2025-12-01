@@ -3,70 +3,7 @@ part of '../pages/cleaner_home_page.dart';
 extension CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
   Widget _buildSummaryCard() {
     if (_scanResults.isEmpty && !_isScanning) {
-      return Container(
-        padding: const EdgeInsets.all(24.0),
-        decoration: BoxDecoration(
-          color: CupertinoColors.systemGrey6,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          children: [
-            Icon(
-              _hasPermission ? CupertinoIcons.folder : CupertinoIcons.lock,
-              size: 64,
-              color: _hasPermission
-                  ? CupertinoColors.systemBlue.withOpacity(0.6)
-                  : CupertinoColors.systemOrange.withOpacity(0.6),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              _hasPermission
-                  ? AppConstants.noScanResultsYet
-                  : AppConstants.permissionRequired,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              _hasPermission
-                  ? AppConstants.clickToScanMessage
-                  : AppConstants.grantPermissionMessage,
-              style: const TextStyle(
-                fontSize: 14,
-                color: CupertinoColors.secondaryLabel,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            CupertinoButton.filled(
-              onPressed: _requestFileAccess,
-              color: _hasPermission
-                  ? CupertinoColors.systemBlue
-                  : CupertinoColors.systemOrange,
-              child: Text(
-                _selectedPath.isEmpty
-                    ? AppConstants.selectDirectoryMessage
-                    : 'Scan Path: $_selectedPath',
-                style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
-              ),
-            ),
-            if (!_hasPermission) ...[
-              const SizedBox(height: 16),
-              CupertinoButton.filled(
-                onPressed: _requestFileAccess,
-                color: CupertinoColors.systemOrange,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(CupertinoIcons.folder, size: 16),
-                    const SizedBox(width: 8),
-                    const Text(AppConstants.selectDirectoryButtonText),
-                  ],
-                ),
-              ),
-            ],
-          ],
-        ),
-      );
+      return const SizedBox.shrink();
     }
 
     if (_scanResults.isEmpty) return const SizedBox.shrink();
@@ -106,18 +43,40 @@ extension CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
     return FadeTransition(
       opacity: _fadeAnimation,
       child: Container(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          color: CupertinoColors.systemGrey6,
-          borderRadius: BorderRadius.circular(12),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              CupertinoColors.systemGrey6,
+              CupertinoColors.systemGrey5,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: CupertinoColors.black.withOpacity(0.06),
+              blurRadius: 20,
+              offset: const Offset(0, 4),
+            ),
+          ],
+          border: Border.all(
+            color: CupertinoColors.systemGrey4.withOpacity(0.3),
+            width: 1,
+          ),
         ),
         child: Column(
           children: [
             const Text(
               'Scan Results',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                letterSpacing: -0.5,
+              ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
             Column(
               children: [
                 Row(
@@ -146,7 +105,7 @@ extension CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
                       ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -180,7 +139,7 @@ extension CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
                       ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -202,52 +161,81 @@ extension CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 12),
             // Subtle informational panel — not tappable. Reduced emphasis
             // so users don't think this is a primary action button.
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(
-                color: CupertinoColors.secondarySystemFill,
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    CupertinoColors.systemRed.withOpacity(0.08),
+                    CupertinoColors.systemRed.withOpacity(0.04),
+                  ],
+                ),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: CupertinoColors.systemGrey4.withOpacity(0.8),
-                  width: 0.5,
+                  color: CupertinoColors.systemRed.withOpacity(0.2),
+                  width: 1.5,
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: CupertinoColors.systemRed.withOpacity(0.05),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: CupertinoColors.systemGrey.withOpacity(0.08),
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          CupertinoColors.systemRed.withOpacity(0.15),
+                          CupertinoColors.systemRed.withOpacity(0.08),
+                        ],
+                      ),
                       shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: CupertinoColors.systemRed.withOpacity(0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: const Icon(
                       CupertinoIcons.delete_solid,
-                      size: 22,
-                      color: CupertinoColors.systemGrey,
+                      size: 18,
+                      color: CupertinoColors.systemRed,
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         AppConstants.spaceToFreeUp,
                         style: const TextStyle(
-                          fontSize: 12,
+                          fontSize: 10,
                           color: CupertinoColors.secondaryLabel,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       Text(
                         _formatFileSize(totalSize),
                         style: const TextStyle(
-                          fontSize: 18,
-                          color: CupertinoColors.label,
+                          fontSize: 16,
+                          color: CupertinoColors.systemRed,
                           fontWeight: FontWeight.bold,
+                          letterSpacing: -0.2,
                         ),
                       ),
                     ],
@@ -257,7 +245,7 @@ extension CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
                   Text(
                     'Review items below to delete',
                     style: const TextStyle(
-                      fontSize: 12,
+                      fontSize: 10,
                       color: CupertinoColors.secondaryLabel,
                     ),
                   ),
@@ -279,18 +267,36 @@ extension CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
     return Column(
       children: [
         Container(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.1),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                color.withOpacity(0.15),
+                color.withOpacity(0.08),
+              ],
+            ),
             borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: color.withOpacity(0.2),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: color.withOpacity(0.1),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-          child: Icon(icon, size: 32, color: color),
+          child: Icon(icon, size: 24, color: color),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         Text(
           count.toString(),
           style: TextStyle(
-            fontSize: 24,
+            fontSize: 18,
             fontWeight: FontWeight.bold,
             color: color,
           ),
@@ -298,7 +304,7 @@ extension CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
         Text(
           label,
           style: const TextStyle(
-            fontSize: 12,
+            fontSize: 10,
             color: CupertinoColors.secondaryLabel,
           ),
         ),

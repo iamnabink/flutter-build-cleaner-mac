@@ -99,42 +99,42 @@ class _CleanerHomePageState extends State<CleanerHomePage>
     return CupertinoPageScaffold(
       navigationBar: _buildNavigationBar(),
       child: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20.0),
+          child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Header section
               _buildHeaderSection(),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
 
               // Action buttons
               _buildActionButtons(),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
 
               // Stats bar (only during scanning)
               if (_isScanning) ...[
                 _buildStatsBar(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
               ],
 
               // Progress indicator
               _buildProgressCard(),
-              if (_isScanning || _isDeleting) const SizedBox(height: 20),
+              if (_isScanning || _isDeleting) const SizedBox(height: 12),
 
               // Permission warnings
               _buildPermissionWarnings(),
-              if (_permissionErrors.isNotEmpty) const SizedBox(height: 20),
+              if (_permissionErrors.isNotEmpty) const SizedBox(height: 12),
 
               // Summary card
               _buildSummaryCard(),
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
 
               // Results list
               _buildResultsList(),
 
               // Footer spacing
-              const SizedBox(height: 40),
+              const SizedBox(height: 20),
             ],
           ),
         ),

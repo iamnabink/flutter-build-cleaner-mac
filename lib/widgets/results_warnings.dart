@@ -5,13 +5,28 @@ extension CleanerHomePageWidgetsResultsWarnings on _CleanerHomePageState {
     if (_permissionErrors.isEmpty) return const SizedBox.shrink();
 
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(14.0),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemRed.withOpacity(0.1),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            CupertinoColors.systemRed.withOpacity(0.12),
+            CupertinoColors.systemRed.withOpacity(0.06),
+          ],
+        ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: CupertinoColors.systemRed.withOpacity(0.3),
+          color: CupertinoColors.systemRed.withOpacity(0.4),
+          width: 1.5,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: CupertinoColors.systemRed.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
