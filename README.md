@@ -284,6 +284,27 @@ spctl --assess --verbose "YourApp.app"     # Check Gatekeeper
 
 ---
 
+## Contributing
+
+We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting a pull request.
+
+**Found a bug or have a feature request?**
+- 🐛 [Report a Bug](https://github.com/iamnabink/macOs-mobile-dev-cleaner/issues/new?template=bug_report.md)
+- ✨ [Request a Feature](https://github.com/iamnabink/macOs-mobile-dev-cleaner/issues/new?template=feature_request.md)
+- 📖 [Documentation Issue](https://github.com/iamnabink/macOs-mobile-dev-cleaner/issues/new?template=documentation.md)
+
+**Quick Start:**
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feat/amazing-feature`)
+3. Make your changes
+4. Commit with clear messages (`git commit -m 'feat: add amazing feature'`)
+5. Push to your branch (`git push origin feat/amazing-feature`)
+6. Open a Pull Request
+
+For detailed information about our development workflow, code standards, and PR process, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+---
+
 ## Made With Love
 
 **Broomie** was created by **Nabraj Khadka** - Mobile Developer & Flutter Enthusiast
@@ -296,6 +317,6 @@ spctl --assess --verbose "YourApp.app"     # Check Gatekeeper
 
 ---
 
-**Version 1.0.0 • Build 1**
+**Version 5.0.0 • Build 5**
 
 *Free up your disk space and focus on what matters - building amazing mobile apps!* 🚀
