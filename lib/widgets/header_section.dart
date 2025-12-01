@@ -3,32 +3,68 @@ part of '../pages/cleaner_home_page.dart';
 extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
   Widget _buildHeaderSection() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            CupertinoColors.systemBlue.withOpacity(0.08),
+            CupertinoColors.systemPurple.withOpacity(0.05),
+          ],
+        ),
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: CupertinoColors.systemGrey4.withOpacity(0.3),
+          width: 1,
+        ),
       ),
       child: Column(
         children: [
-          Icon(
-            CupertinoIcons.desktopcomputer,
-            size: 48,
-            color: CupertinoColors.systemBlue,
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  CupertinoColors.systemBlue,
+                  CupertinoColors.systemBlue.darkColor,
+                ],
+              ),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: CupertinoColors.systemBlue.withOpacity(0.3),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: const Icon(
+              CupertinoIcons.desktopcomputer,
+              size: 32,
+              color: CupertinoColors.white,
+            ),
           ),
           const SizedBox(height: 12),
           Text(
             AppConstants.appName,
             style: const TextStyle(
-              fontSize: 28,
+              fontSize: 26,
               fontWeight: FontWeight.bold,
+              letterSpacing: -0.8,
+              height: 1.1,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Text(
             AppConstants.mainDescription,
             style: const TextStyle(
-              fontSize: 14,
+              fontSize: 13,
               color: CupertinoColors.secondaryLabel,
+              height: 1.4,
+              letterSpacing: -0.1,
             ),
             textAlign: TextAlign.center,
           ),
@@ -39,15 +75,14 @@ extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
 
   CupertinoNavigationBar _buildNavigationBar() {
     return CupertinoNavigationBar(
-      
+      backgroundColor: CupertinoColors.systemBackground.withOpacity(0.8),
+      border: null,
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (_scanResults.isNotEmpty && !_isScanning)
-            CupertinoButton(
-              padding: EdgeInsets.zero,
-              minSize: 0,
-              onPressed: () {
+          if (_scanResults.isNotEmpty && !_isScanning) ...[
+            GestureDetector(
+              onTap: () {
                 setState(() {
                   _scanResults.clear();
                   _filesFound = 0;
@@ -59,13 +94,51 @@ extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
                 });
                 _animationController.reverse();
               },
-              child: const Icon(CupertinoIcons.clear),
+              child: Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: CupertinoColors.systemGrey6,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: CupertinoColors.black.withOpacity(0.05),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  CupertinoIcons.xmark,
+                  size: 18,
+                  color: CupertinoColors.systemBlue,
+                ),
+              ),
             ),
-          CupertinoButton(
-            padding: EdgeInsets.zero,
-            minSize: 0,
-            onPressed: () => _showAboutDialog(),
-            child: const Icon(CupertinoIcons.info),
+            const SizedBox(width: 10),
+          ],
+          GestureDetector(
+            onTap: () => _showAboutDialog(),
+            child: Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: CupertinoColors.systemGrey6,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: CupertinoColors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                CupertinoIcons.info_circle,
+                size: 18,
+                color: CupertinoColors.systemBlue,
+              ),
+            ),
           ),
         ],
       ),

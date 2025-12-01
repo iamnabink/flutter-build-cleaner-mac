@@ -9,20 +9,51 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
       opacity: _fadeAnimation,
       child: Container(
         decoration: BoxDecoration(
-          color: CupertinoColors.systemGrey6,
-          borderRadius: BorderRadius.circular(12),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              CupertinoColors.systemGrey6,
+              CupertinoColors.systemGrey5,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: CupertinoColors.black.withOpacity(0.06),
+              blurRadius: 20,
+              offset: const Offset(0, 4),
+            ),
+          ],
+          border: Border.all(
+            color: CupertinoColors.systemGrey4.withOpacity(0.3),
+            width: 1,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(14.0),
               decoration: BoxDecoration(
-                color: CupertinoColors.systemGrey5,
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    CupertinoColors.systemGrey5,
+                    CupertinoColors.systemGrey6,
+                  ],
+                ),
                 borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  topRight: Radius.circular(12),
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
+                ),
+                border: Border(
+                  bottom: BorderSide(
+                    color: CupertinoColors.systemGrey4.withOpacity(0.3),
+                    width: 1,
+                  ),
                 ),
               ),
               child: Row(
@@ -35,9 +66,10 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
                   Text(
                     'Found Items (${sortedResults.length})',
                     style: const TextStyle(
-                      fontSize: 18,
+                      fontSize: 16,
                       color: CupertinoColors.label,
                       fontWeight: FontWeight.bold,
+                      letterSpacing: -0.3,
                     ),
                   ),
                   const Spacer(),
@@ -133,17 +165,26 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
 
     return Container(
       decoration: BoxDecoration(
-        color: isLargest
-            ? CupertinoColors.systemRed.withOpacity(0.1)
+        gradient: isLargest
+            ? LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  CupertinoColors.systemRed.withOpacity(0.12),
+                  CupertinoColors.systemRed.withOpacity(0.06),
+                ],
+              )
             : null,
+        color: isLargest ? null : CupertinoColors.systemGrey6,
         border: isLargest
             ? Border.all(
-                color: CupertinoColors.systemRed.withOpacity(0.5),
+                color: CupertinoColors.systemRed.withOpacity(0.4),
                 width: 2,
               )
             : Border(
                 bottom: BorderSide(
-                  color: CupertinoColors.systemGrey4.withOpacity(0.2),
+                  color: CupertinoColors.systemGrey4.withOpacity(0.3),
+                  width: 1,
                 ),
               ),
       ),
@@ -151,20 +192,38 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
         onSecondaryTap: () => _showContextMenu(context, result),
         child: Container(
           padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 8,
+            horizontal: 12,
+            vertical: 6,
           ),
           child: Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: iconColor.withOpacity(0.15),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      iconColor.withOpacity(0.2),
+                      iconColor.withOpacity(0.1),
+                    ],
+                  ),
                   borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: iconColor.withOpacity(0.3),
+                    width: 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: iconColor.withOpacity(0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
-                child: Icon(icon, color: iconColor, size: 24),
+                child: Icon(icon, color: iconColor, size: 20),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,7 +237,7 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
                               fontWeight: isLargest
                                   ? FontWeight.bold
                                   : FontWeight.w500,
-                              fontSize: 16,
+                              fontSize: 14,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -187,11 +246,25 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8,
-                              vertical: 2,
+                              vertical: 3,
                             ),
                             decoration: BoxDecoration(
-                              color: CupertinoColors.systemRed,
-                              borderRadius: BorderRadius.circular(12),
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  CupertinoColors.systemRed,
+                                  CupertinoColors.systemRed.darkColor,
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(14),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: CupertinoColors.systemRed.withOpacity(0.4),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                             ),
                             child: const Text(
                               'LARGEST',
@@ -199,55 +272,68 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
                                 color: CupertinoColors.white,
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
+                                letterSpacing: 0.5,
                               ),
                             ),
                           ),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 3),
                     Text(
                       relativePath,
                       style: const TextStyle(
-                        fontSize: 12,
+                        fontSize: 10,
                         fontFamily: 'monospace',
                         color: CupertinoColors.secondaryLabel,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 3),
                     Row(
                       children: [
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 6,
-                            vertical: 2,
+                            vertical: 3,
                           ),
                           decoration: BoxDecoration(
-                            color: iconColor.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(4),
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                iconColor.withOpacity(0.25),
+                                iconColor.withOpacity(0.15),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(
+                              color: iconColor.withOpacity(0.3),
+                              width: 0.5,
+                            ),
                           ),
                           child: Text(
                             result.type.toUpperCase(),
                             style: TextStyle(
                               color: iconColor,
                               fontWeight: FontWeight.bold,
-                              fontSize: 10,
+                              fontSize: 9,
+                              letterSpacing: 0.3,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 6),
                         Text(
                           result.isDirectory ? 'Folder' : 'File',
                           style: const TextStyle(
-                            fontSize: 12,
+                            fontSize: 10,
                             color: CupertinoColors.secondaryLabel,
                           ),
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 6),
                         Text(
                           '• Modified: ${_formatDate(result.lastModified)}',
                           style: const TextStyle(
-                            fontSize: 12,
+                            fontSize: 10,
                             color: CupertinoColors.secondaryLabel,
                           ),
                         ),
@@ -270,13 +356,13 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
                           color: isLargest
                               ? CupertinoColors.systemRed
                               : CupertinoColors.systemBlue,
-                          fontSize: 16,
+                          fontSize: 14,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 6),
                       const Icon(
                         CupertinoIcons.ellipsis,
-                        size: 16,
+                        size: 14,
                         color: CupertinoColors.secondaryLabel,
                       ),
                     ],
@@ -284,7 +370,7 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
                   Text(
                     result.isDirectory ? 'FOLDER' : 'FILE',
                     style: const TextStyle(
-                      fontSize: 10,
+                      fontSize: 9,
                       color: CupertinoColors.secondaryLabel,
                     ),
                   ),

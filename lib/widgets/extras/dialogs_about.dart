@@ -71,15 +71,42 @@ extension CleanerHomePageDialogsAbout on _CleanerHomePageState {
                   softWrap: true,
                 ),
                 const SizedBox(height: 12),
-                const Text(AppConstants.apkFiles),
-                const Text(AppConstants.ipaFiles),
-                const Text(AppConstants.aabFiles),
-                const Text(AppConstants.flutterBuildFolders),
-                const Text(AppConstants.reactNativeBuildFolders),
-                const Text(AppConstants.androidBuildFolders),
-                const Text(AppConstants.iosBuildFolders),
-                const Text(AppConstants.archivesFolders),
-                const Text(AppConstants.reactNativeNodeModules),
+                const Text(
+                  AppConstants.apkFiles,
+                  style: TextStyle(fontSize: 14),
+                ),
+                const Text(
+                  AppConstants.ipaFiles,
+                  style: TextStyle(fontSize: 14),
+                ),
+                const Text(
+                  AppConstants.aabFiles,
+                  style: TextStyle(fontSize: 14),
+                ),
+                const Text(
+                  AppConstants.flutterBuildFolders,
+                  style: TextStyle(fontSize: 14),
+                ),
+                const Text(
+                  AppConstants.reactNativeBuildFolders,
+                  style: TextStyle(fontSize: 14),
+                ),
+                const Text(
+                  AppConstants.androidBuildFolders,
+                  style: TextStyle(fontSize: 14),
+                ),
+                const Text(
+                  AppConstants.iosBuildFolders,
+                  style: TextStyle(fontSize: 14),
+                ),
+                const Text(
+                  AppConstants.archivesFolders,
+                  style: TextStyle(fontSize: 14),
+                ),
+                const Text(
+                  AppConstants.reactNativeNodeModules,
+                  style: TextStyle(fontSize: 14),
+                ),
                 const SizedBox(height: 12),
                 Container(
                   padding: const EdgeInsets.all(12),

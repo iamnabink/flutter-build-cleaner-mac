@@ -149,90 +149,171 @@ extension CleanerHomePageDialogsCore on _CleanerHomePageState {
   }
 
   void _showItemDetails(ScanResult result) {
-    showCupertinoDialog(
+    showCupertinoModalPopup(
       context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: Row(
+      builder: (context) => Container(
+        constraints: BoxConstraints(
+          maxWidth: 600,
+          maxHeight: MediaQuery.of(context).size.height * 0.8,
+        ),
+        margin: const EdgeInsets.all(40),
+        decoration: BoxDecoration(
+          color: CupertinoColors.systemBackground,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              result.isDirectory ? CupertinoIcons.folder : CupertinoIcons.doc,
-              color: CupertinoColors.systemBlue,
+            // Header
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: const BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: CupertinoColors.separator,
+                    width: 0.5,
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    result.isDirectory ? CupertinoIcons.folder : CupertinoIcons.doc,
+                    color: CupertinoColors.systemBlue,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      path.basename(result.path),
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  CupertinoButton(
+                    padding: EdgeInsets.zero,
+                    minSize: 0,
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Icon(
+                      CupertinoIcons.xmark,
+                      size: 20,
+                      color: CupertinoColors.secondaryLabel,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                path.basename(result.path),
-                overflow: TextOverflow.ellipsis,
+            // Content
+            Flexible(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildDetailRow('Type', result.type.toUpperCase()),
+                    const SizedBox(height: 4),
+                    _buildDetailRow('Kind', result.isDirectory ? 'Folder' : 'File'),
+                    const SizedBox(height: 4),
+                    _buildDetailRow('Size', _formatFileSize(result.size)),
+                    const SizedBox(height: 4),
+                    _buildDetailRow('Last Modified', result.lastModified.toString()),
+                    const SizedBox(height: 4),
+                    _buildDetailRow('Full Path', result.path),
+                  ],
+                ),
+              ),
+            ),
+            // Footer with action buttons
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(
+                    color: CupertinoColors.separator,
+                    width: 0.5,
+                  ),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  CupertinoButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text(AppConstants.closeButton),
+                  ),
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      await _deleteItem(result);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: CupertinoColors.systemRed,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(CupertinoIcons.delete, size: 18, color: CupertinoColors.white),
+                          SizedBox(width: 6),
+                          Text(
+                            'Delete',
+                            style: TextStyle(
+                              color: CupertinoColors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
-        content: SizedBox(
-          width: 500,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildDetailRow('Type', result.type.toUpperCase()),
-                _buildDetailRow('Kind', result.isDirectory ? 'Folder' : 'File'),
-                _buildDetailRow('Size', _formatFileSize(result.size)),
-                _buildDetailRow('Last Modified', result.lastModified.toString()),
-                _buildDetailRow('Full Path', result.path),
-              ],
-            ),
-          ),
-        ),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text(AppConstants.closeButton),
-          ),
-          CupertinoDialogAction(
-            isDestructiveAction: true,
-            onPressed: () async {
-              Navigator.of(context).pop();
-              await _deleteItem(result);
-            },
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(CupertinoIcons.delete, size: 16),
-                SizedBox(width: 4),
-                Text('Delete'),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
 
   Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 100,
-            child: Text(
-              '$label:',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: CupertinoColors.secondaryLabel,
+            letterSpacing: 0.5,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: CupertinoColors.systemGrey6,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: 15,
+              fontFamily: label == 'Full Path' ? 'monospace' : null,
+              height: 1.4,
             ),
           ),
-          Expanded(
-            child: Text(
-              value,
-              style: TextStyle(
-                fontFamily: label == 'Full Path' ? 'monospace' : null,
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
