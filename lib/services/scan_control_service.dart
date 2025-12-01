@@ -57,6 +57,26 @@ extension CleanerHomePageScanControl on _CleanerHomePageState {
         _scanProgress = 1.0;
       });
       _progressController.stop();
+      
+      // Request review on first scan
+      await _requestReviewIfFirstScan();
+    }
+  }
+
+  Future<void> _requestReviewIfFirstScan() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final hasRequestedReview = prefs.getBool('has_requested_review') ?? false;
+      
+      if (!hasRequestedReview) {
+        final review = InAppReview.instance;
+        if (await review.isAvailable()) {
+          await review.requestReview();
+          await prefs.setBool('has_requested_review', true);
+        }
+      }
+    } catch (_) {
+      // Silently fail if review request fails
     }
   }
 }
