@@ -23,10 +23,7 @@ extension CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
               _hasPermission
                   ? AppConstants.noScanResultsYet
                   : AppConstants.permissionRequired,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
             Text(
@@ -49,10 +46,7 @@ extension CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
                 _selectedPath.isEmpty
                     ? AppConstants.selectDirectoryMessage
                     : 'Scan Path: $_selectedPath',
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontFamily: 'monospace',
-                ),
+                style: const TextStyle(fontSize: 12, fontFamily: 'monospace'),
               ),
             ),
             if (!_hasPermission) ...[
@@ -81,12 +75,15 @@ extension CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
       0,
       (sum, result) => sum + result.size,
     );
-    final apkCount =
-        _scanResults.where((r) => r.type == AppConstants.apkIndicator).length;
-    final aabCount =
-        _scanResults.where((r) => r.type == AppConstants.aabIndicator).length;
-    final ipaCount =
-        _scanResults.where((r) => r.type == AppConstants.ipaIndicator).length;
+    final apkCount = _scanResults
+        .where((r) => r.type == AppConstants.apkIndicator)
+        .length;
+    final aabCount = _scanResults
+        .where((r) => r.type == AppConstants.aabIndicator)
+        .length;
+    final ipaCount = _scanResults
+        .where((r) => r.type == AppConstants.ipaIndicator)
+        .length;
     final flutterBuildCount = _scanResults
         .where((r) => r.type == AppConstants.flutterBuildIndicator)
         .length;
@@ -118,10 +115,7 @@ extension CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
           children: [
             const Text(
               'Scan Results',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Column(
@@ -209,28 +203,62 @@ extension CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
               ],
             ),
             const SizedBox(height: 20),
+            // Subtle informational panel — not tappable. Reduced emphasis
+            // so users don't think this is a primary action button.
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: CupertinoColors.systemBlue,
+                color: CupertinoColors.secondarySystemFill,
                 borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: CupertinoColors.systemGrey4.withOpacity(0.8),
+                  width: 0.5,
+                ),
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    CupertinoIcons.delete_solid,
-                    size: 28,
-                    color: CupertinoColors.white,
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: CupertinoColors.systemGrey.withOpacity(0.08),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      CupertinoIcons.delete_solid,
+                      size: 22,
+                      color: CupertinoColors.systemGrey,
+                    ),
                   ),
                   const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppConstants.spaceToFreeUp,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: CupertinoColors.secondaryLabel,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        _formatFileSize(totalSize),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          color: CupertinoColors.label,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  // Small hint to clarify there's no immediate tap action here.
                   Text(
-                    '${AppConstants.spaceToFreeUp} ${_formatFileSize(totalSize)}',
+                    'Review items below to delete',
                     style: const TextStyle(
-                      fontSize: 20,
-                      color: CupertinoColors.white,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                      color: CupertinoColors.secondaryLabel,
                     ),
                   ),
                 ],
@@ -278,4 +306,3 @@ extension CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
     );
   }
 }
-
