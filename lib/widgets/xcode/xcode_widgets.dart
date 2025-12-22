@@ -60,16 +60,6 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
           ),
           const SizedBox(height: 8.4),
           const Text(
-            'Xcode Cache Cleaner',
-            style: TextStyle(
-              fontSize: 18.2,
-              fontWeight: FontWeight.bold,
-              letterSpacing: -0.56,
-              height: 1.1,
-            ),
-          ),
-          const SizedBox(height: 4.2),
-          const Text(
             'Clean up Xcode caches: Device Support, Archives, Derived Data, Documentation Cache, Old Logs, and Documentation Downloads',
             style: TextStyle(
               fontSize: 9.1,
