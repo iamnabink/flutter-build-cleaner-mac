@@ -17,6 +17,7 @@ class AppConstants {
   static const String deletingButtonText = 'Deleting...';
   static const String clearResultsButtonText = 'Clear Results';
   static const String aboutButtonText = 'About';
+  static const String xcodeCacheCleanerButtonText = 'Xcode Cache Cleaner';
 
   // Messages
   static const String noScanResultsYet = 'No scan results yet';
@@ -104,6 +105,14 @@ class AppConstants {
   static const String iosBuildType = 'iOS Build';
   static const String nodeModulesType = 'Node Modules';
   static const String archivesType = 'iOS Archives (DerivedData)';
+  
+  // Xcode Cache Types
+  static const String xcodeDeviceSupportType = 'Device Support';
+  static const String xcodeArchivesType = 'Archives';
+  static const String xcodeDerivedDataType = 'Derived Data';
+  static const String xcodeDocCacheType = 'Documentation Cache';
+  static const String xcodeOldLogsType = 'Old Logs';
+  static const String xcodeOldDocDownloadsType = 'Old Documentation Downloads';
 
   // Labels
   static const String filesLabel = 'Files:';
@@ -141,6 +150,14 @@ class AppConstants {
   static const String iosBuildIndicator = 'IOS_BUILD';
   static const String nodeModulesIndicator = 'NODE_MODULES';
   static const String archivesIndicator = 'ARCHIVES';
+  
+  // Xcode Cache Indicators
+  static const String xcodeDeviceSupportIndicator = 'XCODE_DEVICE_SUPPORT';
+  static const String xcodeArchivesIndicator = 'XCODE_ARCHIVES';
+  static const String xcodeDerivedDataIndicator = 'XCODE_DERIVED_DATA';
+  static const String xcodeDocCacheIndicator = 'XCODE_DOC_CACHE';
+  static const String xcodeOldLogsIndicator = 'XCODE_OLD_LOGS';
+  static const String xcodeOldDocDownloadsIndicator = 'XCODE_OLD_DOC_DOWNLOADS';
 
   // Detail Labels
   static const String typeLabel = 'Type';
