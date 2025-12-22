@@ -3,7 +3,7 @@ part of '../pages/cleaner_home_page.dart';
 extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
   Widget _buildHeaderSection() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 11.2, horizontal: 11.2),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -13,7 +13,7 @@ extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
             CupertinoColors.systemPurple.withOpacity(0.05),
           ],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(11.2),
         border: Border.all(
           color: CupertinoColors.systemGrey4.withOpacity(0.3),
           width: 1,
@@ -22,7 +22,7 @@ extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(8.4),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -36,35 +36,35 @@ extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
               boxShadow: [
                 BoxShadow(
                   color: CupertinoColors.systemBlue.withOpacity(0.3),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
+                  blurRadius: 8.4,
+                  offset: const Offset(0, 2.8),
                 ),
               ],
             ),
             child: const Icon(
               CupertinoIcons.desktopcomputer,
-              size: 32,
+              size: 22.4,
               color: CupertinoColors.white,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8.4),
           Text(
             AppConstants.appName,
             style: const TextStyle(
-              fontSize: 26,
+              fontSize: 18.2,
               fontWeight: FontWeight.bold,
-              letterSpacing: -0.8,
+              letterSpacing: -0.56,
               height: 1.1,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4.2),
           Text(
             AppConstants.mainDescription,
             style: const TextStyle(
-              fontSize: 13,
+              fontSize: 9.1,
               color: CupertinoColors.secondaryLabel,
               height: 1.4,
-              letterSpacing: -0.1,
+              letterSpacing: -0.07,
             ),
             textAlign: TextAlign.center,
           ),
@@ -151,13 +151,13 @@ extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
     required VoidCallback onTap,
   }) {
     return CupertinoButton(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8.4, vertical: 5.6),
       onPressed: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 8.4, vertical: 5.6),
         decoration: BoxDecoration(
           color: CupertinoColors.systemGrey6,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(5.6),
           border: Border.all(
             color: CupertinoColors.systemGrey4,
           ),
@@ -165,12 +165,12 @@ extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 16, color: CupertinoColors.systemBlue),
-            const SizedBox(width: 6),
+            Icon(icon, size: 11.2, color: CupertinoColors.systemBlue),
+            const SizedBox(width: 4.2),
             Text(
               label,
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 8.4,
                 color: CupertinoColors.systemBlue,
                 fontWeight: FontWeight.w500,
               ),
@@ -192,7 +192,7 @@ extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
             CupertinoColors.systemOrange.withOpacity(0.05),
           ],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(11.2),
         border: Border.all(
           color: CupertinoColors.systemOrange.withOpacity(0.3),
           width: 1.5,
@@ -200,13 +200,13 @@ extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
         boxShadow: [
           BoxShadow(
             color: CupertinoColors.systemOrange.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            blurRadius: 5.6,
+            offset: const Offset(0, 1.4),
           ),
         ],
       ),
       child: CupertinoButton(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(11.2),
         onPressed: () {
           Navigator.of(context).push(
             CupertinoPageRoute(
@@ -217,7 +217,7 @@ extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(7),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
@@ -227,22 +227,22 @@ extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
                     CupertinoColors.systemOrange.darkColor,
                   ],
                 ),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(8.4),
                 boxShadow: [
                   BoxShadow(
                     color: CupertinoColors.systemOrange.withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+                    blurRadius: 5.6,
+                    offset: const Offset(0, 1.4),
                   ),
                 ],
               ),
               child: const Icon(
                 CupertinoIcons.hammer,
-                size: 24,
+                size: 16.8,
                 color: CupertinoColors.white,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 8.4),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,16 +250,16 @@ extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
                   const Text(
                     'Xcode Cache Cleaner',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 11.2,
                       fontWeight: FontWeight.bold,
                       color: CupertinoColors.label,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 2.8),
                   Text(
                     'Clean Device Support, Archives, Derived Data, and more',
                     style: TextStyle(
-                      fontSize: 12,
+                      fontSize: 8.4,
                       color: CupertinoColors.secondaryLabel,
                     ),
                   ),
@@ -268,6 +268,7 @@ extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
             ),
             const Icon(
               CupertinoIcons.chevron_right,
+              size: 14,
               color: CupertinoColors.systemOrange,
             ),
           ],

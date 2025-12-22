@@ -14,7 +14,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
 
   Widget _buildHeaderSection() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 11.2, horizontal: 11.2),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -24,7 +24,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
             CupertinoColors.systemPurple.withOpacity(0.05),
           ],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(11.2),
         border: Border.all(
           color: CupertinoColors.systemGrey4.withOpacity(0.3),
           width: 1,
@@ -33,7 +33,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(8.4),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
@@ -47,35 +47,35 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
               boxShadow: [
                 BoxShadow(
                   color: CupertinoColors.systemBlue.withOpacity(0.3),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
+                  blurRadius: 8.4,
+                  offset: const Offset(0, 2.8),
                 ),
               ],
             ),
             child: const Icon(
               CupertinoIcons.hammer,
-              size: 32,
+              size: 22.4,
               color: CupertinoColors.white,
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8.4),
           const Text(
             'Xcode Cache Cleaner',
             style: TextStyle(
-              fontSize: 26,
+              fontSize: 18.2,
               fontWeight: FontWeight.bold,
-              letterSpacing: -0.8,
+              letterSpacing: -0.56,
               height: 1.1,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4.2),
           const Text(
             'Clean up Xcode caches: Device Support, Archives, Derived Data, Documentation Cache, Old Logs, and Documentation Downloads',
             style: TextStyle(
-              fontSize: 13,
+              fontSize: 9.1,
               color: CupertinoColors.secondaryLabel,
               height: 1.4,
-              letterSpacing: -0.1,
+              letterSpacing: -0.07,
             ),
             textAlign: TextAlign.center,
           ),
@@ -88,7 +88,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
     final isDisabled = _isScanning || _isDeleting;
     return Container(
       width: double.infinity,
-      height: 44,
+      height: 30.8,
       decoration: BoxDecoration(
         gradient: isDisabled
             ? null
@@ -100,14 +100,14 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                   CupertinoColors.systemBlue.darkColor,
                 ],
               ),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8.4),
         boxShadow: isDisabled
             ? null
             : [
                 BoxShadow(
                   color: CupertinoColors.systemBlue.withOpacity(0.4),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
+                  blurRadius: 8.4,
+                  offset: const Offset(0, 2.8),
                 ),
               ],
       ),
@@ -116,7 +116,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
         onPressed: isDisabled ? null : _scanXcodeCaches,
         color: isDisabled ? CupertinoColors.systemGrey4 : CupertinoColors.systemBlue.withOpacity(0),
         disabledColor: CupertinoColors.systemGrey4,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8.4),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
@@ -129,7 +129,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                         angle: _rotationAnimation.value * 2 * 3.14159,
                         child: const Icon(
                           CupertinoIcons.arrow_2_squarepath,
-                          size: 18,
+                          size: 12.6,
                           color: CupertinoColors.white,
                         ),
                       );
@@ -137,20 +137,20 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                   )
                 : const Icon(
                     CupertinoIcons.search,
-                    size: 18,
+                    size: 12.6,
                     color: CupertinoColors.white,
                   ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 5.6),
             Flexible(
               child: Text(
                 _isScanning
                     ? AppConstants.scanningButtonText
                     : 'Scan Xcode Caches',
                 style: const TextStyle(
-                  fontSize: 15,
+                  fontSize: 10.5,
                   fontWeight: FontWeight.w700,
                   color: CupertinoColors.white,
-                  letterSpacing: -0.2,
+                  letterSpacing: -0.14,
                 ),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -164,29 +164,29 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
   Widget _buildEmptyState() {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32.0),
+        padding: const EdgeInsets.all(22.4),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               CupertinoIcons.hammer,
-              size: 64,
+              size: 44.8,
               color: CupertinoColors.systemGrey3,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 11.2),
             const Text(
               'No Xcode cache found',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: CupertinoColors.label,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 5.6),
             Text(
               'Click "Scan Xcode Caches" to find cache files',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 9.8,
                 color: CupertinoColors.secondaryLabel,
               ),
               textAlign: TextAlign.center,
@@ -211,10 +211,10 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
     );
     
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 11.2, vertical: 8.4),
       decoration: BoxDecoration(
         color: CupertinoColors.systemGrey6,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8.4),
         border: Border.all(
           color: CupertinoColors.systemGrey4.withOpacity(0.3),
           width: 1,
@@ -237,13 +237,13 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
         child: Row(
           children: [
             Container(
-              width: 22,
-              height: 22,
+              width: 15.4,
+              height: 15.4,
               decoration: BoxDecoration(
                 color: allSelected
                     ? CupertinoColors.systemBlue
                     : CupertinoColors.systemGrey5,
-                borderRadius: BorderRadius.circular(5),
+                borderRadius: BorderRadius.circular(3.5),
                 border: Border.all(
                   color: allSelected
                       ? CupertinoColors.systemBlue
@@ -254,16 +254,16 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
               child: allSelected
                   ? const Icon(
                       CupertinoIcons.checkmark,
-                      size: 16,
+                      size: 11.2,
                       color: CupertinoColors.white,
                     )
                   : null,
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 8.4),
             const Text(
               'Select All',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 11.2,
                 fontWeight: FontWeight.w600,
                 color: CupertinoColors.label,
               ),
@@ -272,7 +272,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
             Text(
               '${_selectedItems.length} / ${allItems.length}',
               style: const TextStyle(
-                fontSize: 14,
+                fontSize: 9.8,
                 fontWeight: FontWeight.w500,
                 color: CupertinoColors.secondaryLabel,
               ),
@@ -299,7 +299,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
 
   Widget _buildPermissionPrompt() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(11.2),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -309,7 +309,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
             CupertinoColors.systemOrange.withOpacity(0.05),
           ],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(11.2),
         border: Border.all(
           color: CupertinoColors.systemOrange.withOpacity(0.3),
           width: 1.5,
@@ -319,46 +319,46 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
         children: [
           Icon(
             CupertinoIcons.lock_fill,
-            size: 32,
+            size: 22.4,
             color: CupertinoColors.systemOrange,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8.4),
           const Text(
             'Permission Required',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 12.6,
               fontWeight: FontWeight.bold,
               color: CupertinoColors.label,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 5.6),
           const Text(
             'This app needs permission to access your Developer folder (~/Library/Developer) to scan Xcode cache files.',
             style: TextStyle(
-              fontSize: 14,
+              fontSize: 9.8,
               color: CupertinoColors.secondaryLabel,
               height: 1.4,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 11.2),
           SizedBox(
             width: double.infinity,
-            height: 44,
+            height: 30.8,
             child: CupertinoButton(
               padding: EdgeInsets.zero,
               color: CupertinoColors.systemOrange,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(8.4),
               onPressed: _showPermissionDialog,
               child: const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(CupertinoIcons.folder, size: 18, color: CupertinoColors.white),
-                  SizedBox(width: 8),
+                  Icon(CupertinoIcons.folder, size: 12.6, color: CupertinoColors.white),
+                  SizedBox(width: 5.6),
                   Text(
                     'Grant Access to Developer',
                     style: TextStyle(
-                      fontSize: 15,
+                      fontSize: 10.5,
                       fontWeight: FontWeight.w700,
                       color: CupertinoColors.white,
                     ),
@@ -377,10 +377,10 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
     final categorySize = category.totalSize;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: 5.6),
       decoration: BoxDecoration(
         color: CupertinoColors.systemGrey6,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8.4),
         border: Border.all(
           color: CupertinoColors.systemGrey4.withOpacity(0.3),
           width: 1,
@@ -390,7 +390,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
         children: [
           // Category header
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(11.2),
             child: Row(
               children: [
                 // Expand/collapse button
@@ -408,16 +408,16 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                     isExpanded
                         ? CupertinoIcons.chevron_down
                         : CupertinoIcons.chevron_right,
-                    size: 16,
+                    size: 11.2,
                     color: CupertinoColors.secondaryLabel,
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 8.4),
                 Expanded(
                   child: Text(
                     category.label,
                     style: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 11.2,
                       fontWeight: FontWeight.w600,
                       color: CupertinoColors.label,
                     ),
@@ -426,12 +426,12 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                 Text(
                   _formatFileSize(categorySize),
                   style: const TextStyle(
-                    fontSize: 14,
+                    fontSize: 9.8,
                     fontWeight: FontWeight.w500,
                     color: CupertinoColors.label,
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 8.4),
                 // Category Select All checkbox
                 GestureDetector(
                   onTap: () {
@@ -454,8 +454,8 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                     });
                   },
                   child: Container(
-                    width: 20,
-                    height: 20,
+                    width: 14,
+                    height: 14,
                     decoration: BoxDecoration(
                       color: category.items.isNotEmpty &&
                               category.items.every(
@@ -463,7 +463,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                               )
                           ? CupertinoColors.systemBlue
                           : CupertinoColors.systemGrey5,
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(2.8),
                       border: Border.all(
                         color: category.items.isNotEmpty &&
                                 category.items.every(
@@ -480,7 +480,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                             )
                         ? const Icon(
                             CupertinoIcons.checkmark,
-                            size: 14,
+                            size: 9.8,
                             color: CupertinoColors.white,
                           )
                         : null,
@@ -522,7 +522,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
           });
         },
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 11.2, vertical: 8.4),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -530,13 +530,13 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                 children: [
                   // Checkbox
                   Container(
-                    width: 20,
-                    height: 20,
+                    width: 14,
+                    height: 14,
                     decoration: BoxDecoration(
                       color: isSelected
                           ? CupertinoColors.systemBlue
                           : CupertinoColors.systemGrey5,
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(2.8),
                       border: Border.all(
                         color: isSelected
                             ? CupertinoColors.systemBlue
@@ -547,21 +547,21 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                     child: isSelected
                         ? const Icon(
                             CupertinoIcons.checkmark,
-                            size: 14,
+                            size: 9.8,
                             color: CupertinoColors.white,
                           )
                         : null,
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 8.4),
                   // Item icon
                   Icon(
                     item.isDirectory
                         ? CupertinoIcons.folder_fill
                         : CupertinoIcons.doc,
-                    size: 20,
+                    size: 14,
                     color: CupertinoColors.systemBlue,
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 8.4),
                   // Item name or full path for DerivedData
                   Expanded(
                     child: isDerivedData && item.workspacePath != null
@@ -571,16 +571,16 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                               Text(
                                 _getProjectNameFromPath(item.workspacePath!),
                                 style: const TextStyle(
-                                  fontSize: 14,
+                                  fontSize: 9.8,
                                   fontWeight: FontWeight.w600,
                                   color: CupertinoColors.label,
                                 ),
                               ),
-                              const SizedBox(height: 2),
+                              const SizedBox(height: 1.4),
                               Text(
                                 item.workspacePath!,
                                 style: const TextStyle(
-                                  fontSize: 12,
+                                  fontSize: 8.4,
                                   color: CupertinoColors.secondaryLabel,
                                   fontFamily: 'Courier',
                                 ),
@@ -592,7 +592,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                         : Text(
                             item.name,
                             style: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 9.8,
                               color: CupertinoColors.label,
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -602,7 +602,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                   Text(
                     _formatFileSize(item.size),
                     style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 9.8,
                       fontWeight: FontWeight.w500,
                       color: CupertinoColors.secondaryLabel,
                     ),
@@ -611,7 +611,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
               ),
               // Open in Finder button for DerivedData
               if (isDerivedData && item.workspacePath != null) ...[
-                const SizedBox(height: 8),
+                const SizedBox(height: 5.6),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -624,14 +624,14 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                         children: [
                           Icon(
                             CupertinoIcons.folder,
-                            size: 14,
+                            size: 9.8,
                             color: CupertinoColors.systemBlue,
                           ),
-                          SizedBox(width: 4),
+                          SizedBox(width: 2.8),
                           Text(
                             'Open in Finder',
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 8.4,
                               color: CupertinoColors.systemBlue,
                             ),
                           ),
@@ -650,7 +650,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
 
   Widget _buildBottomSummary() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(11.2),
       decoration: BoxDecoration(
         color: CupertinoColors.systemBackground,
         border: Border(
@@ -669,15 +669,15 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
               const Text(
                 'Selected:',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 8.4,
                   color: CupertinoColors.secondaryLabel,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 2.8),
               Text(
                 _formatFileSize(_selectedSize),
                 style: const TextStyle(
-                  fontSize: 16,
+                  fontSize: 11.2,
                   fontWeight: FontWeight.bold,
                   color: CupertinoColors.label,
                 ),
@@ -690,15 +690,15 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
               const Text(
                 'Total:',
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 8.4,
                   color: CupertinoColors.secondaryLabel,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 2.8),
               Text(
                 _formatFileSize(_totalSize),
                 style: const TextStyle(
-                  fontSize: 16,
+                  fontSize: 11.2,
                   fontWeight: FontWeight.bold,
                   color: CupertinoColors.label,
                 ),
@@ -716,8 +716,8 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
     final selectedSize = _selectedSize;
     
     return Positioned(
-      bottom: 20,
-      right: 20,
+      bottom: 14,
+      right: 14,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -725,16 +725,16 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
           // Info card showing selected count and size
           if (selectedCount > 0 && !isDisabled)
             Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              margin: const EdgeInsets.only(bottom: 8.4),
+              padding: const EdgeInsets.symmetric(horizontal: 9.8, vertical: 7),
               decoration: BoxDecoration(
                 color: CupertinoColors.systemBackground,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(11.2),
                 boxShadow: [
                   BoxShadow(
                     color: CupertinoColors.black.withOpacity(0.15),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
+                    blurRadius: 8.4,
+                    offset: const Offset(0, 2.8),
                     spreadRadius: 1,
                   ),
                 ],
@@ -754,7 +754,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                         'Selected: ',
                         style: TextStyle(
                           color: CupertinoColors.secondaryLabel,
-                          fontSize: 12,
+                          fontSize: 8.4,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -762,18 +762,18 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                         '$selectedCount',
                         style: const TextStyle(
                           color: CupertinoColors.systemRed,
-                          fontSize: 14,
+                          fontSize: 9.8,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 2.8),
                   Text(
                     _formatFileSize(selectedSize),
                     style: const TextStyle(
                       color: CupertinoColors.label,
-                      fontSize: 13,
+                      fontSize: 9.1,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -784,8 +784,8 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
           GestureDetector(
             onTap: isDisabled ? null : _cleanSelected,
             child: Container(
-              width: 64,
-              height: 64,
+              width: 44.8,
+              height: 44.8,
               decoration: BoxDecoration(
                 gradient: isDisabled
                     ? null
@@ -804,9 +804,9 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                     : [
                         BoxShadow(
                           color: CupertinoColors.systemRed.withOpacity(0.4),
-                          blurRadius: 16,
-                          offset: const Offset(0, 6),
-                          spreadRadius: 2,
+                          blurRadius: 11.2,
+                          offset: const Offset(0, 4.2),
+                          spreadRadius: 1.4,
                         ),
                       ],
               ),
@@ -818,7 +818,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                     )
                   : const Icon(
                       CupertinoIcons.delete_solid,
-                      size: 28,
+                      size: 19.6,
                       color: CupertinoColors.white,
                     ),
             ),
@@ -835,7 +835,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
     final percentage = (progress * 100).toInt();
 
     return Container(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(11.2),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -845,12 +845,12 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
             CupertinoColors.systemGrey5,
           ],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(11.2),
         boxShadow: [
           BoxShadow(
             color: CupertinoColors.black.withOpacity(0.06),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
+            blurRadius: 14,
+            offset: const Offset(0, 2.8),
           ),
         ],
         border: Border.all(
@@ -864,20 +864,20 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: 60,
-                height: 60,
+                width: 42,
+                height: 42,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
                     SizedBox(
-                      width: 60,
-                      height: 60,
+                      width: 42,
+                      height: 42,
                       child: CustomPaint(
                         painter: _CircularProgressPainter(
                           progress: progress,
                           backgroundColor: CupertinoColors.systemGrey4.withOpacity(0.3),
                           progressColor: CupertinoColors.systemBlue,
-                          strokeWidth: 5,
+                          strokeWidth: 3.5,
                         ),
                       ),
                     ),
@@ -887,17 +887,17 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                         Text(
                           '$percentage%',
                           style: const TextStyle(
-                            fontSize: 16,
+                            fontSize: 11.2,
                             fontWeight: FontWeight.bold,
                             color: CupertinoColors.label,
-                            letterSpacing: -0.3,
+                            letterSpacing: -0.21,
                           ),
                         ),
                         if (_isDeleting)
                           const Text(
                             'Deleting',
                             style: TextStyle(
-                              fontSize: 8,
+                              fontSize: 5.6,
                               color: CupertinoColors.secondaryLabel,
                             ),
                           ),
@@ -906,7 +906,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                   ],
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 11.2),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -916,17 +916,17 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                           ? AppConstants.deletingFiles
                           : AppConstants.scanningSystem,
                       style: const TextStyle(
-                        fontSize: 18,
+                        fontSize: 12.6,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: -0.5,
+                        letterSpacing: -0.35,
                         height: 1.2,
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 7),
                     Text(
                       _currentScanPath,
                       style: const TextStyle(
-                        fontSize: 12,
+                        fontSize: 8.4,
                         color: CupertinoColors.secondaryLabel,
                         fontFamily: 'monospace',
                       ),
@@ -939,9 +939,9 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
             ],
           ),
           if (_currentScanPath.isNotEmpty && !_isDeleting) ...[
-            const SizedBox(height: 12),
+            const SizedBox(height: 8.4),
             Container(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(7),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
@@ -951,7 +951,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                     CupertinoColors.systemGrey6,
                   ],
                 ),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(5.6),
                 border: Border.all(
                   color: CupertinoColors.systemGrey4.withOpacity(0.3),
                   width: 1,
@@ -961,15 +961,15 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                 children: [
                   const Icon(
                     CupertinoIcons.folder_fill,
-                    size: 12,
+                    size: 8.4,
                     color: CupertinoColors.secondaryLabel,
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 4.2),
                   Expanded(
                     child: Text(
                       _currentScanPath,
                       style: const TextStyle(
-                        fontSize: 11,
+                        fontSize: 7.7,
                         color: CupertinoColors.secondaryLabel,
                         fontFamily: 'monospace',
                       ),
@@ -991,9 +991,9 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          margin: const EdgeInsets.only(top: 6, right: 12),
-          width: 6,
-          height: 6,
+          margin: const EdgeInsets.only(top: 4.2, right: 8.4),
+          width: 4.2,
+          height: 4.2,
           decoration: BoxDecoration(
             color: CupertinoColors.systemOrange,
             shape: BoxShape.circle,
@@ -1003,7 +1003,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
           child: Text(
             text,
             style: const TextStyle(
-              fontSize: 15,
+              fontSize: 10.5,
               height: 1.5,
               color: CupertinoColors.secondaryLabel,
             ),

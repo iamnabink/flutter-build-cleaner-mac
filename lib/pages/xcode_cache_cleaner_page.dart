@@ -152,51 +152,51 @@ class _XcodeCacheCleanerPageState extends State<XcodeCacheCleanerPage>
                 children: [
                   // Header section with scan button
                   Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(11.2),
                     child: _buildHeaderSection(),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 11.2),
                     child: _buildScanButton(),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 11.2),
 
                   // Permission prompt (if no permission)
                   if (!_hasPermission && !_isScanning) ...[
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 11.2),
                       child: _buildPermissionPrompt(),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8.4),
                   ],
 
                   // Progress indicator (only during scanning)
                   if (_isScanning) ...[
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 11.2),
                       child: _buildProgressCard(),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8.4),
                   ],
 
                   // Select All checkbox (if categories exist)
                   if (_cacheCategories.isNotEmpty && !_isScanning) ...[
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 11.2),
                       child: _buildSelectAllCheckbox(),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 8.4),
                   ],
                   
                   // Cache categories list
                   if (_cacheCategories.isNotEmpty || _isScanning)
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 11.2),
                       child: _buildCacheCategoriesList(),
                     )
                   else if (!_isScanning)
                     Padding(
-                      padding: const EdgeInsets.all(32.0),
+                      padding: const EdgeInsets.all(22.4),
                       child: _buildEmptyState(),
                     ),
 
@@ -204,7 +204,7 @@ class _XcodeCacheCleanerPageState extends State<XcodeCacheCleanerPage>
                   if (_cacheCategories.isNotEmpty) _buildBottomSummary(),
                   
                   // Footer spacing for floating button
-                  const SizedBox(height: 100),
+                  const SizedBox(height: 70),
                 ],
               ),
             ),

@@ -11,6 +11,7 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:upgrader/upgrader.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 part '../utils/file_system_utils.dart';
@@ -101,48 +102,50 @@ class _CleanerHomePageState extends State<CleanerHomePage>
 
     return CupertinoPageScaffold(
       navigationBar: _buildNavigationBar(),
-      child: SafeArea(
-          child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Header section
-              _buildHeaderSection(),
-              const SizedBox(height: 16),
-
-              // Xcode Cache Cleaner button
-              _buildXcodeCacheCleanerButton(),
-              const SizedBox(height: 16),
-
-              // Action buttons
-              _buildActionButtons(),
-              const SizedBox(height: 12),
-
-              // Stats bar (only during scanning)
-              if (_isScanning) ...[
-                _buildStatsBar(),
-                const SizedBox(height: 12),
+      child: UpgradeAlert(
+        child: SafeArea(
+            child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 11.2, vertical: 8.4),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Header section
+                _buildHeaderSection(),
+                const SizedBox(height: 11.2),
+        
+                // Xcode Cache Cleaner button
+                _buildXcodeCacheCleanerButton(),
+                const SizedBox(height: 11.2),
+        
+                // Action buttons
+                _buildActionButtons(),
+                const SizedBox(height: 8.4),
+        
+                // Stats bar (only during scanning)
+                if (_isScanning) ...[
+                  _buildStatsBar(),
+                  const SizedBox(height: 8.4),
+                ],
+        
+                // Progress indicator
+                _buildProgressCard(),
+                if (_isScanning || _isDeleting) const SizedBox(height: 8.4),
+        
+                // Permission warnings
+                _buildPermissionWarnings(),
+                if (_permissionErrors.isNotEmpty) const SizedBox(height: 8.4),
+        
+                // Summary card
+                _buildSummaryCard(),
+                const SizedBox(height: 8.4),
+        
+                // Results list
+                _buildResultsList(),
+        
+                // Footer spacing
+                const SizedBox(height: 14),
               ],
-
-              // Progress indicator
-              _buildProgressCard(),
-              if (_isScanning || _isDeleting) const SizedBox(height: 12),
-
-              // Permission warnings
-              _buildPermissionWarnings(),
-              if (_permissionErrors.isNotEmpty) const SizedBox(height: 12),
-
-              // Summary card
-              _buildSummaryCard(),
-              const SizedBox(height: 12),
-
-              // Results list
-              _buildResultsList(),
-
-              // Footer spacing
-              const SizedBox(height: 20),
-            ],
+            ),
           ),
         ),
       ),
