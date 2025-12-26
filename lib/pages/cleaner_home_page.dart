@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cleaner/constants.dart';
 import 'package:flutter_cleaner/pages/xcode_cache_cleaner_page.dart';
+import 'package:flutter_cleaner/pages/paywall_page.dart';
 import 'package:flutter_cleaner/scan_result.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -113,9 +114,11 @@ class _CleanerHomePageState extends State<CleanerHomePage>
                 _buildHeaderSection(),
                 const SizedBox(height: 11.2),
         
-                // Xcode Cache Cleaner button
-                _buildXcodeCacheCleanerButton(),
-                const SizedBox(height: 11.2),
+                // Xcode Cache Cleaner button (macOS only)
+                if (Platform.isMacOS) ...[
+                  _buildXcodeCacheCleanerButton(),
+                  const SizedBox(height: 11.2),
+                ],
         
                 // Action buttons
                 _buildActionButtons(),

@@ -16,6 +16,7 @@ dependencies:
   in_app_review: ^2.0.11
   shared_preferences: ^2.2.2
   upgrader: ^12.3.0
+  purchases_flutter: ^9.10.2
 
 flutter_launcher_icons:
   macos:

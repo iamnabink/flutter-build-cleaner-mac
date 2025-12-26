@@ -117,6 +117,38 @@ extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
             ),
             const SizedBox(width: 10),
           ],
+          if (Platform.isMacOS) ...[
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  CupertinoPageRoute(
+                    builder: (context) => const PaywallPage(),
+                  ),
+                );
+              },
+              child: Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: CupertinoColors.systemGrey6,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: CupertinoColors.black.withOpacity(0.05),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  CupertinoIcons.heart_fill,
+                  size: 18,
+                  color: CupertinoColors.systemPink,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+          ],
           GestureDetector(
             onTap: () => _showAboutDialog(),
             child: Container(

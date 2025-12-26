@@ -29,7 +29,6 @@
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
 		647387246FC2F3BD428598A2 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 415F636C3DB50319A451630F /* Pods_RunnerTests.framework */; };
 		BB1B38480A37DE9329665F55 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A38517A69C4C0477221E7537 /* Pods_Runner.framework */; };
-		D11AE84E2EF9618E0016804E /* clean_notification.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = D11AE84D2EF9618E0016804E /* clean_notification.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -88,7 +87,6 @@
 		A935DE26F52D861A89D4151E /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		AAF45DCF351CA09D3B3CFBA3 /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		B6883570E999E7F88C6E0252 /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
-		D11AE84D2EF9618E0016804E /* clean_notification.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = clean_notification.mp3; sourceTree = "<group>"; };
 		E31136FA1831FF92B9590A70 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -183,7 +181,6 @@
 				33E51914231749380026EE4D /* Release.entitlements */,
 				33CC11242044D66E0003C045 /* Resources */,
 				33BA886A226E78AF003329D5 /* Configs */,
-				D11AE84D2EF9618E0016804E /* clean_notification.mp3 */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -316,7 +313,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D11AE84E2EF9618E0016804E /* clean_notification.mp3 in Resources */,
 				33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */,
 				33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */,
 			);
