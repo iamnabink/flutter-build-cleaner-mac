@@ -36,11 +36,11 @@ extension XcodeCacheCleanerDialogs on _XcodeCacheCleanerPageState {
                     size: 16.8,
                   ),
                   const SizedBox(width: 8.4),
-                  const Expanded(
+                   Expanded(
                     child: Text(
                       'Permission Required',
-                      style: TextStyle(
-                        fontSize: 12.6,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -66,10 +66,10 @@ extension XcodeCacheCleanerDialogs on _XcodeCacheCleanerPageState {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'This app needs access to your Developer folder to scan and clean Xcode cache files.',
-                      style: TextStyle(
-                        fontSize: 10.5,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 12,
                         height: 1.6,
                         color: CupertinoColors.label,
                       ),
@@ -98,10 +98,10 @@ extension XcodeCacheCleanerDialogs on _XcodeCacheCleanerPageState {
                                 size: 15.4,
                               ),
                               const SizedBox(width: 7),
-                              const Text(
+                              Text(
                                 'Select this folder:',
-                                style: TextStyle(
-                                  fontSize: 10.5,
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                   color: CupertinoColors.label,
                                 ),
@@ -119,11 +119,10 @@ extension XcodeCacheCleanerDialogs on _XcodeCacheCleanerPageState {
                               color: CupertinoColors.systemBackground,
                               borderRadius: BorderRadius.circular(5.6),
                             ),
-                            child: const Text(
+                            child: Text(
                               '~/Library/Developer',
-                              style: TextStyle(
-                                fontSize: 11.2,
-                                fontFamily: 'Courier',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 12,
                                 fontWeight: FontWeight.w600,
                                 color: CupertinoColors.systemOrange,
                                 letterSpacing: 0.35,
@@ -135,10 +134,10 @@ extension XcodeCacheCleanerDialogs on _XcodeCacheCleanerPageState {
                     ),
                     const SizedBox(height: 19.6),
                     // What app will do
-                    const Text(
+                    Text(
                       'What this app will do:',
-                      style: TextStyle(
-                        fontSize: 10.5,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: CupertinoColors.label,
                       ),
@@ -180,8 +179,8 @@ extension XcodeCacheCleanerDialogs on _XcodeCacheCleanerPageState {
                           Expanded(
                             child: Text(
                               'Click "Grant Access" to open the system dialog and select the Developer folder.',
-                              style: TextStyle(
-                                fontSize: 9.8,
+                              style: GoogleFonts.montserrat(
+                                fontSize: 12,
                                 color: CupertinoColors.secondaryLabel,
                                 height: 1.5,
                               ),
@@ -210,22 +209,22 @@ extension XcodeCacheCleanerDialogs on _XcodeCacheCleanerPageState {
                 children: [
                   CupertinoButton(
                     onPressed: () => Navigator.of(context).pop(false),
-                    child: const Text(
+                    child: Text(
                       AppConstants.cancelButton,
-                      style: TextStyle(fontSize: 9.8),
+                      style: GoogleFonts.montserrat(fontSize: 14),
                     ),
                   ),
                   const SizedBox(width: 5.6),
                   CupertinoButton(
                     onPressed: () => Navigator.of(context).pop(true),
-                    child: const Row(
+                    child:  Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(CupertinoIcons.folder, size: 12.6),
                         SizedBox(width: 4.2),
                         Text(
                           'Grant Access',
-                          style: TextStyle(
+                          style: GoogleFonts.montserrat(
                             fontSize: 9.8,
                             fontWeight: FontWeight.w600,
                           ),
@@ -253,12 +252,12 @@ extension XcodeCacheCleanerDialogs on _XcodeCacheCleanerPageState {
     return await showCupertinoDialog<bool>(
           context: context,
           builder: (context) => CupertinoAlertDialog(
-            title: const Row(
+            title: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(CupertinoIcons.exclamationmark_triangle_fill, color: CupertinoColors.systemRed, size: 14),
-                SizedBox(width: 5.6),
-                Text('Confirm Deletion', style: TextStyle(fontSize: 12.6)),
+                const Icon(CupertinoIcons.question, color: CupertinoColors.systemRed, size: 14),
+                const SizedBox(width: 5.6),
+                Text('Confirm Deletion', style: GoogleFonts.montserrat(fontSize: 12)),
               ],
             ),
             content: SizedBox(
@@ -268,9 +267,10 @@ extension XcodeCacheCleanerDialogs on _XcodeCacheCleanerPageState {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Are you sure you want to delete the selected Xcode cache files?',
-                      style: TextStyle(fontSize: 9.8),
+                      style: GoogleFonts.montserrat(fontSize: 11),
+                      textAlign: TextAlign.start,
                     ),
                     const SizedBox(height: 8.4),
                     Container(
@@ -287,13 +287,13 @@ extension XcodeCacheCleanerDialogs on _XcodeCacheCleanerPageState {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
+                              Text(
                                 'Selected items:',
-                                style: TextStyle(fontSize: 9.8),
+                                style: GoogleFonts.montserrat(fontSize: 14),
                               ),
                               Text(
                                 '$itemCount',
-                                style: const TextStyle(
+                                style: GoogleFonts.montserrat(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 9.8,
                                 ),
@@ -303,13 +303,13 @@ extension XcodeCacheCleanerDialogs on _XcodeCacheCleanerPageState {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
+                              Text(
                                 'Total size:',
-                                style: TextStyle(fontSize: 9.8),
+                                style: GoogleFonts.montserrat(fontSize: 14),
                               ),
                               Text(
                                 _formatFileSize(totalSize),
-                                style: const TextStyle(
+                                style: GoogleFonts.montserrat(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 9.8,
                                 ),
@@ -320,9 +320,9 @@ extension XcodeCacheCleanerDialogs on _XcodeCacheCleanerPageState {
                       ),
                     ),
                     const SizedBox(height: 8.4),
-                    const Text(
+                    Text(
                       '⚠️ This action cannot be undone!',
-                      style: TextStyle(
+                      style: GoogleFonts.montserrat(
                         color: CupertinoColors.systemRed,
                         fontWeight: FontWeight.bold,
                         fontSize: 9.8,
@@ -335,17 +335,17 @@ extension XcodeCacheCleanerDialogs on _XcodeCacheCleanerPageState {
             actions: [
               CupertinoDialogAction(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: const Text(
+                child: Text(
                   AppConstants.cancelButton,
-                  style: TextStyle(fontSize: 9.8),
+                  style: GoogleFonts.montserrat(fontSize: 9.8),
                 ),
               ),
               CupertinoDialogAction(
                 isDestructiveAction: true,
                 onPressed: () => Navigator.of(context).pop(true),
-                child: const Text(
+                child: Text(
                   'Delete',
-                  style: TextStyle(fontSize: 9.8),
+                  style: GoogleFonts.montserrat(fontSize: 9.8),
                 ),
               ),
             ],
@@ -364,12 +364,12 @@ extension XcodeCacheCleanerDialogs on _XcodeCacheCleanerPageState {
               Navigator.pop(context, 'open');
               _openInFinder(result.path);
             },
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(CupertinoIcons.folder, size: 14),
-                SizedBox(width: 5.6),
-                Text('Open in Finder', style: TextStyle(fontSize: 10.5)),
+                const Icon(CupertinoIcons.folder, size: 14),
+                const SizedBox(width: 5.6),
+                Text('Open in Finder', style: GoogleFonts.montserrat(fontSize: 14)),
               ],
             ),
           ),
@@ -378,12 +378,12 @@ extension XcodeCacheCleanerDialogs on _XcodeCacheCleanerPageState {
               Navigator.pop(context, 'details');
               _showItemDetails(result);
             },
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(CupertinoIcons.info, size: 14),
-                SizedBox(width: 5.6),
-                Text('Show Details', style: TextStyle(fontSize: 10.5)),
+                const Icon(CupertinoIcons.info, size: 14),
+                const SizedBox(width: 5.6),
+                Text('Show Details', style: GoogleFonts.montserrat(fontSize: 14)),
               ],
             ),
           ),
@@ -439,8 +439,8 @@ extension XcodeCacheCleanerDialogs on _XcodeCacheCleanerPageState {
                   Expanded(
                     child: Text(
                       path.basename(result.path),
-                      style: const TextStyle(
-                        fontSize: 12.6,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -494,9 +494,9 @@ extension XcodeCacheCleanerDialogs on _XcodeCacheCleanerPageState {
                 children: [
                   CupertinoButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text(
+                    child: Text(
                       AppConstants.closeButton,
-                      style: TextStyle(fontSize: 9.8),
+                      style: GoogleFonts.montserrat(fontSize: 14),
                     ),
                   ),
                   const SizedBox(width: 5.6),
@@ -534,14 +534,14 @@ extension XcodeCacheCleanerDialogs on _XcodeCacheCleanerPageState {
                         color: CupertinoColors.systemRed,
                         borderRadius: BorderRadius.circular(5.6),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(CupertinoIcons.delete, size: 12.6, color: CupertinoColors.white),
-                          SizedBox(width: 4.2),
+                          const Icon(CupertinoIcons.delete, size: 12.6, color: CupertinoColors.white),
+                          const SizedBox(width: 4.2),
                           Text(
                             'Delete',
-                            style: TextStyle(
+                            style: GoogleFonts.montserrat(
                               color: CupertinoColors.white,
                               fontSize: 11.2,
                               fontWeight: FontWeight.w600,
@@ -566,8 +566,8 @@ extension XcodeCacheCleanerDialogs on _XcodeCacheCleanerPageState {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 8.4,
+          style: GoogleFonts.montserrat(
+            fontSize: 12,
             fontWeight: FontWeight.w600,
             color: CupertinoColors.secondaryLabel,
             letterSpacing: 0.35,
@@ -583,9 +583,8 @@ extension XcodeCacheCleanerDialogs on _XcodeCacheCleanerPageState {
           ),
           child: Text(
             value,
-            style: TextStyle(
-              fontSize: 10.5,
-              fontFamily: label == 'Full Path' ? 'monospace' : null,
+            style: GoogleFonts.montserrat(
+              fontSize: 12,
               height: 1.4,
             ),
           ),

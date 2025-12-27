@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_cleaner/constants.dart';
 import 'package:flutter_cleaner/pages/xcode_cache_cleaner_page.dart';
 import 'package:flutter_cleaner/pages/paywall_page.dart';
@@ -14,6 +15,7 @@ import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:upgrader/upgrader.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 part '../utils/file_system_utils.dart';
 part '../utils/scan_checks_utils.dart';
@@ -29,6 +31,15 @@ part '../widgets/results_warnings.dart';
 part '../widgets/header_section.dart';
 part '../widgets/extras/dialogs_core.dart';
 part '../widgets/extras/dialogs_about.dart';
+
+class _SummaryItemData {
+  final String label;
+  final int count;
+  final IconData icon;
+  final Color color;
+
+  const _SummaryItemData(this.label, this.count, this.icon, this.color);
+}
 
 class CleanerHomePage extends StatefulWidget {
   const CleanerHomePage({Key? key}) : super(key: key);

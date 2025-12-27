@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class PaywallErrorView extends StatelessWidget {
   final String? errorMessage;
@@ -26,8 +27,8 @@ class PaywallErrorView extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               errorMessage ?? 'Failed to load offerings',
-              style: const TextStyle(
-                fontSize: 14,
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
                 color: CupertinoColors.secondaryLabel,
               ),
               textAlign: TextAlign.center,

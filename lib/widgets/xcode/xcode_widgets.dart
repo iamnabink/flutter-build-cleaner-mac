@@ -5,9 +5,9 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
     return CupertinoNavigationBar(
       backgroundColor: CupertinoColors.systemBackground.withOpacity(0.8),
       border: null,
-      middle: const Text(
+      middle: Text(
         'Xcode Cache Cleaner',
-        style: TextStyle(fontWeight: FontWeight.w600),
+        style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
       ),
     );
   }
@@ -31,38 +31,14 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
         ),
       ),
       child: Column(
+        
         children: [
-          Container(
-            padding: const EdgeInsets.all(8.4),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  CupertinoColors.systemBlue,
-                  CupertinoColors.systemBlue.darkColor,
-                ],
-              ),
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: CupertinoColors.systemBlue.withOpacity(0.3),
-                  blurRadius: 8.4,
-                  offset: const Offset(0, 2.8),
-                ),
-              ],
-            ),
-            child: const Icon(
-              CupertinoIcons.hammer,
-              size: 22.4,
-              color: CupertinoColors.white,
-            ),
-          ),
+          Center(child: const AppLogo()),
           const SizedBox(height: 8.4),
-          const Text(
+          Text(
             'Clean up Xcode caches: Device Support, Archives, Derived Data, Documentation Cache, Old Logs, and Documentation Downloads',
-            style: TextStyle(
-              fontSize: 9.1,
+            style: GoogleFonts.montserrat(
+              fontSize: 12,
               color: CupertinoColors.secondaryLabel,
               height: 1.4,
               letterSpacing: -0.07,
@@ -95,7 +71,7 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
             ? null
             : [
                 BoxShadow(
-                  color: CupertinoColors.systemBlue.withOpacity(0.4),
+                  color: CupertinoColors.systemBlue.withOpacity(0.2),
                   blurRadius: 8.4,
                   offset: const Offset(0, 2.8),
                 ),
@@ -104,7 +80,6 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
       child: CupertinoButton(
         padding: EdgeInsets.zero,
         onPressed: isDisabled ? null : _scanXcodeCaches,
-        color: isDisabled ? CupertinoColors.systemGrey4 : CupertinoColors.systemBlue.withOpacity(0),
         disabledColor: CupertinoColors.systemGrey4,
         borderRadius: BorderRadius.circular(8.4),
         child: Row(
@@ -136,8 +111,8 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                 _isScanning
                     ? AppConstants.scanningButtonText
                     : 'Scan Xcode Caches',
-                style: const TextStyle(
-                  fontSize: 10.5,
+                style: GoogleFonts.montserrat(
+                  fontSize: 12,
                   fontWeight: FontWeight.w700,
                   color: CupertinoColors.white,
                   letterSpacing: -0.14,
@@ -164,10 +139,10 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
               color: CupertinoColors.systemGrey3,
             ),
             const SizedBox(height: 11.2),
-            const Text(
+            Text(
               'No Xcode cache found',
-              style: TextStyle(
-                fontSize: 14,
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: CupertinoColors.label,
               ),
@@ -175,8 +150,8 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
             const SizedBox(height: 5.6),
             Text(
               'Click "Scan Xcode Caches" to find cache files',
-              style: TextStyle(
-                fontSize: 9.8,
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
                 color: CupertinoColors.secondaryLabel,
               ),
               textAlign: TextAlign.center,
@@ -250,9 +225,9 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                   : null,
             ),
             const SizedBox(width: 8.4),
-            const Text(
+            Text(
               'Select All',
-              style: TextStyle(
+              style: GoogleFonts.montserrat(
                 fontSize: 11.2,
                 fontWeight: FontWeight.w600,
                 color: CupertinoColors.label,
@@ -261,8 +236,8 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
             const Spacer(),
             Text(
               '${_selectedItems.length} / ${allItems.length}',
-              style: const TextStyle(
-                fontSize: 9.8,
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
                 fontWeight: FontWeight.w500,
                 color: CupertinoColors.secondaryLabel,
               ),
@@ -313,19 +288,19 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
             color: CupertinoColors.systemOrange,
           ),
           const SizedBox(height: 8.4),
-          const Text(
+          Text(
             'Permission Required',
-            style: TextStyle(
-              fontSize: 12.6,
+            style: GoogleFonts.montserrat(
+              fontSize: 12,
               fontWeight: FontWeight.bold,
               color: CupertinoColors.label,
             ),
           ),
           const SizedBox(height: 5.6),
-          const Text(
+          Text(
             'This app needs permission to access your Developer folder (~/Library/Developer) to scan Xcode cache files.',
-            style: TextStyle(
-              fontSize: 9.8,
+            style: GoogleFonts.montserrat(
+              fontSize: 12,
               color: CupertinoColors.secondaryLabel,
               height: 1.4,
             ),
@@ -337,20 +312,20 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
             height: 30.8,
             child: CupertinoButton(
               padding: EdgeInsets.zero,
-              color: CupertinoColors.systemOrange,
+              // color: CupertinoColors.systemOrange,
               borderRadius: BorderRadius.circular(8.4),
               onPressed: _showPermissionDialog,
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(CupertinoIcons.folder, size: 12.6, color: CupertinoColors.white),
-                  SizedBox(width: 5.6),
+                  const Icon(CupertinoIcons.folder, size: 12.6, color: CupertinoColors.white),
+                  const SizedBox(width: 5.6),
                   Text(
                     'Grant Access to Developer',
-                    style: TextStyle(
-                      fontSize: 10.5,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: CupertinoColors.white,
+                      
                     ),
                   ),
                 ],
@@ -406,17 +381,17 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                 Expanded(
                   child: Text(
                     category.label,
-                    style: const TextStyle(
-                      fontSize: 11.2,
-                      fontWeight: FontWeight.w600,
-                      color: CupertinoColors.label,
-                    ),
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: CupertinoColors.label,
+              ),
                   ),
                 ),
                 Text(
                   _formatFileSize(categorySize),
-                  style: const TextStyle(
-                    fontSize: 9.8,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 12,
                     fontWeight: FontWeight.w500,
                     color: CupertinoColors.label,
                   ),
@@ -560,8 +535,8 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                             children: [
                               Text(
                                 _getProjectNameFromPath(item.workspacePath!),
-                                style: const TextStyle(
-                                  fontSize: 9.8,
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                   color: CupertinoColors.label,
                                 ),
@@ -569,10 +544,9 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                               const SizedBox(height: 1.4),
                               Text(
                                 item.workspacePath!,
-                                style: const TextStyle(
-                                  fontSize: 8.4,
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 12,
                                   color: CupertinoColors.secondaryLabel,
-                                  fontFamily: 'Courier',
                                 ),
                                 overflow: TextOverflow.ellipsis,
                                 maxLines: 1,
@@ -581,8 +555,8 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                           )
                         : Text(
                             item.name,
-                            style: const TextStyle(
-                              fontSize: 9.8,
+                            style: GoogleFonts.montserrat(
+                              fontSize: 12,
                               color: CupertinoColors.label,
                             ),
                             overflow: TextOverflow.ellipsis,
@@ -591,8 +565,8 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                   // Item size
                   Text(
                     _formatFileSize(item.size),
-                    style: const TextStyle(
-                      fontSize: 9.8,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 12,
                       fontWeight: FontWeight.w500,
                       color: CupertinoColors.secondaryLabel,
                     ),
@@ -609,19 +583,19 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                       padding: EdgeInsets.zero,
                       minimumSize: Size.zero,
                       onPressed: () => _openInFinder(item.workspacePath!),
-                      child: const Row(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
+                          const Icon(
                             CupertinoIcons.folder,
                             size: 9.8,
                             color: CupertinoColors.systemBlue,
                           ),
-                          SizedBox(width: 2.8),
+                          const SizedBox(width: 2.8),
                           Text(
                             'Open in Finder',
-                            style: TextStyle(
-                              fontSize: 8.4,
+                            style: GoogleFonts.montserrat(
+                              fontSize: 12,
                               color: CupertinoColors.systemBlue,
                             ),
                           ),
@@ -656,18 +630,18 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Selected:',
-                style: TextStyle(
-                  fontSize: 8.4,
+                style: GoogleFonts.montserrat(
+                  fontSize: 12,
                   color: CupertinoColors.secondaryLabel,
                 ),
               ),
               const SizedBox(height: 2.8),
               Text(
                 _formatFileSize(_selectedSize),
-                style: const TextStyle(
-                  fontSize: 11.2,
+                style: GoogleFonts.montserrat(
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
                   color: CupertinoColors.label,
                 ),
@@ -677,18 +651,18 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              const Text(
+              Text(
                 'Total:',
-                style: TextStyle(
-                  fontSize: 8.4,
+                style: GoogleFonts.montserrat(
+                  fontSize: 12,
                   color: CupertinoColors.secondaryLabel,
                 ),
               ),
               const SizedBox(height: 2.8),
               Text(
                 _formatFileSize(_totalSize),
-                style: const TextStyle(
-                  fontSize: 11.2,
+                style: GoogleFonts.montserrat(
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
                   color: CupertinoColors.label,
                 ),
@@ -740,19 +714,19 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Text(
+                      Text(
                         'Selected: ',
-                        style: TextStyle(
+                        style: GoogleFonts.montserrat(
                           color: CupertinoColors.secondaryLabel,
-                          fontSize: 8.4,
+                          fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       Text(
                         '$selectedCount',
-                        style: const TextStyle(
+                        style: GoogleFonts.montserrat(
                           color: CupertinoColors.systemRed,
-                          fontSize: 9.8,
+                          fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -761,9 +735,9 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                   const SizedBox(height: 2.8),
                   Text(
                     _formatFileSize(selectedSize),
-                    style: const TextStyle(
+                    style: GoogleFonts.montserrat(
                       color: CupertinoColors.label,
-                      fontSize: 9.1,
+                      fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -876,18 +850,18 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                       children: [
                         Text(
                           '$percentage%',
-                          style: const TextStyle(
-                            fontSize: 11.2,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                             color: CupertinoColors.label,
                             letterSpacing: -0.21,
                           ),
                         ),
                         if (_isDeleting)
-                          const Text(
+                          Text(
                             'Deleting',
-                            style: TextStyle(
-                              fontSize: 5.6,
+                            style: GoogleFonts.montserrat(
+                              fontSize: 12,
                               color: CupertinoColors.secondaryLabel,
                             ),
                           ),
@@ -905,8 +879,8 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                       _isDeleting
                           ? AppConstants.deletingFiles
                           : AppConstants.scanningSystem,
-                      style: const TextStyle(
-                        fontSize: 12.6,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
                         letterSpacing: -0.35,
                         height: 1.2,
@@ -915,10 +889,9 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                     const SizedBox(height: 7),
                     Text(
                       _currentScanPath,
-                      style: const TextStyle(
-                        fontSize: 8.4,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 12,
                         color: CupertinoColors.secondaryLabel,
-                        fontFamily: 'monospace',
                       ),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 2,
@@ -958,10 +931,9 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
                   Expanded(
                     child: Text(
                       _currentScanPath,
-                      style: const TextStyle(
-                        fontSize: 7.7,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 12,
                         color: CupertinoColors.secondaryLabel,
-                        fontFamily: 'monospace',
                       ),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
@@ -992,8 +964,8 @@ extension XcodeCacheCleanerWidgets on _XcodeCacheCleanerPageState {
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(
-              fontSize: 10.5,
+            style: GoogleFonts.montserrat(
+              fontSize: 12,
               height: 1.5,
               color: CupertinoColors.secondaryLabel,
             ),

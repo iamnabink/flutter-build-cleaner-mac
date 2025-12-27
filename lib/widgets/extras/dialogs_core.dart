@@ -53,14 +53,7 @@ extension CleanerHomePageDialogsCore on _CleanerHomePageState {
     return await showCupertinoDialog<bool>(
           context: context,
           builder: (context) => CupertinoAlertDialog(
-            title: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(CupertinoIcons.exclamationmark_triangle_fill, color: CupertinoColors.systemRed),
-                SizedBox(width: 8),
-                Text('Confirm Deletion'),
-              ],
-            ),
+            
             content: SizedBox(
               width: 400,
               child: SingleChildScrollView(
@@ -70,7 +63,7 @@ extension CleanerHomePageDialogsCore on _CleanerHomePageState {
                   children: [
                     Text(
                       AppConstants.confirmDeletionContent,
-                      style: const TextStyle(fontSize: 14),
+                      style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 12),
                     Container(
@@ -87,15 +80,15 @@ extension CleanerHomePageDialogsCore on _CleanerHomePageState {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
+                              Text(
                                 'Total items:',
-                                style: TextStyle(fontSize: 14),
+                                style: GoogleFonts.montserrat(fontSize: 14),
                               ),
                               Text(
                                 '${_scanResults.length}',
-                                style: const TextStyle(
+                                style: GoogleFonts.montserrat(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 14,
+                                  fontSize: 12,
                                 ),
                               ),
                             ],
@@ -103,15 +96,15 @@ extension CleanerHomePageDialogsCore on _CleanerHomePageState {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
+                              Text(
                                 'Total size:',
-                                style: TextStyle(fontSize: 14),
+                                style: GoogleFonts.montserrat(fontSize: 14),
                               ),
                               Text(
                                 _formatFileSize(totalSize),
-                                style: const TextStyle(
+                                style: GoogleFonts.montserrat(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 14,
+                                  fontSize: 12,
                                 ),
                               ),
                             ],
@@ -120,12 +113,12 @@ extension CleanerHomePageDialogsCore on _CleanerHomePageState {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    const Text(
+                    Text(
                       '⚠️ This action cannot be undone!',
-                      style: TextStyle(
+                      style: GoogleFonts.montserrat(
                         color: CupertinoColors.systemRed,
                         fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -186,8 +179,8 @@ extension CleanerHomePageDialogsCore on _CleanerHomePageState {
                   Expanded(
                     child: Text(
                       path.basename(result.path),
-                      style: const TextStyle(
-                        fontSize: 18,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -257,16 +250,16 @@ extension CleanerHomePageDialogsCore on _CleanerHomePageState {
                         color: CupertinoColors.systemRed,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(CupertinoIcons.delete, size: 18, color: CupertinoColors.white),
-                          SizedBox(width: 6),
+                          const Icon(CupertinoIcons.delete, size: 18, color: CupertinoColors.white),
+                          const SizedBox(width: 6),
                           Text(
                             'Delete',
-                            style: TextStyle(
+                            style: GoogleFonts.montserrat(
                               color: CupertinoColors.white,
-                              fontSize: 16,
+                              fontSize: 12,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -289,7 +282,7 @@ extension CleanerHomePageDialogsCore on _CleanerHomePageState {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: GoogleFonts.montserrat(
             fontSize: 12,
             fontWeight: FontWeight.w600,
             color: CupertinoColors.secondaryLabel,
@@ -306,9 +299,8 @@ extension CleanerHomePageDialogsCore on _CleanerHomePageState {
           ),
           child: Text(
             value,
-            style: TextStyle(
-              fontSize: 15,
-              fontFamily: label == 'Full Path' ? 'monospace' : null,
+            style: GoogleFonts.montserrat(
+              fontSize: 12,
               height: 1.4,
             ),
           ),

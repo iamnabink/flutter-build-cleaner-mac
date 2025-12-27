@@ -6,6 +6,9 @@ PODS:
     - FlutterMacOS
   - package_info_plus (0.0.1):
     - FlutterMacOS
+  - path_provider_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - purchases_flutter (9.10.2):
     - FlutterMacOS
     - PurchasesHybridCommon (= 17.25.0)
@@ -23,6 +26,7 @@ DEPENDENCIES:
   - FlutterMacOS (from `Flutter/ephemeral`)
   - in_app_review (from `Flutter/ephemeral/.symlinks/plugins/in_app_review/macos`)
   - package_info_plus (from `Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos`)
+  - path_provider_foundation (from `Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin`)
   - purchases_flutter (from `Flutter/ephemeral/.symlinks/plugins/purchases_flutter/macos`)
   - shared_preferences_foundation (from `Flutter/ephemeral/.symlinks/plugins/shared_preferences_foundation/darwin`)
   - url_launcher_macos (from `Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos`)
@@ -41,6 +45,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/in_app_review/macos
   package_info_plus:
     :path: Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos
+  path_provider_foundation:
+    :path: Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin
   purchases_flutter:
     :path: Flutter/ephemeral/.symlinks/plugins/purchases_flutter/macos
   shared_preferences_foundation:
@@ -53,6 +59,7 @@ SPEC CHECKSUMS:
   FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
   in_app_review: 66e7680752b632d83f4f0e88b34d52ed303fbff4
   package_info_plus: f0052d280d17aa382b932f399edf32507174e870
+  path_provider_foundation: bb55f6dbba17d0dccd6737fe6f7f34fbd0376880
   purchases_flutter: d964268509d7ee677eca1258b4867b7d4a87e9e9
   PurchasesHybridCommon: 6a79a873ab52f777bfa36e9516f3fcd84d3b3428
   RevenueCat: eab035bbab271faccfef5c36eaff2a1ffef14dc0

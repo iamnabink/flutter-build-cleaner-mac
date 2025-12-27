@@ -65,17 +65,17 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
                   const SizedBox(width: 8),
                   Text(
                     'Found Items (${sortedResults.length})',
-                    style: const TextStyle(
-                      fontSize: 16,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 12,
                       color: CupertinoColors.label,
                       fontWeight: FontWeight.bold,
                       letterSpacing: -0.3,
                     ),
                   ),
                   const Spacer(),
-                  const Text(
+                  Text(
                     'Sorted by size',
-                    style: TextStyle(
+                    style: GoogleFonts.montserrat(
                       fontSize: 12,
                       color: CupertinoColors.secondaryLabel,
                     ),
@@ -90,8 +90,8 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
                 child: Center(
                   child: Text(
                     AppConstants.noArtifactsFound,
-                    style: const TextStyle(
-                      fontSize: 14,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 12,
                       color: CupertinoColors.secondaryLabel,
                     ),
                     textAlign: TextAlign.center,
@@ -233,11 +233,11 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
                         Expanded(
                           child: Text(
                             path.basename(result.path),
-                            style: TextStyle(
+                            style: GoogleFonts.montserrat(
                               fontWeight: isLargest
                                   ? FontWeight.bold
                                   : FontWeight.w500,
-                              fontSize: 14,
+                              fontSize: 12,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -266,11 +266,11 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
                                 ),
                               ],
                             ),
-                            child: const Text(
+                            child: Text(
                               'LARGEST',
-                              style: TextStyle(
+                              style: GoogleFonts.montserrat(
                                 color: CupertinoColors.white,
-                                fontSize: 10,
+                                fontSize: 12,
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 0.5,
                               ),
@@ -281,9 +281,8 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
                     const SizedBox(height: 3),
                     Text(
                       relativePath,
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontFamily: 'monospace',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 12,
                         color: CupertinoColors.secondaryLabel,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -313,10 +312,10 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
                           ),
                           child: Text(
                             result.type.toUpperCase(),
-                            style: TextStyle(
+                            style: GoogleFonts.montserrat(
                               color: iconColor,
                               fontWeight: FontWeight.bold,
-                              fontSize: 9,
+                              fontSize: 12,
                               letterSpacing: 0.3,
                             ),
                           ),
@@ -324,16 +323,16 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
                         const SizedBox(width: 6),
                         Text(
                           result.isDirectory ? 'Folder' : 'File',
-                          style: const TextStyle(
-                            fontSize: 10,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 12,
                             color: CupertinoColors.secondaryLabel,
                           ),
                         ),
                         const SizedBox(width: 6),
                         Text(
                           '• Modified: ${_formatDate(result.lastModified)}',
-                          style: const TextStyle(
-                            fontSize: 10,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 12,
                             color: CupertinoColors.secondaryLabel,
                           ),
                         ),
@@ -351,12 +350,12 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
                     children: [
                       Text(
                         _formatFileSize(result.size),
-                        style: TextStyle(
+                        style: GoogleFonts.montserrat(
                           fontWeight: FontWeight.bold,
                           color: isLargest
                               ? CupertinoColors.systemRed
                               : CupertinoColors.systemBlue,
-                          fontSize: 14,
+                          fontSize: 12,
                         ),
                       ),
                       const SizedBox(width: 6),
@@ -369,8 +368,8 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
                   ),
                   Text(
                     result.isDirectory ? 'FOLDER' : 'FILE',
-                    style: const TextStyle(
-                      fontSize: 9,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 12,
                       color: CupertinoColors.secondaryLabel,
                     ),
                   ),

@@ -36,13 +36,13 @@ extension CleanerHomePageDialogsAbout on _CleanerHomePageState {
                     size: 16.8,
                   ),
                   const SizedBox(width: 5.6),
-                  const Expanded(
+                   Expanded(
                     child: Text(
                       AppConstants.aboutTitle,
-                      style: TextStyle(
-                        fontSize: 12.6,
-                        fontWeight: FontWeight.w600,
-                      ),
+                        style: GoogleFonts.montserrat(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
                     ),
                   ),
                   CupertinoButton(
@@ -68,45 +68,45 @@ extension CleanerHomePageDialogsAbout on _CleanerHomePageState {
                   children: [
                 Text(
                   AppConstants.aboutContent,
-                  style: const TextStyle(fontSize: 9.8),
+                  style: GoogleFonts.montserrat(fontSize: 14),
                   softWrap: true,
                 ),
                 const SizedBox(height: 8.4),
-                const Text(
+                 Text(
                   AppConstants.apkFiles,
-                  style: TextStyle(fontSize: 9.8),
+                  style: GoogleFonts.montserrat(fontSize: 14),
                 ),
-                const Text(
+                  Text(
                   AppConstants.ipaFiles,
-                  style: TextStyle(fontSize: 9.8),
+                  style: GoogleFonts.montserrat(fontSize: 14),
                 ),
-                const Text(
+                Text(
                   AppConstants.aabFiles,
-                  style: TextStyle(fontSize: 9.8),
+                  style: GoogleFonts.montserrat(fontSize: 14),
                 ),
-                const Text(
+                Text(
                   AppConstants.flutterBuildFolders,
-                  style: TextStyle(fontSize: 9.8),
+                  style: GoogleFonts.montserrat(fontSize: 14),
                 ),
-                const Text(
+                Text(
                   AppConstants.reactNativeBuildFolders,
-                  style: TextStyle(fontSize: 9.8),
+                  style: GoogleFonts.montserrat(fontSize: 14),
                 ),
-                const Text(
+                Text(
                   AppConstants.androidBuildFolders,
-                  style: TextStyle(fontSize: 9.8),
+                  style: GoogleFonts.montserrat(fontSize: 14),
                 ),
-                const Text(
+                Text(
                   AppConstants.iosBuildFolders,
-                  style: TextStyle(fontSize: 9.8),
+                  style: GoogleFonts.montserrat(fontSize: 14),
                 ),
-                const Text(
+                Text(
                   AppConstants.archivesFolders,
-                  style: TextStyle(fontSize: 9.8),
+                  style: GoogleFonts.montserrat(fontSize: 14),
                 ),
-                const Text(
+                Text(
                   AppConstants.reactNativeNodeModules,
-                  style: TextStyle(fontSize: 9.8),
+                  style: GoogleFonts.montserrat(fontSize: 14),
                 ),
                 const SizedBox(height: 8.4),
                 Container(
@@ -120,8 +120,8 @@ extension CleanerHomePageDialogsAbout on _CleanerHomePageState {
                     children: [
                       Text(
                         AppConstants.currentScanLocation,
-                        style: const TextStyle(
-                          fontSize: 8.4,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -129,9 +129,8 @@ extension CleanerHomePageDialogsAbout on _CleanerHomePageState {
                         _selectedPath.isEmpty
                             ? AppConstants.notAvailable
                             : _selectedPath,
-                        style: const TextStyle(
-                          fontSize: 8.4,
-                          fontFamily: 'monospace',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 12,
                         ),
                         overflow: TextOverflow.ellipsis,
                         maxLines: 3,
@@ -142,8 +141,8 @@ extension CleanerHomePageDialogsAbout on _CleanerHomePageState {
                 const SizedBox(height: 8.4),
                 Text(
                   AppConstants.safetyMessage,
-                  style: const TextStyle(
-                    fontSize: 8.4,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 12,
                     color: CupertinoColors.secondaryLabel,
                   ),
                 ),
@@ -153,16 +152,16 @@ extension CleanerHomePageDialogsAbout on _CleanerHomePageState {
                     children: [
                       Text(
                         AppConstants.madeWithLove,
-                        style: const TextStyle(
-                          fontSize: 9.8,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       const SizedBox(height: 5.6),
                       Text(
                         AppConstants.developerTitle,
-                        style: const TextStyle(
-                          fontSize: 8.4,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 12,
                           color: CupertinoColors.secondaryLabel,
                         ),
                       ),
@@ -178,11 +177,10 @@ extension CleanerHomePageDialogsAbout on _CleanerHomePageState {
                         ),
                         child: Text(
                           '$_appVersionLabel • $_buildNumberLabel',
-                          style: const TextStyle(
-                            fontSize: 8.4,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 12,
                             color: CupertinoColors.label,
                             fontWeight: FontWeight.w500,
-                            fontFamily: 'monospace',
                           ),
                         ),
                       ),
@@ -227,9 +225,9 @@ extension CleanerHomePageDialogsAbout on _CleanerHomePageState {
                 children: [
                   CupertinoButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text(
+                    child: Text(
                       AppConstants.closeButton,
-                      style: TextStyle(fontSize: 9.8),
+                      style: GoogleFonts.montserrat(fontSize: 14),
                     ),
                   ),
                 ],

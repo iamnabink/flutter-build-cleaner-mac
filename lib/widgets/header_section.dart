@@ -19,56 +19,15 @@ extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
           width: 1,
         ),
       ),
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8.4),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  CupertinoColors.systemBlue,
-                  CupertinoColors.systemBlue.darkColor,
-                ],
-              ),
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: CupertinoColors.systemBlue.withOpacity(0.3),
-                  blurRadius: 8.4,
-                  offset: const Offset(0, 2.8),
-                ),
-              ],
-            ),
-            child: const Icon(
-              CupertinoIcons.desktopcomputer,
-              size: 22.4,
-              color: CupertinoColors.white,
-            ),
-          ),
-          const SizedBox(height: 8.4),
-          Text(
-            AppConstants.appName,
-            style: const TextStyle(
-              fontSize: 18.2,
-              fontWeight: FontWeight.bold,
-              letterSpacing: -0.56,
-              height: 1.1,
-            ),
-          ),
-          const SizedBox(height: 4.2),
-          Text(
-            AppConstants.mainDescription,
-            style: const TextStyle(
-              fontSize: 9.1,
-              color: CupertinoColors.secondaryLabel,
-              height: 1.4,
-              letterSpacing: -0.07,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+      child: Text(
+        AppConstants.mainDescription,
+        style: GoogleFonts.montserrat(
+          fontSize: 12,
+          color: CupertinoColors.secondaryLabel,
+          height: 1.4,
+          letterSpacing: -0.07,
+        ),
+        textAlign: TextAlign.center,
       ),
     );
   }
@@ -77,6 +36,7 @@ extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
     return CupertinoNavigationBar(
       backgroundColor: CupertinoColors.systemBackground.withOpacity(0.8),
       border: null,
+      leading: AppLogo(),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -201,8 +161,8 @@ extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
             const SizedBox(width: 4.2),
             Text(
               label,
-              style: const TextStyle(
-                fontSize: 8.4,
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
                 color: CupertinoColors.systemBlue,
                 fontWeight: FontWeight.w500,
               ),
@@ -279,10 +239,10 @@ extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Xcode Cache Cleaner',
-                    style: TextStyle(
-                      fontSize: 11.2,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 12,
                       fontWeight: FontWeight.bold,
                       color: CupertinoColors.label,
                     ),
@@ -290,8 +250,8 @@ extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
                   const SizedBox(height: 2.8),
                   Text(
                     'Clean Device Support, Archives, Derived Data, and more',
-                    style: TextStyle(
-                      fontSize: 8.4,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 12,
                       color: CupertinoColors.secondaryLabel,
                     ),
                   ),
@@ -306,6 +266,50 @@ extension CleanerHomePageWidgetsHeader on _CleanerHomePageState {
           ],
         ),
       ),
+    );
+  }
+}
+
+class AppLogo extends StatelessWidget {
+  const AppLogo({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'Broomie',
+          style: GoogleFonts.montserrat(
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: CupertinoColors.black.withOpacity(0.1),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: ClipOval(
+            child: Image.asset(
+              'assets/images/icon.png',
+              width: 32,
+              height: 32,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

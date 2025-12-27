@@ -62,18 +62,18 @@ extension CleanerHomePageWidgetsProgress on _CleanerHomePageState {
                       children: [
                         Text(
                           '$percentage%',
-                          style: const TextStyle(
-                            fontSize: 16,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                             color: CupertinoColors.label,
                             letterSpacing: -0.3,
                           ),
                         ),
                         if (_isDeleting)
-                          const Text(
+                          Text(
                             'Deleting',
-                            style: TextStyle(
-                              fontSize: 8,
+                            style: GoogleFonts.montserrat(
+                              fontSize: 12,
                               color: CupertinoColors.secondaryLabel,
                             ),
                           ),
@@ -92,8 +92,8 @@ extension CleanerHomePageWidgetsProgress on _CleanerHomePageState {
                       _isDeleting
                           ? AppConstants.deletingFiles
                           : AppConstants.scanningSystem,
-                      style: const TextStyle(
-                        fontSize: 18,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
                         letterSpacing: -0.5,
                         height: 1.2,
@@ -154,10 +154,9 @@ extension CleanerHomePageWidgetsProgress on _CleanerHomePageState {
                   Expanded(
                     child: Text(
                       _currentScanPath.replaceFirst(_selectedPath, '~'),
-                      style: const TextStyle(
-                        fontSize: 11,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 12,
                         color: CupertinoColors.secondaryLabel,
-                        fontFamily: 'monospace',
                       ),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
@@ -187,8 +186,8 @@ extension CleanerHomePageWidgetsProgress on _CleanerHomePageState {
         const SizedBox(width: 6),
         Text(
           '$label $value',
-          style: const TextStyle(
-            fontSize: 13,
+          style: GoogleFonts.montserrat(
+            fontSize: 12,
             color: CupertinoColors.label,
           ),
         ),
@@ -263,7 +262,7 @@ extension CleanerHomePageWidgetsProgress on _CleanerHomePageState {
           children: [
             Text(
               value,
-              style: TextStyle(
+              style: GoogleFonts.montserrat(
                 fontWeight: FontWeight.bold,
                 color: color,
                 fontSize: 12,
@@ -271,8 +270,8 @@ extension CleanerHomePageWidgetsProgress on _CleanerHomePageState {
             ),
             Text(
               label,
-              style: const TextStyle(
-                fontSize: 10,
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
                 color: CupertinoColors.secondaryLabel,
               ),
             ),

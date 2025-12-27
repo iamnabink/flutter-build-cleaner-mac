@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class PaywallPackageList extends StatelessWidget {
   final List<Package> packages;
@@ -88,8 +89,8 @@ class _PackageItem extends StatelessWidget {
                 children: [
                   Text(
                     package.storeProduct.title,
-                    style: const TextStyle(
-                      fontSize: 16,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -97,7 +98,7 @@ class _PackageItem extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       package.storeProduct.description,
-                      style: TextStyle(
+                      style: GoogleFonts.montserrat(
                         fontSize: 12,
                         color: CupertinoColors.secondaryLabel,
                       ),
@@ -111,8 +112,8 @@ class _PackageItem extends StatelessWidget {
             const SizedBox(width: 12),
             Text(
               package.storeProduct.priceString,
-              style: TextStyle(
-                fontSize: 18,
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
                 fontWeight: FontWeight.bold,
                 color: isSelected
                     ? CupertinoColors.systemBlue

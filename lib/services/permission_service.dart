@@ -79,7 +79,7 @@ extension CleanerHomePagePermissions on _CleanerHomePageState {
                       Text(
                         'What this app will do:',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -96,7 +96,7 @@ extension CleanerHomePagePermissions on _CleanerHomePageState {
                 Text(
                   'Click "Grant Access" to open the system dialog and select your home directory.',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 12,
                     fontStyle: FontStyle.italic,
                     color: CupertinoColors.secondaryLabel,
                   ),

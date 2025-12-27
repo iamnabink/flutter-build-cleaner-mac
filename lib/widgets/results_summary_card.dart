@@ -1,6 +1,6 @@
 part of '../pages/cleaner_home_page.dart';
 
-extension CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
+extension _CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
   Widget _buildSummaryCard() {
     if (_scanResults.isEmpty && !_isScanning) {
       return const SizedBox.shrink();
@@ -67,100 +67,51 @@ extension CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
           ),
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Scan Results',
-              style: TextStyle(
-                fontSize: 18,
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
                 fontWeight: FontWeight.bold,
                 letterSpacing: -0.5,
               ),
             ),
             const SizedBox(height: 12),
-            Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    if (apkCount > 0)
-                      _buildSummaryItem(
-                        AppConstants.apkType,
-                        apkCount,
-                        CupertinoIcons.device_phone_portrait,
-                        CupertinoColors.systemGreen,
-                      ),
-                    if (aabCount > 0)
-                      _buildSummaryItem(
-                        AppConstants.aabType,
-                        aabCount,
-                        CupertinoIcons.square_stack,
-                        CupertinoColors.systemBlue,
-                      ),
-                    if (ipaCount > 0)
-                      _buildSummaryItem(
-                        AppConstants.ipaType,
-                        ipaCount,
-                        CupertinoIcons.device_phone_portrait,
-                        CupertinoColors.systemPurple,
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    if (flutterBuildCount > 0)
-                      _buildSummaryItem(
-                        AppConstants.flutterBuildType,
-                        flutterBuildCount,
-                        CupertinoIcons.hammer,
-                        CupertinoColors.systemBlue,
-                      ),
-                    if (reactNativeBuildCount > 0)
-                      _buildSummaryItem(
-                        AppConstants.reactNativeBuildType,
-                        reactNativeBuildCount,
-                        CupertinoIcons.hammer,
-                        CupertinoColors.activeBlue,
-                      ),
-                    if (androidBuildCount > 0)
-                      _buildSummaryItem(
-                        AppConstants.androidBuildType,
-                        androidBuildCount,
-                        CupertinoIcons.hammer,
-                        CupertinoColors.systemGreen,
-                      ),
-                    if (iosBuildCount > 0)
-                      _buildSummaryItem(
-                        AppConstants.iosBuildType,
-                        iosBuildCount,
-                        CupertinoIcons.hammer,
-                        CupertinoColors.systemGrey,
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    if (nodeModulesCount > 0)
-                      _buildSummaryItem(
-                        AppConstants.nodeModulesType,
-                        nodeModulesCount,
-                        CupertinoIcons.folder,
-                        CupertinoColors.systemOrange,
-                      ),
-                    if (archivesCount > 0)
-                      _buildSummaryItem(
-                        AppConstants.archivesType,
-                        archivesCount,
-                        CupertinoIcons.archivebox,
-                        CupertinoColors.systemBrown,
-                      ),
-                  ],
-                ),
-              ],
+            AlignedGridView.count(
+              crossAxisCount: 3,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: [
+                if (apkCount > 0) _SummaryItemData(AppConstants.apkType, apkCount, CupertinoIcons.device_phone_portrait, CupertinoColors.systemGreen),
+                if (aabCount > 0) _SummaryItemData(AppConstants.aabType, aabCount, CupertinoIcons.square_stack, CupertinoColors.systemBlue),
+                if (ipaCount > 0) _SummaryItemData(AppConstants.ipaType, ipaCount, CupertinoIcons.device_phone_portrait, CupertinoColors.systemPurple),
+                if (flutterBuildCount > 0) _SummaryItemData(AppConstants.flutterBuildType, flutterBuildCount, CupertinoIcons.hammer, CupertinoColors.systemBlue),
+                if (reactNativeBuildCount > 0) _SummaryItemData(AppConstants.reactNativeBuildType, reactNativeBuildCount, CupertinoIcons.hammer, CupertinoColors.activeBlue),
+                if (androidBuildCount > 0) _SummaryItemData(AppConstants.androidBuildType, androidBuildCount, CupertinoIcons.hammer, CupertinoColors.systemGreen),
+                if (iosBuildCount > 0) _SummaryItemData(AppConstants.iosBuildType, iosBuildCount, CupertinoIcons.hammer, CupertinoColors.systemGrey),
+                if (nodeModulesCount > 0) _SummaryItemData(AppConstants.nodeModulesType, nodeModulesCount, CupertinoIcons.folder, CupertinoColors.systemOrange),
+                if (archivesCount > 0) _SummaryItemData(AppConstants.archivesType, archivesCount, CupertinoIcons.archivebox, CupertinoColors.systemBrown),
+              ].length,
+              itemBuilder: (context, index) {
+                final items = [
+                  if (apkCount > 0) _SummaryItemData(AppConstants.apkType, apkCount, CupertinoIcons.device_phone_portrait, CupertinoColors.systemGreen),
+                  if (aabCount > 0) _SummaryItemData(AppConstants.aabType, aabCount, CupertinoIcons.square_stack, CupertinoColors.systemBlue),
+                  if (ipaCount > 0) _SummaryItemData(AppConstants.ipaType, ipaCount, CupertinoIcons.device_phone_portrait, CupertinoColors.systemPurple),
+                  if (flutterBuildCount > 0) _SummaryItemData(AppConstants.flutterBuildType, flutterBuildCount, CupertinoIcons.hammer, CupertinoColors.systemBlue),
+                  if (reactNativeBuildCount > 0) _SummaryItemData(AppConstants.reactNativeBuildType, reactNativeBuildCount, CupertinoIcons.hammer, CupertinoColors.activeBlue),
+                  if (androidBuildCount > 0) _SummaryItemData(AppConstants.androidBuildType, androidBuildCount, CupertinoIcons.hammer, CupertinoColors.systemGreen),
+                  if (iosBuildCount > 0) _SummaryItemData(AppConstants.iosBuildType, iosBuildCount, CupertinoIcons.hammer, CupertinoColors.systemGrey),
+                  if (nodeModulesCount > 0) _SummaryItemData(AppConstants.nodeModulesType, nodeModulesCount, CupertinoIcons.folder, CupertinoColors.systemOrange),
+                  if (archivesCount > 0) _SummaryItemData(AppConstants.archivesType, archivesCount, CupertinoIcons.archivebox, CupertinoColors.systemBrown),
+                ];
+                final item = items[index];
+                return _buildSummaryItem(item.label, item.count, item.icon, item.color);
+              },
             ),
+            
             const SizedBox(height: 12),
             // Subtle informational panel — not tappable. Reduced emphasis
             // so users don't think this is a primary action button.
@@ -223,16 +174,16 @@ extension CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
                     children: [
                       Text(
                         AppConstants.spaceToFreeUp,
-                        style: const TextStyle(
-                          fontSize: 10,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 12,
                           color: CupertinoColors.secondaryLabel,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         _formatFileSize(totalSize),
-                        style: const TextStyle(
-                          fontSize: 16,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 12,
                           color: CupertinoColors.systemRed,
                           fontWeight: FontWeight.bold,
                           letterSpacing: -0.2,
@@ -244,8 +195,8 @@ extension CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
                   // Small hint to clarify there's no immediate tap action here.
                   Text(
                     'Review items below to delete',
-                    style: const TextStyle(
-                      fontSize: 10,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 12,
                       color: CupertinoColors.secondaryLabel,
                     ),
                   ),
@@ -295,16 +246,16 @@ extension CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
         const SizedBox(height: 6),
         Text(
           count.toString(),
-          style: TextStyle(
-            fontSize: 18,
+          style: GoogleFonts.montserrat(
+            fontSize: 12,
             fontWeight: FontWeight.bold,
             color: color,
           ),
         ),
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 10,
+          style: GoogleFonts.montserrat(
+            fontSize: 12,
             color: CupertinoColors.secondaryLabel,
           ),
         ),

@@ -38,10 +38,10 @@ extension CleanerHomePageWidgetsResultsWarnings on _CleanerHomePageState {
                 color: CupertinoColors.systemRed,
               ),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 'Permission Warnings',
-                style: TextStyle(
-                  fontSize: 16,
+                style: GoogleFonts.montserrat(
+                  fontSize: 12,
                   color: CupertinoColors.systemRed,
                   fontWeight: FontWeight.bold,
                 ),
@@ -49,11 +49,11 @@ extension CleanerHomePageWidgetsResultsWarnings on _CleanerHomePageState {
             ],
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Some directories could not be accessed due to permission restrictions. '
             'Scan results may be incomplete.',
-            style: TextStyle(
-              fontSize: 14,
+            style: GoogleFonts.montserrat(
+              fontSize: 12,
               color: CupertinoColors.label,
             ),
           ),
@@ -64,10 +64,9 @@ extension CleanerHomePageWidgetsResultsWarnings on _CleanerHomePageState {
                 padding: const EdgeInsets.only(bottom: 4),
                 child: Text(
                   '• ${error.replaceFirst(_selectedPath, '~')}',
-                  style: const TextStyle(
+                  style: GoogleFonts.montserrat(
                     fontSize: 12,
                     color: CupertinoColors.secondaryLabel,
-                    fontFamily: 'monospace',
                   ),
                 ),
               ),
@@ -76,7 +75,7 @@ extension CleanerHomePageWidgetsResultsWarnings on _CleanerHomePageState {
             const SizedBox(height: 8),
             Text(
               '${_permissionErrors.length} directories could not be accessed',
-              style: const TextStyle(
+              style: GoogleFonts.montserrat(
                 fontSize: 12,
                 color: CupertinoColors.secondaryLabel,
                 fontWeight: FontWeight.bold,

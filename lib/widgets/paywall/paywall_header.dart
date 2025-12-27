@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class PaywallHeader extends StatelessWidget {
   const PaywallHeader({Key? key}) : super(key: key);
@@ -43,18 +44,18 @@ class PaywallHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'Support Broomie',
-            style: TextStyle(
-              fontSize: 24,
+            style: GoogleFonts.montserrat(
+              fontSize: 12,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Support independent development and unlock lifetime access',
-            style: TextStyle(
-              fontSize: 14,
+            style: GoogleFonts.montserrat(
+              fontSize: 12,
               color: CupertinoColors.secondaryLabel,
             ),
             textAlign: TextAlign.center,

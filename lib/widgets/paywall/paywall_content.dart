@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_cleaner/widgets/paywall/paywall_header.dart';
 import 'package:flutter_cleaner/widgets/paywall/paywall_package_list.dart';
 import 'package:flutter_cleaner/widgets/paywall/paywall_buttons.dart';
@@ -77,18 +78,18 @@ class PaywallContent extends StatelessWidget {
               color: CupertinoColors.systemBlue,
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'No packages available',
-              style: TextStyle(
-                fontSize: 16,
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Please check your RevenueCat configuration',
-              style: TextStyle(
-                fontSize: 14,
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
                 color: CupertinoColors.secondaryLabel,
               ),
             ),
@@ -120,8 +121,8 @@ class PaywallContent extends StatelessWidget {
           Expanded(
             child: Text(
               errorMessage!,
-              style: const TextStyle(
-                fontSize: 13,
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
                 color: CupertinoColors.systemRed,
               ),
             ),
@@ -136,8 +137,8 @@ class PaywallContent extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Text(
         'Your support directly helps fund development time, allowing me to add new features, fix bugs, and improve Broomie. Thank you for being part of this journey!',
-        style: TextStyle(
-          fontSize: 11,
+        style: GoogleFonts.montserrat(
+          fontSize: 12,
           color: CupertinoColors.secondaryLabel,
         ),
         textAlign: TextAlign.center,

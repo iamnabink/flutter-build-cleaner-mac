@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_cleaner/utils/purchase_utils.dart';
 
 class PaywallSuccessView extends StatelessWidget {
@@ -77,10 +78,10 @@ class PaywallSuccessView extends StatelessWidget {
   }
 
   Widget _buildThankYouMessage() {
-    return const Text(
+    return Text(
       'Thank you for your support!',
-      style: TextStyle(
-        fontSize: 24,
+      style: GoogleFonts.montserrat(
+        fontSize: 13,
         fontWeight: FontWeight.bold,
         color: CupertinoColors.label,
       ),
@@ -91,8 +92,8 @@ class PaywallSuccessView extends StatelessWidget {
   Widget _buildSubtitle() {
     return Text(
       'You now have lifetime access to Broomie',
-      style: TextStyle(
-        fontSize: 14,
+      style: GoogleFonts.montserrat(
+        fontSize: 12,
         color: CupertinoColors.secondaryLabel,
       ),
       textAlign: TextAlign.center,
@@ -123,8 +124,8 @@ class PaywallSuccessView extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 'Subscription Date',
-                style: TextStyle(
-                  fontSize: 14,
+                style: GoogleFonts.montserrat(
+                  fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: CupertinoColors.secondaryLabel,
                 ),
@@ -134,8 +135,8 @@ class PaywallSuccessView extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             formattedDate,
-            style: const TextStyle(
-              fontSize: 20,
+            style: GoogleFonts.montserrat(
+              fontSize: 12,
               fontWeight: FontWeight.bold,
               color: CupertinoColors.label,
             ),
@@ -143,7 +144,7 @@ class PaywallSuccessView extends StatelessWidget {
           // const SizedBox(height: 8),
           // Text(
           //   formattedTime,
-          //   style: TextStyle(
+          //   style: GoogleFonts.montserrat(
           //     fontSize: 16,
           //     color: CupertinoColors.secondaryLabel,
           //   ),
@@ -178,10 +179,10 @@ class PaywallSuccessView extends StatelessWidget {
       child: CupertinoButton(
         padding: EdgeInsets.zero,
         onPressed: onContinue,
-        child: const Text(
+        child: Text(
           'Continue',
-          style: TextStyle(
-            fontSize: 16,
+          style: GoogleFonts.montserrat(
+            fontSize: 12,
             fontWeight: FontWeight.w600,
             color: CupertinoColors.white,
           ),

@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_cleaner/pages/cleaner_home_page.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_cleaner/constants.dart';
 import 'package:flutter_cleaner/scan_result.dart';
 import 'package:path/path.dart' as path;

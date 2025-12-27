@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class PaywallButtons extends StatelessWidget {
   final Package? selectedPackage;
@@ -90,8 +91,8 @@ class _PurchaseButton extends StatelessWidget {
                 selectedPackage != null
                     ? 'Purchase ${selectedPackage!.storeProduct.priceString}'
                     : 'Select a package',
-                style: const TextStyle(
-                  fontSize: 16,
+                style: GoogleFonts.montserrat(
+                  fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: CupertinoColors.white,
                 ),
@@ -118,18 +119,24 @@ class _RestoreButton extends StatelessWidget {
     return CupertinoButton(
       onPressed: (isPurchasing || isRestoring) ? null : onPressed,
       child: isRestoring
-          ? const Row(
+          ? Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CupertinoActivityIndicator(radius: 8),
-                SizedBox(width: 8),
-                Text('Restoring...'),
+                const CupertinoActivityIndicator(radius: 8),
+                const SizedBox(width: 8),
+                Text(
+                  'Restoring...',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 12,
+                    color: CupertinoColors.systemBlue,
+                  ),
+                ),
               ],
             )
-          : const Text(
+          : Text(
               'Restore Purchases',
-              style: TextStyle(
-                fontSize: 14,
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
                 color: CupertinoColors.systemBlue,
               ),
             ),

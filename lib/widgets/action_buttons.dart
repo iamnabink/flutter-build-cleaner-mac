@@ -2,68 +2,36 @@ part of '../pages/cleaner_home_page.dart';
 
 extension CleanerHomePageWidgetsActions on _CleanerHomePageState {
   Widget _buildActionButtons() {
-    return Container(
-      padding: const EdgeInsets.all(11.2),
-      decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
-        borderRadius: BorderRadius.circular(11.2),
-        boxShadow: [
-          BoxShadow(
-            color: CupertinoColors.black.withOpacity(0.06),
-            blurRadius: 8.4,
-            offset: const Offset(0, 1.4),
-          ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        // Current path display (if selected)
+        if (_selectedPath.isNotEmpty && _hasPermission) ...[
+          _buildCurrentPathDisplay(),
+          const SizedBox(height: 12),
         ],
-        border: Border.all(
-          color: CupertinoColors.systemGrey4.withOpacity(0.3),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Current path display (if selected)
-          if (_selectedPath.isNotEmpty && _hasPermission) ...[
-            _buildCurrentPathDisplay(),
-            const SizedBox(height: 8.4),
-            Container(
-              height: 1,
-              color: CupertinoColors.systemGrey4,
+        
+        // Permission state
+        if (!_hasPermission) ...[
+          _buildPermissionCard(),
+        ] else if (_selectedPath.isEmpty) ...[
+          _buildSelectDirectoryCard(),
+        ] else ...[
+          // Primary action - Scan
+          _buildScanCard(),
+          if (_scanResults.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            // Secondary actions
+            Row(
+              children: [
+                Expanded(child: _buildChangeDirectoryCard()),
+                const SizedBox(width: 12),
+                Expanded(child: _buildCleanCard()),
+              ],
             ),
-            const SizedBox(height: 8.4),
-          ],
-          
-          // Permission state
-          if (!_hasPermission) ...[
-            _buildPermissionPrompt(),
-            const SizedBox(height: 8.4),
-            _buildGrantPermissionButton(),
-          ] else if (_selectedPath.isEmpty) ...[
-            _buildSelectDirectoryPrompt(),
-            const SizedBox(height: 8.4),
-            _buildSelectDirectoryButton(),
-          ] else ...[
-            // Primary action - Scan
-            _buildScanButton(),
-            if (_scanResults.isNotEmpty) ...[
-              const SizedBox(height: 8.4),
-              Container(
-                height: 1,
-                color: CupertinoColors.systemGrey4,
-              ),
-              const SizedBox(height: 8.4),
-              // Secondary actions
-              Row(
-                children: [
-                  Expanded(child: _buildChangeDirectoryButton()),
-                  const SizedBox(width: 8.4),
-                  Expanded(child: _buildCleanButton()),
-                ],
-              ),
-            ],
           ],
         ],
-      ),
+      ],
     );
   }
 
@@ -110,9 +78,8 @@ extension CleanerHomePageWidgetsActions on _CleanerHomePageState {
           Expanded(
             child: Text(
               _selectedPath,
-              style: const TextStyle(
-                fontSize: 7.7,
-                fontFamily: 'monospace',
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
                 color: CupertinoColors.label,
                 fontWeight: FontWeight.w500,
               ),
@@ -124,123 +91,98 @@ extension CleanerHomePageWidgetsActions on _CleanerHomePageState {
     );
   }
 
-  Widget _buildPermissionPrompt() {
-    return Column(
-      children: [
-        Icon(
-          CupertinoIcons.lock_fill,
-          size: 22.4,
-          color: CupertinoColors.systemOrange,
-        ),
-        const SizedBox(height: 5.6),
-        const Text(
-          'Permission Required',
-          style: TextStyle(
-            fontSize: 11.2,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 4.2),
-        Text(
-          AppConstants.grantPermissionMessage,
-          style: const TextStyle(
-            fontSize: 8.4,
-            color: CupertinoColors.secondaryLabel,
-            height: 1.3,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
-    );
-  }
 
-  Widget _buildSelectDirectoryPrompt() {
-    return Column(
-      children: [
-        Icon(
-          CupertinoIcons.folder_fill,
-          size: 22.4,
-          color: CupertinoColors.systemBlue,
-        ),
-        const SizedBox(height: 5.6),
-        const Text(
-          'Select Directory',
-          style: TextStyle(
-            fontSize: 11.2,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 4.2),
-        Text(
-          AppConstants.selectDirectoryMessage,
-          style: const TextStyle(
-            fontSize: 8.4,
-            color: CupertinoColors.secondaryLabel,
-            height: 1.3,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildGrantPermissionButton() {
+  Widget _buildPermissionCard() {
     final isDisabled = _isScanning || _isDeleting;
-    return Container(
-      width: double.infinity,
-      height: 30.8,
-      decoration: BoxDecoration(
-        gradient: isDisabled
-            ? null
-            : LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  CupertinoColors.systemOrange,
-                  CupertinoColors.systemOrange.darkColor,
+    return GestureDetector(
+      onTap: isDisabled ? null : _showPermissionDialog,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: isDisabled
+              ? null
+              : LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    CupertinoColors.systemOrange.withOpacity(0.15),
+                    CupertinoColors.systemOrange.withOpacity(0.08),
+                  ],
+                ),
+          color: isDisabled ? CupertinoColors.systemGrey6 : null,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isDisabled
+                ? CupertinoColors.systemGrey4
+                : CupertinoColors.systemOrange.withOpacity(0.4),
+            width: 2,
+          ),
+          boxShadow: isDisabled
+              ? null
+              : [
+                  BoxShadow(
+                    color: CupertinoColors.systemOrange.withOpacity(0.2),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
                 ],
-              ),
-        borderRadius: BorderRadius.circular(8.4),
-        boxShadow: isDisabled
-            ? null
-            : [
-                BoxShadow(
-                  color: CupertinoColors.systemOrange.withOpacity(0.4),
-                  blurRadius: 8.4,
-                  offset: const Offset(0, 2.8),
-                ),
-              ],
-      ),
-      child: CupertinoButton(
-        padding: EdgeInsets.zero,
-        onPressed: isDisabled ? null : _showPermissionDialog,
-        color: isDisabled ? CupertinoColors.systemGrey4 : CupertinoColors.systemBlue.withOpacity(0),
-        disabledColor: CupertinoColors.systemGrey4,
-        borderRadius: BorderRadius.circular(8.4),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
+        ),
+        child: Column(
           children: [
-            Icon(
-              CupertinoIcons.lock_fill,
-              size: 12.6,
-              color: isDisabled
-                  ? CupertinoColors.secondaryLabel
-                  : CupertinoColors.white,
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                gradient: isDisabled
+                    ? null
+                    : LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          CupertinoColors.systemOrange,
+                          CupertinoColors.systemOrange.darkColor,
+                        ],
+                      ),
+                color: isDisabled ? CupertinoColors.systemGrey4 : null,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                CupertinoIcons.lock_fill,
+                size: 24,
+                color: isDisabled
+                    ? CupertinoColors.secondaryLabel
+                    : CupertinoColors.white,
+              ),
             ),
-            const SizedBox(width: 5.6),
-            Flexible(
-              child: Text(
-                AppConstants.grantPermissionButtonText,
-                style: TextStyle(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w700,
-                  color: isDisabled
-                      ? CupertinoColors.secondaryLabel
-                      : CupertinoColors.white,
-                  letterSpacing: -0.14,
-                ),
-                overflow: TextOverflow.ellipsis,
+            const SizedBox(height: 16),
+            Text(
+              'Permission Required',
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: isDisabled
+                    ? CupertinoColors.secondaryLabel
+                    : CupertinoColors.label,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              AppConstants.grantPermissionMessage,
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
+                color: CupertinoColors.secondaryLabel,
+                height: 1.4,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Tap to grant permission',
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
+                color: isDisabled
+                    ? CupertinoColors.secondaryLabel
+                    : CupertinoColors.systemOrange,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
@@ -249,63 +191,97 @@ extension CleanerHomePageWidgetsActions on _CleanerHomePageState {
     );
   }
 
-  Widget _buildSelectDirectoryButton() {
+  Widget _buildSelectDirectoryCard() {
     final isDisabled = _isScanning || _isDeleting;
-    return Container(
-      width: double.infinity,
-      height: 30.8,
-      decoration: BoxDecoration(
-        gradient: isDisabled
-            ? null
-            : LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  CupertinoColors.systemBlue,
-                  CupertinoColors.systemBlue.darkColor,
+    return GestureDetector(
+      onTap: isDisabled ? null : _requestFileAccess,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: isDisabled
+              ? null
+              : LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    CupertinoColors.systemBlue.withOpacity(0.15),
+                    CupertinoColors.systemBlue.withOpacity(0.08),
+                  ],
+                ),
+          color: isDisabled ? CupertinoColors.systemGrey6 : null,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isDisabled
+                ? CupertinoColors.systemGrey4
+                : CupertinoColors.systemBlue.withOpacity(0.4),
+            width: 2,
+          ),
+          boxShadow: isDisabled
+              ? null
+              : [
+                  BoxShadow(
+                    color: CupertinoColors.systemBlue.withOpacity(0.2),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
                 ],
-              ),
-        borderRadius: BorderRadius.circular(8.4),
-        boxShadow: isDisabled
-            ? null
-            : [
-                BoxShadow(
-                  color: CupertinoColors.systemBlue.withOpacity(0.4),
-                  blurRadius: 8.4,
-                  offset: const Offset(0, 2.8),
-                ),
-              ],
-      ),
-      child: CupertinoButton(
-        padding: EdgeInsets.zero,
-        onPressed: isDisabled ? null : _requestFileAccess,
-        color: isDisabled ? CupertinoColors.systemGrey4 : CupertinoColors.systemBlue.withOpacity(0),
-        disabledColor: CupertinoColors.systemGrey4,
-        borderRadius: BorderRadius.circular(8.4),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
+        ),
+        child: Column(
           children: [
-            Icon(
-              CupertinoIcons.folder_fill,
-              size: 12.6,
-              color: isDisabled
-                  ? CupertinoColors.secondaryLabel
-                  : CupertinoColors.white,
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                gradient: isDisabled
+                    ? null
+                    : LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          CupertinoColors.systemBlue,
+                          CupertinoColors.systemBlue.darkColor,
+                        ],
+                      ),
+                color: isDisabled ? CupertinoColors.systemGrey4 : null,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                CupertinoIcons.folder_fill,
+                size: 24,
+                color: isDisabled
+                    ? CupertinoColors.secondaryLabel
+                    : CupertinoColors.white,
+              ),
             ),
-            const SizedBox(width: 5.6),
-            Flexible(
-              child: Text(
-                AppConstants.selectDirectoryButtonText,
-                style: TextStyle(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w700,
-                  color: isDisabled
-                      ? CupertinoColors.secondaryLabel
-                      : CupertinoColors.white,
-                  letterSpacing: -0.14,
-                ),
-                overflow: TextOverflow.ellipsis,
+            const SizedBox(height: 16),
+            Text(
+              'Select Directory',
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: isDisabled
+                    ? CupertinoColors.secondaryLabel
+                    : CupertinoColors.label,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              AppConstants.selectDirectoryMessage,
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
+                color: CupertinoColors.secondaryLabel,
+                height: 1.4,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Tap to select directory',
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
+                color: isDisabled
+                    ? CupertinoColors.secondaryLabel
+                    : CupertinoColors.systemBlue,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
@@ -314,135 +290,61 @@ extension CleanerHomePageWidgetsActions on _CleanerHomePageState {
     );
   }
 
-  Widget _buildChangeDirectoryButton() {
+  Widget _buildChangeDirectoryCard() {
     final isDisabled = _isScanning || _isDeleting;
-    return Container(
-      height: 28,
-      decoration: BoxDecoration(
-        color: CupertinoColors.systemBackground,
-        border: Border.all(
-          color: isDisabled
-              ? CupertinoColors.systemGrey4
-              : CupertinoColors.systemBlue.withOpacity(0.3),
-          width: 1.5,
-        ),
-        borderRadius: BorderRadius.circular(8.4),
-        boxShadow: [
-          BoxShadow(
-            color: CupertinoColors.black.withOpacity(0.03),
-            blurRadius: 2.8,
-            offset: const Offset(0, 1.4),
+    return GestureDetector(
+      onTap: isDisabled ? null : _requestFileAccess,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              CupertinoColors.systemBlue.withOpacity(0.1),
+              CupertinoColors.systemBlue.withOpacity(0.05),
+            ],
           ),
-        ],
-      ),
-      child: CupertinoButton(
-        padding: EdgeInsets.zero,
-        onPressed: isDisabled ? null : _requestFileAccess,
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 8.4, vertical: 8.4),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isDisabled
+                ? CupertinoColors.systemGrey4
+                : CupertinoColors.systemBlue.withOpacity(0.3),
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: CupertinoColors.systemBlue.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: CupertinoColors.systemBlue.withOpacity(0.15),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
                 CupertinoIcons.folder,
-                size: 11.2,
+                size: 20,
                 color: isDisabled
                     ? CupertinoColors.secondaryLabel
                     : CupertinoColors.systemBlue,
               ),
-              const SizedBox(width: 4.2),
-              Flexible(
-                child: Text(
-                  'Change',
-                  style: TextStyle(
-                    fontSize: 9.1,
-                    fontWeight: FontWeight.w600,
-                    color: isDisabled
-                        ? CupertinoColors.secondaryLabel
-                        : CupertinoColors.systemBlue,
-                    letterSpacing: -0.07,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildScanButton() {
-    final isDisabled = _isScanning || _isDeleting;
-    return Container(
-      width: double.infinity,
-      height: 30.8,
-      decoration: BoxDecoration(
-        gradient: isDisabled
-            ? null
-            : LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  CupertinoColors.systemBlue,
-                  CupertinoColors.systemBlue.darkColor,
-                ],
-              ),
-        borderRadius: BorderRadius.circular(8.4),
-        boxShadow: isDisabled
-            ? null
-            : [
-                BoxShadow(
-                  color: CupertinoColors.systemBlue.withOpacity(0.4),
-                  blurRadius: 8.4,
-                  offset: const Offset(0, 2.8),
-                ),
-              ],
-      ),
-      child: CupertinoButton(
-        padding: EdgeInsets.zero,
-        onPressed: isDisabled ? null : _scanSystem,
-        color: isDisabled ? CupertinoColors.systemGrey4 : CupertinoColors.systemBlue.withOpacity(0),
-        disabledColor: CupertinoColors.systemGrey4,
-        borderRadius: BorderRadius.circular(8.4),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _isScanning
-                ? AnimatedBuilder(
-                    animation: _rotationAnimation,
-                    builder: (context, child) {
-                      return Transform.rotate(
-                        angle: _rotationAnimation.value * 2 * 3.14159,
-                        child: const Icon(
-                          CupertinoIcons.arrow_2_squarepath,
-                          size: 12.6,
-                          color: CupertinoColors.white,
-                        ),
-                      );
-                    },
-                  )
-                : const Icon(
-                    CupertinoIcons.search,
-                    size: 12.6,
-                    color: CupertinoColors.white,
-                  ),
-            const SizedBox(width: 5.6),
-            Flexible(
-              child: Text(
-                _isScanning
-                    ? AppConstants.scanningButtonText
-                    : AppConstants.scanButtonText,
-                style: const TextStyle(
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w700,
-                  color: CupertinoColors.white,
-                  letterSpacing: -0.14,
-                ),
-                overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'Change Directory',
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: isDisabled
+                    ? CupertinoColors.secondaryLabel
+                    : CupertinoColors.label,
               ),
             ),
           ],
@@ -451,78 +353,191 @@ extension CleanerHomePageWidgetsActions on _CleanerHomePageState {
     );
   }
 
-  Widget _buildCleanButton() {
-    final isDisabled = _scanResults.isEmpty || _isScanning || _isDeleting;
-    return Container(
-      height: 28,
-      decoration: BoxDecoration(
-        gradient: isDisabled
-            ? null
-            : LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  CupertinoColors.systemRed,
-                  CupertinoColors.systemRed.darkColor,
-                ],
-              ),
-        borderRadius: BorderRadius.circular(8.4),
-        boxShadow: isDisabled
-            ? null
-            : [
-                BoxShadow(
-                  color: CupertinoColors.systemRed.withOpacity(0.4),
-                  blurRadius: 7,
-                  offset: const Offset(0, 2.8),
+  Widget _buildScanCard() {
+    final isDisabled = _isScanning || _isDeleting;
+    return GestureDetector(
+      onTap: isDisabled ? null : _scanSystem,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: isDisabled
+              ? null
+              : LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    CupertinoColors.systemBlue.withOpacity(0.15),
+                    CupertinoColors.systemBlue.withOpacity(0.08),
+                  ],
                 ),
-              ],
+          color: isDisabled ? CupertinoColors.systemGrey6 : null,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isDisabled
+                ? CupertinoColors.systemGrey4
+                : CupertinoColors.systemBlue.withOpacity(0.4),
+            width: 2,
+          ),
+          boxShadow: isDisabled
+              ? null
+              : [
+                  BoxShadow(
+                    color: CupertinoColors.systemBlue.withOpacity(0.2),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                gradient: isDisabled
+                    ? null
+                    : LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          CupertinoColors.systemBlue,
+                          CupertinoColors.systemBlue.darkColor,
+                        ],
+                      ),
+                color: isDisabled ? CupertinoColors.systemGrey4 : null,
+                shape: BoxShape.circle,
+              ),
+              child: _isScanning
+                  ? AnimatedBuilder(
+                      animation: _rotationAnimation,
+                      builder: (context, child) {
+                        return Transform.rotate(
+                          angle: _rotationAnimation.value * 2 * 3.14159,
+                          child: const Icon(
+                            CupertinoIcons.arrow_2_squarepath,
+                            size: 24,
+                            color: CupertinoColors.white,
+                          ),
+                        );
+                      },
+                    )
+                  : const Icon(
+                      CupertinoIcons.search,
+                      size: 24,
+                      color: CupertinoColors.white,
+                    ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              _isScanning
+                  ? AppConstants.scanningButtonText
+                  : AppConstants.scanButtonText,
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: isDisabled
+                    ? CupertinoColors.secondaryLabel
+                    : CupertinoColors.label,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Tap to scan for artifacts',
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
+                color: isDisabled
+                    ? CupertinoColors.secondaryLabel
+                    : CupertinoColors.systemBlue,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
       ),
-      child: CupertinoButton(
-        padding: EdgeInsets.zero,
-        onPressed: isDisabled ? null : _cleanAll,
-        color: isDisabled ? CupertinoColors.systemGrey4 : CupertinoColors.systemBlue.withOpacity(0),
-        disabledColor: CupertinoColors.systemGrey4,
-        borderRadius: BorderRadius.circular(8.4),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: 8.4, vertical: 8.4),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _isDeleting
+    );
+  }
+
+  Widget _buildCleanCard() {
+    final isDisabled = _scanResults.isEmpty || _isScanning || _isDeleting;
+    return GestureDetector(
+      onTap: isDisabled ? null : _cleanAll,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: isDisabled
+              ? null
+              : LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    CupertinoColors.systemRed.withOpacity(0.15),
+                    CupertinoColors.systemRed.withOpacity(0.08),
+                  ],
+                ),
+          color: isDisabled ? CupertinoColors.systemGrey6 : null,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isDisabled
+                ? CupertinoColors.systemGrey4
+                : CupertinoColors.systemRed.withOpacity(0.4),
+            width: 2,
+          ),
+          boxShadow: isDisabled
+              ? null
+              : [
+                  BoxShadow(
+                    color: CupertinoColors.systemRed.withOpacity(0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                gradient: isDisabled
+                    ? null
+                    : LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          CupertinoColors.systemRed,
+                          CupertinoColors.systemRed.darkColor,
+                        ],
+                      ),
+                color: isDisabled ? CupertinoColors.systemGrey4 : null,
+                shape: BoxShape.circle,
+              ),
+              child: _isDeleting
                   ? const SizedBox(
-                      width: 11.2,
-                      height: 11.2,
+                      width: 20,
+                      height: 20,
                       child: CupertinoActivityIndicator(
-                        radius: 5.6,
+                        radius: 10,
                         color: CupertinoColors.white,
                       ),
                     )
                   : const Icon(
                       CupertinoIcons.delete,
-                      size: 11.2,
+                      size: 20,
                       color: CupertinoColors.white,
                     ),
-              const SizedBox(width: 4.2),
-              Flexible(
-                child: Text(
-                  _isDeleting
-                      ? AppConstants.deletingButtonText
-                      : AppConstants.cleanAllButtonText,
-                  style: TextStyle(
-                    fontSize: 9.1,
-                    fontWeight: FontWeight.w700,
-                    color: isDisabled
-                        ? CupertinoColors.secondaryLabel
-                        : CupertinoColors.white,
-                    letterSpacing: -0.07,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              _isDeleting
+                  ? AppConstants.deletingButtonText
+                  : AppConstants.cleanAllButtonText,
+              style: GoogleFonts.montserrat(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: isDisabled
+                    ? CupertinoColors.secondaryLabel
+                    : CupertinoColors.label,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
