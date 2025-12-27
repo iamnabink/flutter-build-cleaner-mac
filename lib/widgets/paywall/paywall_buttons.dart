@@ -59,6 +59,7 @@ class _PurchaseButton extends StatelessWidget {
     
     return Container(
       height: 50,
+      width: double.infinity,
       decoration: BoxDecoration(
         gradient: isDisabled
             ? null
@@ -83,7 +84,8 @@ class _PurchaseButton extends StatelessWidget {
               ],
       ),
       child: CupertinoButton(
-        padding: EdgeInsets.zero,
+        padding: EdgeInsets.symmetric(horizontal: 16),
+        
         onPressed: isDisabled ? null : onPressed,
         child: isPurchasing
             ? const CupertinoActivityIndicator(color: CupertinoColors.white)
