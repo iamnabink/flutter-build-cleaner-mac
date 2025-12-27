@@ -52,7 +52,7 @@ class PaywallHeader extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Get lifetime access and help us improve',
+            'Support independent development and unlock lifetime access',
             style: TextStyle(
               fontSize: 14,
               color: CupertinoColors.secondaryLabel,

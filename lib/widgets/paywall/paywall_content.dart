@@ -135,7 +135,7 @@ class PaywallContent extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Text(
-        'Your purchase helps support the development of Broomie. Thank you!',
+        'Your support directly helps fund development time, allowing me to add new features, fix bugs, and improve Broomie. Thank you for being part of this journey!',
         style: TextStyle(
           fontSize: 11,
           color: CupertinoColors.secondaryLabel,
