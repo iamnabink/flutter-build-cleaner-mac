@@ -5,6 +5,7 @@ import 'package:flutter_cleaner/models/guide_models.dart';
 import 'package:flutter_cleaner/pages/guide/guide_widgets.dart';
 import 'package:flutter_cleaner/pages/guide/routine_checklist.dart';
 import 'package:flutter_cleaner/services/guide_progress_service.dart';
+import 'package:flutter_cleaner/services/storage_info_service.dart';
 import 'package:flutter_cleaner/theme/app_colors.dart';
 import 'package:macos_ui/macos_ui.dart';
 
@@ -21,11 +22,25 @@ class ManualGuidePage extends StatefulWidget {
 class _ManualGuidePageState extends State<ManualGuidePage> {
   Set<String> _checkedIds = {};
   DateTime? _lastReset;
+  StorageInfo? _storage;
+  bool _loadingStorage = false;
 
   @override
   void initState() {
     super.initState();
     _load();
+    _refreshStorage();
+  }
+
+  Future<void> _refreshStorage() async {
+    if (_loadingStorage) return;
+    setState(() => _loadingStorage = true);
+    final info = await StorageInfoService.fetch();
+    if (!mounted) return;
+    setState(() {
+      _storage = info;
+      _loadingStorage = false;
+    });
   }
 
   Future<void> _load() async {
@@ -87,6 +102,48 @@ class _ManualGuidePageState extends State<ManualGuidePage> {
         title: const Text('Manual Cleanup Guide'),
         centerTitle: false,
         actions: [
+          CustomToolbarItem(
+            tooltipMessage: 'Available storage on this Mac',
+            inToolbarBuilder: (context) => Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: context.colors.chipBackground,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: context.colors.separator),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    MacosIcon(
+                      CupertinoIcons.floppy_disk,
+                      size: 13,
+                      color: context.colors.secondaryLabel,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      _storage == null
+                          ? '— free'
+                          : '${_storage!.availableLabel} free of ${_storage!.totalLabel}',
+                      style: MacosTheme.of(context).typography.caption1,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          ToolBarIconButton(
+            label: 'Refresh storage',
+            icon: _loadingStorage
+                ? const MacosIcon(CupertinoIcons.arrow_2_circlepath_circle)
+                : const MacosIcon(CupertinoIcons.arrow_2_circlepath),
+            showLabel: false,
+            tooltipMessage: 'Refresh available storage',
+            onPressed: _refreshStorage,
+          ),
+          const ToolBarDivider(),
           ToolBarIconButton(
             label: 'Reset routine',
             icon: const MacosIcon(CupertinoIcons.arrow_counterclockwise),
@@ -112,6 +169,7 @@ class _ManualGuidePageState extends State<ManualGuidePage> {
                 checkedIds: _checkedIds,
                 lastReset: _lastReset,
                 onToggle: _toggleStep,
+                onCommandExecuted: _refreshStorage,
               ),
               const SizedBox(height: 18),
               for (final section in ManualGuideData.sections) ...[
@@ -130,7 +188,11 @@ class _ManualGuidePageState extends State<ManualGuidePage> {
                     ),
                   ),
                 const SizedBox(height: 8),
-                for (final item in section.items) GuideItemTile(item: item),
+                for (final item in section.items)
+                  GuideItemTile(
+                    item: item,
+                    onCommandExecuted: _refreshStorage,
+                  ),
                 const SizedBox(height: 14),
               ],
             ],

@@ -40,7 +40,7 @@ class MainView extends StatefulWidget {
 }
 
 class _MainViewState extends State<MainView> {
-  final Set<AppSection> _builtSections = {AppSection.home};
+  final Set<AppSection> _builtSections = {MainView.section.value};
 
   /// Sidebar entries; Pro is hidden when no RevenueCat key is configured.
   List<AppSection> get _sections => [

@@ -12,11 +12,13 @@ class RoutineChecklist extends StatelessWidget {
     required this.checkedIds,
     required this.lastReset,
     required this.onToggle,
+    this.onCommandExecuted,
   });
 
   final Set<String> checkedIds;
   final DateTime? lastReset;
   final void Function(RoutineStep step, bool checked) onToggle;
+  final VoidCallback? onCommandExecuted;
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +75,7 @@ class RoutineChecklist extends StatelessWidget {
             step: step,
             checked: checkedIds.contains(step.id),
             onToggle: onToggle,
+            onCommandExecuted: onCommandExecuted,
           ),
         ],
       ),
@@ -85,11 +88,13 @@ class _RoutineRow extends StatelessWidget {
     required this.step,
     required this.checked,
     required this.onToggle,
+    this.onCommandExecuted,
   });
 
   final RoutineStep step;
   final bool checked;
   final void Function(RoutineStep step, bool checked) onToggle;
+  final VoidCallback? onCommandExecuted;
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +132,10 @@ class _RoutineRow extends StatelessWidget {
           if (step.command != null)
             Padding(
               padding: const EdgeInsets.only(left: 24, top: 4),
-              child: CommandRow(command: GuideCommand(step.command!)),
+              child: CommandRow(
+                command: GuideCommand(step.command!),
+                onExecuted: onCommandExecuted,
+              ),
             ),
         ],
       ),
