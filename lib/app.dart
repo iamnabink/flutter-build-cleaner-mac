@@ -1,20 +1,22 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_cleaner/pages/cleaner_home_page.dart';
+import 'package:flutter/material.dart' show ThemeMode;
+import 'package:flutter/widgets.dart';
 import 'package:flutter_cleaner/constants.dart';
+import 'package:flutter_cleaner/pages/main_view.dart';
+import 'package:flutter_cleaner/theme/app_theme.dart';
+import 'package:macos_ui/macos_ui.dart';
 
-class APKBuildCleanerApp extends StatelessWidget {
-  const APKBuildCleanerApp({super.key});
+class BroomieApp extends StatelessWidget {
+  const BroomieApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
+    return MacosApp(
       title: AppConstants.appName,
       debugShowCheckedModeBanner: false,
-      theme: const CupertinoThemeData(
-        brightness: Brightness.light,
-        primaryColor: CupertinoColors.systemBlue,
-      ),
-      home: const CleanerHomePage(),
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: ThemeMode.system,
+      home: const MainView(),
     );
   }
 }

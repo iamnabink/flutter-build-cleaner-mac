@@ -1,6 +1,8 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
+import 'package:flutter/widgets.dart';
+import 'package:macos_ui/macos_ui.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_cleaner/theme/app_colors.dart';
 
 class PaywallPackageList extends StatelessWidget {
   final List<Package> packages;
@@ -47,21 +49,19 @@ class _PackageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final typography = MacosTheme.of(context).typography;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isSelected
-              ? CupertinoColors.systemBlue.withOpacity(0.1)
-              : CupertinoColors.systemGrey6,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected
-                ? CupertinoColors.systemBlue
-                : CupertinoColors.systemGrey4,
-            width: isSelected ? 2 : 1,
-          ),
+              ? context.colors.accent.withValues(alpha: 0.08)
+              : context.colors.cardBackground,
+          borderRadius: BorderRadius.circular(10),
+          border: isSelected
+              ? Border.all(color: context.colors.accent, width: 2)
+              : Border.all(color: context.colors.separator),
         ),
         child: Row(
           children: [
@@ -71,14 +71,14 @@ class _PackageItem extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: isSelected
-                    ? CupertinoColors.systemBlue
-                    : CupertinoColors.systemGrey4,
+                    ? context.colors.accent
+                    : context.colors.border,
               ),
               child: isSelected
-                  ? const Icon(
+                  ? MacosIcon(
                       CupertinoIcons.checkmark,
                       size: 16,
-                      color: CupertinoColors.white,
+                      color: context.colors.white,
                     )
                   : null,
             ),
@@ -89,8 +89,7 @@ class _PackageItem extends StatelessWidget {
                 children: [
                   Text(
                     package.storeProduct.title,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 12,
+                    style: typography.body.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -98,9 +97,8 @@ class _PackageItem extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       package.storeProduct.description,
-                      style: GoogleFonts.montserrat(
-                        fontSize: 12,
-                        color: CupertinoColors.secondaryLabel,
+                      style: typography.caption1.copyWith(
+                        color: context.colors.secondaryLabel,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -112,12 +110,11 @@ class _PackageItem extends StatelessWidget {
             const SizedBox(width: 12),
             Text(
               package.storeProduct.priceString,
-              style: GoogleFonts.montserrat(
-                fontSize: 12,
+              style: typography.body.copyWith(
                 fontWeight: FontWeight.bold,
                 color: isSelected
-                    ? CupertinoColors.systemBlue
-                    : CupertinoColors.label,
+                    ? context.colors.accent
+                    : context.colors.label,
               ),
             ),
           ],
@@ -126,4 +123,3 @@ class _PackageItem extends StatelessWidget {
     );
   }
 }
-

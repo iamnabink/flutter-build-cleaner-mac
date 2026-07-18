@@ -6,81 +6,44 @@ extension CleanerHomePageWidgetsProgress on _CleanerHomePageState {
 
     final progress = _isDeleting ? 1.0 : _scanProgress;
     final percentage = (progress * 100).toInt();
+    final typography = MacosTheme.of(context).typography;
 
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            CupertinoColors.systemGrey6,
-            CupertinoColors.systemGrey5,
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: CupertinoColors.black.withOpacity(0.06),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(
-          color: CupertinoColors.systemGrey4.withOpacity(0.3),
-          width: 1,
-        ),
+        color: context.colors.cardBackground,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: context.colors.separator),
       ),
       child: Column(
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Circular Progress Indicator
-              SizedBox(
-                width: 60,
-                height: 60,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    // Background circle
-                    SizedBox(
-                      width: 60,
-                      height: 60,
-                      child: CustomPaint(
-                        painter: _CircularProgressPainter(
-                          progress: progress,
-                          backgroundColor: CupertinoColors.systemGrey4.withOpacity(0.3),
-                          progressColor: CupertinoColors.systemBlue,
-                          strokeWidth: 5,
-                        ),
+              // Circular progress indicator
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ProgressCircle(
+                    value: (progress * 100).clamp(0.0, 100.0),
+                    radius: 22,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    '$percentage%',
+                    style: typography.caption1.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: context.colors.label,
+                    ),
+                  ),
+                  if (_isDeleting)
+                    Text(
+                      'Deleting',
+                      style: typography.caption1.copyWith(
+                        color: context.colors.secondaryLabel,
                       ),
                     ),
-                    // Percentage text
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          '$percentage%',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: CupertinoColors.label,
-                            letterSpacing: -0.3,
-                          ),
-                        ),
-                        if (_isDeleting)
-                          Text(
-                            'Deleting',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 12,
-                              color: CupertinoColors.secondaryLabel,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
+                ],
               ),
               const SizedBox(width: 16),
               // Title and stats
@@ -92,11 +55,8 @@ extension CleanerHomePageWidgetsProgress on _CleanerHomePageState {
                       _isDeleting
                           ? AppConstants.deletingFiles
                           : AppConstants.scanningSystem,
-                      style: GoogleFonts.montserrat(
-                        fontSize: 12,
+                      style: typography.title3.copyWith(
                         fontWeight: FontWeight.bold,
-                        letterSpacing: -0.5,
-                        height: 1.2,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -129,34 +89,23 @@ extension CleanerHomePageWidgetsProgress on _CleanerHomePageState {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    CupertinoColors.systemBackground,
-                    CupertinoColors.systemGrey6,
-                  ],
-                ),
+                color: context.colors.controlBackground,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: CupertinoColors.systemGrey4.withOpacity(0.3),
-                  width: 1,
-                ),
+                border: Border.all(color: context.colors.separator),
               ),
               child: Row(
                 children: [
-                  const Icon(
+                  MacosIcon(
                     CupertinoIcons.folder_fill,
                     size: 12,
-                    color: CupertinoColors.secondaryLabel,
+                    color: context.colors.secondaryLabel,
                   ),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
                       _currentScanPath.replaceFirst(_selectedPath, '~'),
-                      style: GoogleFonts.montserrat(
-                        fontSize: 12,
-                        color: CupertinoColors.secondaryLabel,
+                      style: typography.caption1.copyWith(
+                        color: context.colors.secondaryLabel,
                       ),
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
@@ -178,18 +127,17 @@ extension CleanerHomePageWidgetsProgress on _CleanerHomePageState {
   }) {
     return Row(
       children: [
-        Icon(
+        MacosIcon(
           icon,
           size: 14,
-          color: CupertinoColors.systemBlue,
+          color: context.colors.accent,
         ),
         const SizedBox(width: 6),
         Text(
           '$label $value',
-          style: GoogleFonts.montserrat(
-            fontSize: 12,
-            color: CupertinoColors.label,
-          ),
+          style: MacosTheme.of(context).typography.caption1.copyWith(
+                color: context.colors.label,
+              ),
         ),
       ],
     );
@@ -199,26 +147,9 @@ extension CleanerHomePageWidgetsProgress on _CleanerHomePageState {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            CupertinoColors.systemGrey6,
-            CupertinoColors.systemGrey5,
-          ],
-        ),
+        color: context.colors.cardBackground,
         borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: CupertinoColors.black.withOpacity(0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-        border: Border.all(
-          color: CupertinoColors.systemGrey4.withOpacity(0.3),
-          width: 1,
-        ),
+        border: Border.all(color: context.colors.separator),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -227,19 +158,19 @@ extension CleanerHomePageWidgetsProgress on _CleanerHomePageState {
             CupertinoIcons.folder,
             'Scanned',
             _directoriesScanned.toString(),
-            CupertinoColors.systemBlue,
+            context.colors.accent,
           ),
           _buildStatItem(
             CupertinoIcons.exclamationmark_triangle,
             'Errors',
             _permissionErrors.length.toString(),
-            CupertinoColors.systemOrange,
+            context.colors.warning,
           ),
           _buildStatItem(
             CupertinoIcons.timer,
             'Progress',
             '${(_scanProgress * 100).toInt()}%',
-            CupertinoColors.systemBlue,
+            context.colors.accent,
           ),
         ],
       ),
@@ -252,86 +183,31 @@ extension CleanerHomePageWidgetsProgress on _CleanerHomePageState {
     String value,
     Color color,
   ) {
+    final typography = MacosTheme.of(context).typography;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 14, color: color),
+        MacosIcon(icon, size: 14, color: color),
         const SizedBox(width: 4),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               value,
-              style: GoogleFonts.montserrat(
+              style: typography.caption1.copyWith(
                 fontWeight: FontWeight.bold,
                 color: color,
-                fontSize: 12,
               ),
             ),
             Text(
               label,
-              style: GoogleFonts.montserrat(
-                fontSize: 12,
-                color: CupertinoColors.secondaryLabel,
+              style: typography.caption1.copyWith(
+                color: context.colors.secondaryLabel,
               ),
             ),
           ],
         ),
       ],
     );
-  }
-}
-
-// Custom painter for circular progress
-class _CircularProgressPainter extends CustomPainter {
-  final double progress;
-  final Color backgroundColor;
-  final Color progressColor;
-  final double strokeWidth;
-
-  _CircularProgressPainter({
-    required this.progress,
-    required this.backgroundColor,
-    required this.progressColor,
-    required this.strokeWidth,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = (size.width - strokeWidth) / 2;
-
-    // Draw background circle
-    final backgroundPaint = Paint()
-      ..color = backgroundColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-
-    canvas.drawCircle(center, radius, backgroundPaint);
-
-    // Draw progress arc
-    final progressPaint = Paint()
-      ..color = progressColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..strokeCap = StrokeCap.round;
-
-    final sweepAngle = 2 * 3.14159 * progress;
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      -3.14159 / 2, // Start from top
-      sweepAngle,
-      false,
-      progressPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_CircularProgressPainter oldDelegate) {
-    return oldDelegate.progress != progress ||
-        oldDelegate.backgroundColor != backgroundColor ||
-        oldDelegate.progressColor != progressColor ||
-        oldDelegate.strokeWidth != strokeWidth;
   }
 }

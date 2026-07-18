@@ -1,5 +1,7 @@
-import 'package:flutter/cupertino.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
+import 'package:flutter/widgets.dart';
+import 'package:macos_ui/macos_ui.dart';
+import 'package:flutter_cleaner/theme/app_colors.dart';
 
 class PaywallErrorView extends StatelessWidget {
   final String? errorMessage;
@@ -19,22 +21,22 @@ class PaywallErrorView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
+            MacosIcon(
               CupertinoIcons.exclamationmark_triangle,
               size: 48,
-              color: CupertinoColors.systemOrange,
+              color: context.colors.warning,
             ),
             const SizedBox(height: 16),
             Text(
               errorMessage ?? 'Failed to load offerings',
-              style: GoogleFonts.montserrat(
-                fontSize: 12,
-                color: CupertinoColors.secondaryLabel,
-              ),
+              style: MacosTheme.of(context).typography.body.copyWith(
+                    color: context.colors.secondaryLabel,
+                  ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
-            CupertinoButton.filled(
+            PushButton(
+              controlSize: ControlSize.large,
               onPressed: onRetry,
               child: const Text('Retry'),
             ),
@@ -44,4 +46,3 @@ class PaywallErrorView extends StatelessWidget {
     );
   }
 }
-

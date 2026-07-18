@@ -85,9 +85,31 @@ Broomie automatically scans, identifies, and safely removes build artifacts (nev
 
 ## System Requirements
 
-- **macOS 10.14** or later
+- **macOS 10.15** or later
 - **50MB** free disk space for the app
 - **File system access** permission (granted on first launch)
+
+---
+
+## Building from Source
+
+```bash
+git clone https://github.com/iamnabink/macOs-mobile-dev-cleaner.git
+cd macOs-mobile-dev-cleaner
+
+# REQUIRED: create your local .env (the build fails without it — it's a bundled asset)
+cp .env.example .env
+
+flutter pub get
+flutter run -d macos
+```
+
+**About `.env`:** the only variable is `REVENUECAT_API_KEY` (RevenueCat public
+SDK key for in-app purchases). **Leave it empty** — the app runs fully
+featured with the Pro/paywall UI hidden. Never commit your `.env`.
+
+The UI is built entirely with [macos_ui](https://pub.dev/packages/macos_ui).
+See [CLAUDE.md](CLAUDE.md) for architecture notes and conventions.
 
 ---
 

@@ -1,5 +1,7 @@
-import 'package:flutter/cupertino.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
+import 'package:flutter/widgets.dart';
+import 'package:macos_ui/macos_ui.dart';
+import 'package:flutter_cleaner/theme/app_colors.dart';
 import 'package:flutter_cleaner/utils/purchase_utils.dart';
 
 class PaywallSuccessView extends StatelessWidget {
@@ -24,91 +26,74 @@ class PaywallSuccessView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Big checkmark
-            _buildCheckmark(),
+            _buildCheckmark(context),
             const SizedBox(height: 24),
-            
+
             // Thank you message
-            _buildThankYouMessage(),
+            _buildThankYouMessage(context),
             const SizedBox(height: 12),
-            
+
             // Subtitle
-            _buildSubtitle(),
+            _buildSubtitle(context),
             const SizedBox(height: 32),
-            
+
             // Date and time container
-            _buildDateContainer(formattedDate, formattedTime),
+            _buildDateContainer(context, formattedDate, formattedTime),
             const SizedBox(height: 32),
-            
+
             // Continue button
-            _buildContinueButton(),
+            _buildContinueButton(context),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildCheckmark() {
+  Widget _buildCheckmark(BuildContext context) {
     return Container(
       width: 80,
       height: 80,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            CupertinoColors.systemGreen,
-            CupertinoColors.systemGreen.darkColor,
-          ],
-        ),
+        color: context.colors.success,
         shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: CupertinoColors.systemGreen.withOpacity(0.4),
-            blurRadius: 15,
-            offset: const Offset(0, 6),
-          ),
-        ],
       ),
-      child: const Icon(
+      child: MacosIcon(
         CupertinoIcons.checkmark,
         size: 45,
-        color: CupertinoColors.white,
+        color: context.colors.white,
       ),
     );
   }
 
-  Widget _buildThankYouMessage() {
+  Widget _buildThankYouMessage(BuildContext context) {
     return Text(
       'Thank you for your support!',
-      style: GoogleFonts.montserrat(
-        fontSize: 13,
-        fontWeight: FontWeight.bold,
-        color: CupertinoColors.label,
-      ),
+      style: MacosTheme.of(context).typography.title1.copyWith(
+            color: context.colors.label,
+          ),
       textAlign: TextAlign.center,
     );
   }
 
-  Widget _buildSubtitle() {
+  Widget _buildSubtitle(BuildContext context) {
     return Text(
       'You now have lifetime access to Broomie',
-      style: GoogleFonts.montserrat(
-        fontSize: 12,
-        color: CupertinoColors.secondaryLabel,
-      ),
+      style: MacosTheme.of(context).typography.body.copyWith(
+            color: context.colors.secondaryLabel,
+          ),
       textAlign: TextAlign.center,
     );
   }
 
-  Widget _buildDateContainer(String formattedDate, String formattedTime) {
+  Widget _buildDateContainer(BuildContext context, String formattedDate, String formattedTime) {
+    final typography = MacosTheme.of(context).typography;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       decoration: BoxDecoration(
-        color: CupertinoColors.systemGrey6,
-        borderRadius: BorderRadius.circular(16),
+        color: context.colors.cardBackground,
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: CupertinoColors.systemGrey4,
-          width: 1,
+          color: context.colors.separator,
         ),
       ),
       child: Column(
@@ -116,18 +101,17 @@ class PaywallSuccessView extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
+              MacosIcon(
                 CupertinoIcons.calendar,
                 size: 18,
-                color: CupertinoColors.systemBlue,
+                color: context.colors.accent,
               ),
               const SizedBox(width: 8),
               Text(
                 'Subscription Date',
-                style: GoogleFonts.montserrat(
-                  fontSize: 12,
+                style: typography.caption1.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: CupertinoColors.secondaryLabel,
+                  color: context.colors.secondaryLabel,
                 ),
               ),
             ],
@@ -135,18 +119,16 @@ class PaywallSuccessView extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             formattedDate,
-            style: GoogleFonts.montserrat(
-              fontSize: 12,
+            style: typography.body.copyWith(
               fontWeight: FontWeight.bold,
-              color: CupertinoColors.label,
+              color: context.colors.label,
             ),
           ),
           // const SizedBox(height: 8),
           // Text(
           //   formattedTime,
-          //   style: GoogleFonts.montserrat(
-          //     fontSize: 16,
-          //     color: CupertinoColors.secondaryLabel,
+          //   style: typography.body.copyWith(
+          //     color: context.colors.secondaryLabel,
           //   ),
           // ),
         ],
@@ -154,41 +136,14 @@ class PaywallSuccessView extends StatelessWidget {
     );
   }
 
-  Widget _buildContinueButton() {
-    return Container(
+  Widget _buildContinueButton(BuildContext context) {
+    return SizedBox(
       width: double.infinity,
-      height: 50,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            CupertinoColors.systemBlue,
-            CupertinoColors.systemPurple,
-          ],
-        ),
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: CupertinoColors.systemBlue.withOpacity(0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: CupertinoButton(
-        padding: EdgeInsets.zero,
+      child: PushButton(
+        controlSize: ControlSize.large,
         onPressed: onContinue,
-        child: Text(
-          'Continue',
-          style: GoogleFonts.montserrat(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: CupertinoColors.white,
-          ),
-        ),
+        child: const Text('Continue'),
       ),
     );
   }
 }
-

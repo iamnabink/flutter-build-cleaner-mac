@@ -43,86 +43,92 @@ extension CleanerHomePagePermissions on _CleanerHomePageState {
   }
 
   Future<void> _showPermissionDialog() async {
-    final result = await showCupertinoDialog<bool>(
+    final result = await showMacosAlertDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Row(
+      builder: (context) => MacosAlertDialog(
+        appIcon: Image.asset(
+          'assets/images/icon.png',
+          width: 56,
+          height: 56,
+        ),
+        title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(CupertinoIcons.lock, color: CupertinoColors.systemOrange),
-            SizedBox(width: 8),
-            Text('Permission Required'),
+            MacosIcon(CupertinoIcons.lock, color: context.colors.warning),
+            const SizedBox(width: 8),
+            Text(
+              'Permission Required',
+              style: MacosTheme.of(context).typography.title3,
+            ),
           ],
         ),
-        content: SizedBox(
-          width: 500,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'This app needs permission to access your home directory to scan for files.',
-                  style: TextStyle(fontSize: 14),
+        message: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'This app needs permission to access your home directory to scan for files.',
+                style: TextStyle(fontSize: 14),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: context.colors.controlBackground,
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: CupertinoColors.systemGrey6,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'What this app will do:',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'What this app will do:',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
                       ),
-                      SizedBox(height: 8),
-                      Text('• Scan for APK, AAB, and IPA files'),
-                      Text('• Find Flutter build folders'),
-                      Text('• Find React Native node_modules folders'),
-                      Text('• Calculate file and folder sizes'),
-                      Text('• Allow you to delete unwanted files'),
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: 8),
+                    Text('• Scan for APK, AAB, and IPA files'),
+                    Text('• Find Flutter build folders'),
+                    Text('• Find React Native node_modules folders'),
+                    Text('• Calculate file and folder sizes'),
+                    Text('• Allow you to delete unwanted files'),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                Text(
-                  'Click "Grant Access" to open the system dialog and select your home directory.',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontStyle: FontStyle.italic,
-                    color: CupertinoColors.secondaryLabel,
-                  ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Click "Grant Access" to open the system dialog and select your home directory.',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                  color: context.colors.secondaryLabel,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-        actions: [
-          CupertinoDialogAction(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text(AppConstants.cancelButton),
+        primaryButton: PushButton(
+          controlSize: ControlSize.large,
+          onPressed: () => Navigator.of(context).pop(true),
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              MacosIcon(CupertinoIcons.folder, size: 16),
+              SizedBox(width: 4),
+              Text('Grant Access'),
+            ],
           ),
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(CupertinoIcons.folder, size: 16),
-                SizedBox(width: 4),
-                Text('Grant Access'),
-              ],
-            ),
-          ),
-        ],
+        ),
+        secondaryButton: PushButton(
+          controlSize: ControlSize.large,
+          secondary: true,
+          onPressed: () => Navigator.of(context).pop(false),
+          child: const Text(AppConstants.cancelButton),
+        ),
       ),
     );
 

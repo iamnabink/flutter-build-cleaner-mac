@@ -1,25 +1,21 @@
-import 'package:flutter/cupertino.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
+import 'package:flutter/widgets.dart';
+import 'package:macos_ui/macos_ui.dart';
+import 'package:flutter_cleaner/theme/app_colors.dart';
 
 class PaywallHeader extends StatelessWidget {
   const PaywallHeader({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final typography = MacosTheme.of(context).typography;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            CupertinoColors.systemBlue.withOpacity(0.1),
-            CupertinoColors.systemPurple.withOpacity(0.05),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
+        color: context.colors.accent.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: CupertinoColors.systemGrey4.withOpacity(0.3),
+          color: context.colors.separator,
         ),
       ),
       child: Column(
@@ -27,36 +23,25 @@ class PaywallHeader extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  CupertinoColors.systemBlue,
-                  CupertinoColors.systemPurple,
-                ],
-              ),
+              color: context.colors.accent,
               shape: BoxShape.circle,
             ),
-            child: const Icon(
+            child: MacosIcon(
               CupertinoIcons.heart_fill,
               size: 32,
-              color: CupertinoColors.white,
+              color: context.colors.white,
             ),
           ),
           const SizedBox(height: 16),
           Text(
             'Support Broomie',
-            style: GoogleFonts.montserrat(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
+            style: typography.title1,
           ),
           const SizedBox(height: 8),
           Text(
             'Support independent development and unlock lifetime access',
-            style: GoogleFonts.montserrat(
-              fontSize: 12,
-              color: CupertinoColors.secondaryLabel,
+            style: typography.body.copyWith(
+              color: context.colors.secondaryLabel,
             ),
             textAlign: TextAlign.center,
           ),
@@ -65,4 +50,3 @@ class PaywallHeader extends StatelessWidget {
     );
   }
 }
-

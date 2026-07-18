@@ -10,7 +10,7 @@ extension CleanerHomePageWidgetsActions on _CleanerHomePageState {
           _buildCurrentPathDisplay(),
           const SizedBox(height: 12),
         ],
-        
+
         // Permission state
         if (!_hasPermission) ...[
           _buildPermissionCard(),
@@ -37,50 +37,26 @@ extension CleanerHomePageWidgetsActions on _CleanerHomePageState {
 
   Widget _buildCurrentPathDisplay() {
     return Container(
-      padding: const EdgeInsets.all(7),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            CupertinoColors.systemBackground,
-            CupertinoColors.systemGrey6,
-          ],
-        ),
-        borderRadius: BorderRadius.circular(7),
-        border: Border.all(
-          color: CupertinoColors.systemBlue.withOpacity(0.2),
-          width: 1.5,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: CupertinoColors.systemBlue.withOpacity(0.05),
-            blurRadius: 4.2,
-            offset: const Offset(0, 0.7),
-          ),
-        ],
+        color: context.colors.cardBackground,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: context.colors.separator),
       ),
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(3.5),
-            decoration: BoxDecoration(
-              color: CupertinoColors.systemBlue.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(4.2),
-            ),
-            child: Icon(
-              CupertinoIcons.folder_fill,
-              size: 9.8,
-              color: CupertinoColors.systemBlue,
-            ),
+          MacosIcon(
+            CupertinoIcons.folder_fill,
+            size: 14,
+            color: context.colors.accent,
           ),
-          const SizedBox(width: 5.6),
+          const SizedBox(width: 8),
           Expanded(
             child: Text(
               _selectedPath,
-              style: GoogleFonts.montserrat(
+              style: TextStyle(
                 fontSize: 12,
-                color: CupertinoColors.label,
+                color: context.colors.label,
                 fontWeight: FontWeight.w500,
               ),
               overflow: TextOverflow.ellipsis,
@@ -94,259 +70,109 @@ extension CleanerHomePageWidgetsActions on _CleanerHomePageState {
 
   Widget _buildPermissionCard() {
     final isDisabled = _isScanning || _isDeleting;
-    return GestureDetector(
-      onTap: isDisabled ? null : _showPermissionDialog,
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          gradient: isDisabled
-              ? null
-              : LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    CupertinoColors.systemOrange.withOpacity(0.15),
-                    CupertinoColors.systemOrange.withOpacity(0.08),
-                  ],
-                ),
-          color: isDisabled ? CupertinoColors.systemGrey6 : null,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: context.colors.cardBackground,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: context.colors.separator),
+      ),
+      child: Column(
+        children: [
+          MacosIcon(
+            CupertinoIcons.lock_fill,
+            size: 28,
             color: isDisabled
-                ? CupertinoColors.systemGrey4
-                : CupertinoColors.systemOrange.withOpacity(0.4),
-            width: 2,
+                ? context.colors.secondaryLabel
+                : context.colors.warning,
           ),
-          boxShadow: isDisabled
-              ? null
-              : [
-                  BoxShadow(
-                    color: CupertinoColors.systemOrange.withOpacity(0.2),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-        ),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                gradient: isDisabled
-                    ? null
-                    : LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          CupertinoColors.systemOrange,
-                          CupertinoColors.systemOrange.darkColor,
-                        ],
-                      ),
-                color: isDisabled ? CupertinoColors.systemGrey4 : null,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                CupertinoIcons.lock_fill,
-                size: 24,
-                color: isDisabled
-                    ? CupertinoColors.secondaryLabel
-                    : CupertinoColors.white,
-              ),
+          const SizedBox(height: 12),
+          Text(
+            'Permission Required',
+            style: MacosTheme.of(context).typography.title3,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            AppConstants.grantPermissionMessage,
+            style: TextStyle(
+              fontSize: 12,
+              color: context.colors.secondaryLabel,
+              height: 1.4,
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Permission Required',
-              style: GoogleFonts.montserrat(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: isDisabled
-                    ? CupertinoColors.secondaryLabel
-                    : CupertinoColors.label,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              AppConstants.grantPermissionMessage,
-              style: GoogleFonts.montserrat(
-                fontSize: 12,
-                color: CupertinoColors.secondaryLabel,
-                height: 1.4,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Tap to grant permission',
-              style: GoogleFonts.montserrat(
-                fontSize: 12,
-                color: isDisabled
-                    ? CupertinoColors.secondaryLabel
-                    : CupertinoColors.systemOrange,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          PushButton(
+            controlSize: ControlSize.large,
+            secondary: true,
+            onPressed: isDisabled ? null : _showPermissionDialog,
+            child: const Text('Grant Permission'),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildSelectDirectoryCard() {
     final isDisabled = _isScanning || _isDeleting;
-    return GestureDetector(
-      onTap: isDisabled ? null : _requestFileAccess,
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          gradient: isDisabled
-              ? null
-              : LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    CupertinoColors.systemBlue.withOpacity(0.15),
-                    CupertinoColors.systemBlue.withOpacity(0.08),
-                  ],
-                ),
-          color: isDisabled ? CupertinoColors.systemGrey6 : null,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: context.colors.cardBackground,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: context.colors.separator),
+      ),
+      child: Column(
+        children: [
+          MacosIcon(
+            CupertinoIcons.folder_fill,
+            size: 28,
             color: isDisabled
-                ? CupertinoColors.systemGrey4
-                : CupertinoColors.systemBlue.withOpacity(0.4),
-            width: 2,
+                ? context.colors.secondaryLabel
+                : context.colors.accent,
           ),
-          boxShadow: isDisabled
-              ? null
-              : [
-                  BoxShadow(
-                    color: CupertinoColors.systemBlue.withOpacity(0.2),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-        ),
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                gradient: isDisabled
-                    ? null
-                    : LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          CupertinoColors.systemBlue,
-                          CupertinoColors.systemBlue.darkColor,
-                        ],
-                      ),
-                color: isDisabled ? CupertinoColors.systemGrey4 : null,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                CupertinoIcons.folder_fill,
-                size: 24,
-                color: isDisabled
-                    ? CupertinoColors.secondaryLabel
-                    : CupertinoColors.white,
-              ),
+          const SizedBox(height: 12),
+          Text(
+            'Select Directory',
+            style: MacosTheme.of(context).typography.title3,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            AppConstants.selectDirectoryMessage,
+            style: TextStyle(
+              fontSize: 12,
+              color: context.colors.secondaryLabel,
+              height: 1.4,
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Select Directory',
-              style: GoogleFonts.montserrat(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: isDisabled
-                    ? CupertinoColors.secondaryLabel
-                    : CupertinoColors.label,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              AppConstants.selectDirectoryMessage,
-              style: GoogleFonts.montserrat(
-                fontSize: 12,
-                color: CupertinoColors.secondaryLabel,
-                height: 1.4,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Tap to select directory',
-              style: GoogleFonts.montserrat(
-                fontSize: 12,
-                color: isDisabled
-                    ? CupertinoColors.secondaryLabel
-                    : CupertinoColors.systemBlue,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          PushButton(
+            controlSize: ControlSize.large,
+            secondary: true,
+            onPressed: isDisabled ? null : _requestFileAccess,
+            child: const Text('Select Directory'),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildChangeDirectoryCard() {
     final isDisabled = _isScanning || _isDeleting;
-    return GestureDetector(
-      onTap: isDisabled ? null : _requestFileAccess,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              CupertinoColors.systemBlue.withOpacity(0.1),
-              CupertinoColors.systemBlue.withOpacity(0.05),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isDisabled
-                ? CupertinoColors.systemGrey4
-                : CupertinoColors.systemBlue.withOpacity(0.3),
-            width: 2,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: CupertinoColors.systemBlue.withOpacity(0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
+    return SizedBox(
+      width: double.infinity,
+      child: PushButton(
+        controlSize: ControlSize.large,
+        secondary: true,
+        onPressed: isDisabled ? null : _requestFileAccess,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: CupertinoColors.systemBlue.withOpacity(0.15),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                CupertinoIcons.folder,
-                size: 20,
-                color: isDisabled
-                    ? CupertinoColors.secondaryLabel
-                    : CupertinoColors.systemBlue,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Change Directory',
-              style: GoogleFonts.montserrat(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: isDisabled
-                    ? CupertinoColors.secondaryLabel
-                    : CupertinoColors.label,
-              ),
-            ),
+            const MacosIcon(CupertinoIcons.folder, size: 16),
+            const SizedBox(width: 6),
+            const Text('Change Directory'),
           ],
         ),
       ),
@@ -355,100 +181,25 @@ extension CleanerHomePageWidgetsActions on _CleanerHomePageState {
 
   Widget _buildScanCard() {
     final isDisabled = _isScanning || _isDeleting;
-    return GestureDetector(
-      onTap: isDisabled ? null : _scanSystem,
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          gradient: isDisabled
-              ? null
-              : LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    CupertinoColors.systemBlue.withOpacity(0.15),
-                    CupertinoColors.systemBlue.withOpacity(0.08),
-                  ],
-                ),
-          color: isDisabled ? CupertinoColors.systemGrey6 : null,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isDisabled
-                ? CupertinoColors.systemGrey4
-                : CupertinoColors.systemBlue.withOpacity(0.4),
-            width: 2,
-          ),
-          boxShadow: isDisabled
-              ? null
-              : [
-                  BoxShadow(
-                    color: CupertinoColors.systemBlue.withOpacity(0.2),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-        ),
-        child: Column(
+    return SizedBox(
+      width: double.infinity,
+      child: PushButton(
+        controlSize: ControlSize.large,
+        onPressed: isDisabled ? null : _scanSystem,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                gradient: isDisabled
-                    ? null
-                    : LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          CupertinoColors.systemBlue,
-                          CupertinoColors.systemBlue.darkColor,
-                        ],
-                      ),
-                color: isDisabled ? CupertinoColors.systemGrey4 : null,
-                shape: BoxShape.circle,
-              ),
-              child: _isScanning
-                  ? AnimatedBuilder(
-                      animation: _rotationAnimation,
-                      builder: (context, child) {
-                        return Transform.rotate(
-                          angle: _rotationAnimation.value * 2 * 3.14159,
-                          child: const Icon(
-                            CupertinoIcons.arrow_2_squarepath,
-                            size: 24,
-                            color: CupertinoColors.white,
-                          ),
-                        );
-                      },
-                    )
-                  : const Icon(
-                      CupertinoIcons.search,
-                      size: 24,
-                      color: CupertinoColors.white,
-                    ),
-            ),
-            const SizedBox(height: 16),
+            if (_isScanning) ...[
+              const ProgressCircle(value: null, radius: 8),
+            ] else ...[
+              const MacosIcon(CupertinoIcons.search, size: 16),
+            ],
+            const SizedBox(width: 6),
             Text(
               _isScanning
                   ? AppConstants.scanningButtonText
                   : AppConstants.scanButtonText,
-              style: GoogleFonts.montserrat(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: isDisabled
-                    ? CupertinoColors.secondaryLabel
-                    : CupertinoColors.label,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Tap to scan for artifacts',
-              style: GoogleFonts.montserrat(
-                fontSize: 12,
-                color: isDisabled
-                    ? CupertinoColors.secondaryLabel
-                    : CupertinoColors.systemBlue,
-                fontWeight: FontWeight.w500,
-              ),
             ),
           ],
         ),
@@ -458,83 +209,32 @@ extension CleanerHomePageWidgetsActions on _CleanerHomePageState {
 
   Widget _buildCleanCard() {
     final isDisabled = _scanResults.isEmpty || _isScanning || _isDeleting;
-    return GestureDetector(
-      onTap: isDisabled ? null : _cleanAll,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: isDisabled
-              ? null
-              : LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    CupertinoColors.systemRed.withOpacity(0.15),
-                    CupertinoColors.systemRed.withOpacity(0.08),
-                  ],
-                ),
-          color: isDisabled ? CupertinoColors.systemGrey6 : null,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isDisabled
-                ? CupertinoColors.systemGrey4
-                : CupertinoColors.systemRed.withOpacity(0.4),
-            width: 2,
-          ),
-          boxShadow: isDisabled
-              ? null
-              : [
-                  BoxShadow(
-                    color: CupertinoColors.systemRed.withOpacity(0.2),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-        ),
-        child: Column(
+    return SizedBox(
+      width: double.infinity,
+      child: PushButton(
+        controlSize: ControlSize.large,
+        color: context.colors.danger,
+        onPressed: isDisabled ? null : _cleanAll,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                gradient: isDisabled
-                    ? null
-                    : LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          CupertinoColors.systemRed,
-                          CupertinoColors.systemRed.darkColor,
-                        ],
-                      ),
-                color: isDisabled ? CupertinoColors.systemGrey4 : null,
-                shape: BoxShape.circle,
+            if (_isDeleting) ...[
+              const ProgressCircle(value: null, radius: 8),
+            ] else ...[
+              MacosIcon(
+                CupertinoIcons.delete,
+                size: 16,
+                color: isDisabled ? null : context.colors.white,
               ),
-              child: _isDeleting
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CupertinoActivityIndicator(
-                        radius: 10,
-                        color: CupertinoColors.white,
-                      ),
-                    )
-                  : const Icon(
-                      CupertinoIcons.delete,
-                      size: 20,
-                      color: CupertinoColors.white,
-                    ),
-            ),
-            const SizedBox(height: 12),
+            ],
+            const SizedBox(width: 6),
             Text(
               _isDeleting
                   ? AppConstants.deletingButtonText
                   : AppConstants.cleanAllButtonText,
-              style: GoogleFonts.montserrat(
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-                color: isDisabled
-                    ? CupertinoColors.secondaryLabel
-                    : CupertinoColors.label,
+              style: TextStyle(
+                color: isDisabled ? null : context.colors.white,
               ),
             ),
           ],
@@ -543,5 +243,3 @@ extension CleanerHomePageWidgetsActions on _CleanerHomePageState {
     );
   }
 }
-
-

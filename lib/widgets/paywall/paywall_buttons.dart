@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
+import 'package:macos_ui/macos_ui.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class PaywallButtons extends StatelessWidget {
   final Package? selectedPackage;
@@ -56,48 +56,18 @@ class _PurchaseButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDisabled = isPurchasing || isRestoring || selectedPackage == null;
-    
-    return Container(
-      height: 50,
+
+    return SizedBox(
       width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: isDisabled
-            ? null
-            : const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  CupertinoColors.systemBlue,
-                  CupertinoColors.systemPurple,
-                ],
-              ),
-        borderRadius: BorderRadius.circular(12),
-        color: isDisabled ? CupertinoColors.systemGrey4 : null,
-        boxShadow: isDisabled
-            ? null
-            : [
-                BoxShadow(
-                  color: CupertinoColors.systemBlue.withOpacity(0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-      ),
-      child: CupertinoButton(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        
+      child: PushButton(
+        controlSize: ControlSize.large,
         onPressed: isDisabled ? null : onPressed,
         child: isPurchasing
-            ? const CupertinoActivityIndicator(color: CupertinoColors.white)
+            ? const ProgressCircle(value: null, radius: 8)
             : Text(
                 selectedPackage != null
                     ? 'Purchase ${selectedPackage!.storeProduct.priceString}'
                     : 'Select a package',
-                style: GoogleFonts.montserrat(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: CupertinoColors.white,
-                ),
               ),
       ),
     );
@@ -118,31 +88,21 @@ class _RestoreButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoButton(
+    return PushButton(
+      controlSize: ControlSize.large,
+      secondary: true,
       onPressed: (isPurchasing || isRestoring) ? null : onPressed,
       child: isRestoring
-          ? Row(
+          ? const Row(
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const CupertinoActivityIndicator(radius: 8),
-                const SizedBox(width: 8),
-                Text(
-                  'Restoring...',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 12,
-                    color: CupertinoColors.systemBlue,
-                  ),
-                ),
+                ProgressCircle(value: null, radius: 8),
+                SizedBox(width: 8),
+                Text('Restoring...'),
               ],
             )
-          : Text(
-              'Restore Purchases',
-              style: GoogleFonts.montserrat(
-                fontSize: 12,
-                color: CupertinoColors.systemBlue,
-              ),
-            ),
+          : const Text('Restore Purchases'),
     );
   }
 }
-

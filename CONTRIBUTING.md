@@ -18,7 +18,7 @@ Thanks for wanting to help! This guide will get you set up and ready to contribu
 ## Setup 💻
 
 ### What you need:
-- macOS 10.14+ 
+- macOS 10.15+
 - Flutter 3.0+ ([install guide](https://flutter.dev/docs/get-started/install/macos))
 - Xcode 12+ (for building)
 - Git
@@ -31,12 +31,20 @@ flutter doctor
 # Enable macOS support
 flutter config --enable-macos-desktop
 
+# REQUIRED: create your local .env — the build fails without it (it's a bundled asset).
+# Leave REVENUECAT_API_KEY empty: the app runs fine with Pro/paywall UI hidden.
+cp .env.example .env
+
 # Get dependencies
 flutter pub get
 
 # Run it!
 flutter run -d macos
 ```
+
+> 🧭 Architecture notes and conventions live in [CLAUDE.md](CLAUDE.md) — read it
+> before making UI changes (macos_ui-only widgets, `context.colors.*` tokens,
+> and the part-file layout of the two main pages).
 
 ## Making Changes ✏️
 

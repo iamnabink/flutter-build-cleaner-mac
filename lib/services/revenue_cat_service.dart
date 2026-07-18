@@ -1,14 +1,39 @@
-import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_cleaner/config/revenue_cat_config.dart';
+import 'package:flutter_cleaner/config/env.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 class RevenueCatService {
+  static bool _configured = false;
+
+  /// Whether Purchases was configured with an API key. When false (no
+  /// REVENUECAT_API_KEY in .env), all Pro/paywall UI must stay hidden.
+  static bool get isConfigured => _configured;
+
   static Future<void> initialize() async {
-    // API key from local config file (gitignored)
-    await Purchases.configure(PurchasesConfiguration(RevenueCatConfig.apiKey));
+    final apiKey = EnvConfig.revenueCatApiKey;
+    if (apiKey == null) {
+      debugPrint(
+        'RevenueCat: no REVENUECAT_API_KEY in .env — Pro features disabled.',
+      );
+      return;
+    }
+    try {
+      await Purchases.configure(PurchasesConfiguration(apiKey));
+      _configured = true;
+    } catch (e) {
+      debugPrint('RevenueCat: configure failed — Pro features disabled. $e');
+    }
+  }
+
+  static void _ensureConfigured() {
+    if (!_configured) {
+      throw StateError('RevenueCat is not configured (missing API key)');
+    }
   }
 
   static Future<bool> hasProAccess() async {
+    if (!_configured) return false;
     try {
       CustomerInfo customerInfo = await Purchases.getCustomerInfo();
       return customerInfo.entitlements.active.containsKey('lifetime_supporter');
@@ -19,10 +44,12 @@ class RevenueCatService {
   }
 
   static Future<CustomerInfo> getCustomerInfo() async {
+    _ensureConfigured();
     return await Purchases.getCustomerInfo();
   }
 
   static Future<Offerings> getOfferings() async {
+    _ensureConfigured();
     try {
       final offerings = await Purchases.getOfferings();
       if (offerings.current == null) {
@@ -35,6 +62,7 @@ class RevenueCatService {
   }
 
   static Future<CustomerInfo> purchasePackage(Package package) async {
+    _ensureConfigured();
     try {
       // Purchases.purchase() returns PurchaseResult which contains CustomerInfo
       final purchaseResult = await Purchases.purchase(PurchaseParams.package(package));
@@ -56,6 +84,7 @@ class RevenueCatService {
   }
 
   static Future<CustomerInfo> restorePurchases() async {
+    _ensureConfigured();
     try {
       final customerInfo = await Purchases.restorePurchases();
       return customerInfo;
@@ -64,4 +93,3 @@ class RevenueCatService {
     }
   }
 }
-

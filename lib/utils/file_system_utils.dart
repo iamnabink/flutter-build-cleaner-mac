@@ -52,23 +52,6 @@ extension CleanerHomePageCoreUtils on _CleanerHomePageState {
     return totalSize;
   }
 
-  Future<void> _launchUrl(String url) async {
-    try {
-      final Uri uri = Uri.parse(url);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } else {
-        if (mounted) {
-          _showSnackBar('Could not launch $url', isError: true);
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        _showSnackBar('Error launching URL: $e', isError: true);
-      }
-    }
-  }
-
   Future<void> _openInFinder(String targetPath) async {
     try {
       if (Platform.isMacOS) {

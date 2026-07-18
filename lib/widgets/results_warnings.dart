@@ -4,45 +4,31 @@ extension CleanerHomePageWidgetsResultsWarnings on _CleanerHomePageState {
   Widget _buildPermissionWarnings() {
     if (_permissionErrors.isEmpty) return const SizedBox.shrink();
 
+    final typography = MacosTheme.of(context).typography;
+
     return Container(
       padding: const EdgeInsets.all(14.0),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            CupertinoColors.systemRed.withOpacity(0.12),
-            CupertinoColors.systemRed.withOpacity(0.06),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(12),
+        color: context.colors.warning.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: CupertinoColors.systemRed.withOpacity(0.4),
-          width: 1.5,
+          color: context.colors.warning.withValues(alpha: 0.4),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: CupertinoColors.systemRed.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(
+              MacosIcon(
                 CupertinoIcons.exclamationmark_triangle,
-                color: CupertinoColors.systemRed,
+                color: context.colors.warning,
               ),
               const SizedBox(width: 8),
               Text(
                 'Permission Warnings',
-                style: GoogleFonts.montserrat(
-                  fontSize: 12,
-                  color: CupertinoColors.systemRed,
+                style: typography.caption1.copyWith(
+                  color: context.colors.warning,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -52,9 +38,8 @@ extension CleanerHomePageWidgetsResultsWarnings on _CleanerHomePageState {
           Text(
             'Some directories could not be accessed due to permission restrictions. '
             'Scan results may be incomplete.',
-            style: GoogleFonts.montserrat(
-              fontSize: 12,
-              color: CupertinoColors.label,
+            style: typography.caption1.copyWith(
+              color: context.colors.label,
             ),
           ),
           if (_permissionErrors.length <= 5) ...[
@@ -64,9 +49,8 @@ extension CleanerHomePageWidgetsResultsWarnings on _CleanerHomePageState {
                 padding: const EdgeInsets.only(bottom: 4),
                 child: Text(
                   '• ${error.replaceFirst(_selectedPath, '~')}',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 12,
-                    color: CupertinoColors.secondaryLabel,
+                  style: typography.caption1.copyWith(
+                    color: context.colors.secondaryLabel,
                   ),
                 ),
               ),
@@ -75,9 +59,8 @@ extension CleanerHomePageWidgetsResultsWarnings on _CleanerHomePageState {
             const SizedBox(height: 8),
             Text(
               '${_permissionErrors.length} directories could not be accessed',
-              style: GoogleFonts.montserrat(
-                fontSize: 12,
-                color: CupertinoColors.secondaryLabel,
+              style: typography.caption1.copyWith(
+                color: context.colors.secondaryLabel,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -87,4 +70,3 @@ extension CleanerHomePageWidgetsResultsWarnings on _CleanerHomePageState {
     );
   }
 }
-

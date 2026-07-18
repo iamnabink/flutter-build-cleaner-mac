@@ -4,18 +4,16 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_cleaner/theme/app_colors.dart';
 import 'package:flutter_cleaner/constants.dart';
-import 'package:flutter_cleaner/pages/xcode_cache_cleaner_page.dart';
-import 'package:flutter_cleaner/pages/paywall_page.dart';
+import 'package:flutter_cleaner/pages/main_view.dart';
 import 'package:flutter_cleaner/scan_result.dart';
+import 'package:flutter_cleaner/services/revenue_cat_service.dart';
 import 'package:in_app_review/in_app_review.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:upgrader/upgrader.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:macos_ui/macos_ui.dart';
 
 part '../utils/file_system_utils.dart';
 part '../utils/scan_checks_utils.dart';
@@ -30,7 +28,6 @@ part '../widgets/results_list.dart';
 part '../widgets/results_warnings.dart';
 part '../widgets/header_section.dart';
 part '../widgets/extras/dialogs_core.dart';
-part '../widgets/extras/dialogs_about.dart';
 
 class _SummaryItemData {
   final String label;
@@ -65,12 +62,9 @@ class _CleanerHomePageState extends State<CleanerHomePage>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late AnimationController _progressController;
-  late Animation<double> _rotationAnimation;
 
   bool _hasPermission = false;
   String _selectedPath = '';
-  String _appVersionLabel = AppConstants.appVersion;
-  String _buildNumberLabel = AppConstants.buildNumber;
 
   @override
   void initState() {
@@ -86,11 +80,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
       duration: const Duration(seconds: 2),
       vsync: this,
     );
-    _rotationAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _progressController, curve: Curves.linear),
-    );
     _checkInitialPermissions();
-    _loadAppMetadata();
   }
 
   @override
@@ -112,25 +102,20 @@ class _CleanerHomePageState extends State<CleanerHomePage>
       _progressController.stop();
     }
 
-    return CupertinoPageScaffold(
-      navigationBar: _buildNavigationBar(),
-      child: UpgradeAlert(
-        child: SafeArea(
-            child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 11.2, vertical: 8.4),
+    return MacosScaffold(
+      toolBar: _buildToolBar(),
+      children: [
+        ContentArea(
+          builder: (context, scrollController) => SingleChildScrollView(
+            controller: scrollController,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Header section
                 _buildHeaderSection(),
                 const SizedBox(height: 11.2),
-        
-                // Xcode Cache Cleaner button (macOS only)
-                if (Platform.isMacOS) ...[
-                  _buildXcodeCacheCleanerButton(),
-                  const SizedBox(height: 11.2),
-                ],
-        
+
                 // Action buttons
                 _buildActionButtons(),
                 const SizedBox(height: 8.4),
@@ -162,20 +147,7 @@ class _CleanerHomePageState extends State<CleanerHomePage>
             ),
           ),
         ),
-      ),
+      ],
     );
-  }
-
-  Future<void> _loadAppMetadata() async {
-    try {
-      final info = await PackageInfo.fromPlatform();
-      if (!mounted) return;
-      setState(() {
-        _appVersionLabel = 'Version ${info.version}';
-        _buildNumberLabel = 'Build ${info.buildNumber}';
-      });
-    } catch (_) {
-      // Ignore errors and fall back to default labels.
-    }
   }
 }

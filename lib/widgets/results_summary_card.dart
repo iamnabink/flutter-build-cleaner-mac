@@ -8,6 +8,8 @@ extension _CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
 
     if (_scanResults.isEmpty) return const SizedBox.shrink();
 
+    final typography = MacosTheme.of(context).typography;
+
     final totalSize = _scanResults.fold<int>(
       0,
       (sum, result) => sum + result.size,
@@ -45,36 +47,17 @@ extension _CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
       child: Container(
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              CupertinoColors.systemGrey6,
-              CupertinoColors.systemGrey5,
-            ],
-          ),
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: CupertinoColors.black.withOpacity(0.06),
-              blurRadius: 20,
-              offset: const Offset(0, 4),
-            ),
-          ],
-          border: Border.all(
-            color: CupertinoColors.systemGrey4.withOpacity(0.3),
-            width: 1,
-          ),
+          color: context.colors.cardBackground,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: context.colors.separator),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Scan Results',
-              style: GoogleFonts.montserrat(
-                fontSize: 12,
+              style: typography.title3.copyWith(
                 fontWeight: FontWeight.bold,
-                letterSpacing: -0.5,
               ),
             ),
             const SizedBox(height: 12),
@@ -85,33 +68,33 @@ extension _CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: [
-                if (apkCount > 0) _SummaryItemData(AppConstants.apkType, apkCount, CupertinoIcons.device_phone_portrait, CupertinoColors.systemGreen),
-                if (aabCount > 0) _SummaryItemData(AppConstants.aabType, aabCount, CupertinoIcons.square_stack, CupertinoColors.systemBlue),
-                if (ipaCount > 0) _SummaryItemData(AppConstants.ipaType, ipaCount, CupertinoIcons.device_phone_portrait, CupertinoColors.systemPurple),
-                if (flutterBuildCount > 0) _SummaryItemData(AppConstants.flutterBuildType, flutterBuildCount, CupertinoIcons.hammer, CupertinoColors.systemBlue),
-                if (reactNativeBuildCount > 0) _SummaryItemData(AppConstants.reactNativeBuildType, reactNativeBuildCount, CupertinoIcons.hammer, CupertinoColors.activeBlue),
-                if (androidBuildCount > 0) _SummaryItemData(AppConstants.androidBuildType, androidBuildCount, CupertinoIcons.hammer, CupertinoColors.systemGreen),
-                if (iosBuildCount > 0) _SummaryItemData(AppConstants.iosBuildType, iosBuildCount, CupertinoIcons.hammer, CupertinoColors.systemGrey),
-                if (nodeModulesCount > 0) _SummaryItemData(AppConstants.nodeModulesType, nodeModulesCount, CupertinoIcons.folder, CupertinoColors.systemOrange),
-                if (archivesCount > 0) _SummaryItemData(AppConstants.archivesType, archivesCount, CupertinoIcons.archivebox, CupertinoColors.systemBrown),
+                if (apkCount > 0) _SummaryItemData(AppConstants.apkType, apkCount, CupertinoIcons.device_phone_portrait, context.colors.success),
+                if (aabCount > 0) _SummaryItemData(AppConstants.aabType, aabCount, CupertinoIcons.square_stack, context.colors.accent),
+                if (ipaCount > 0) _SummaryItemData(AppConstants.ipaType, ipaCount, CupertinoIcons.device_phone_portrait, context.colors.highlight),
+                if (flutterBuildCount > 0) _SummaryItemData(AppConstants.flutterBuildType, flutterBuildCount, CupertinoIcons.hammer, context.colors.accent),
+                if (reactNativeBuildCount > 0) _SummaryItemData(AppConstants.reactNativeBuildType, reactNativeBuildCount, CupertinoIcons.hammer, context.colors.accent),
+                if (androidBuildCount > 0) _SummaryItemData(AppConstants.androidBuildType, androidBuildCount, CupertinoIcons.hammer, context.colors.success),
+                if (iosBuildCount > 0) _SummaryItemData(AppConstants.iosBuildType, iosBuildCount, CupertinoIcons.hammer, context.colors.grey),
+                if (nodeModulesCount > 0) _SummaryItemData(AppConstants.nodeModulesType, nodeModulesCount, CupertinoIcons.folder, context.colors.warning),
+                if (archivesCount > 0) _SummaryItemData(AppConstants.archivesType, archivesCount, CupertinoIcons.archivebox, context.colors.brown),
               ].length,
               itemBuilder: (context, index) {
                 final items = [
-                  if (apkCount > 0) _SummaryItemData(AppConstants.apkType, apkCount, CupertinoIcons.device_phone_portrait, CupertinoColors.systemGreen),
-                  if (aabCount > 0) _SummaryItemData(AppConstants.aabType, aabCount, CupertinoIcons.square_stack, CupertinoColors.systemBlue),
-                  if (ipaCount > 0) _SummaryItemData(AppConstants.ipaType, ipaCount, CupertinoIcons.device_phone_portrait, CupertinoColors.systemPurple),
-                  if (flutterBuildCount > 0) _SummaryItemData(AppConstants.flutterBuildType, flutterBuildCount, CupertinoIcons.hammer, CupertinoColors.systemBlue),
-                  if (reactNativeBuildCount > 0) _SummaryItemData(AppConstants.reactNativeBuildType, reactNativeBuildCount, CupertinoIcons.hammer, CupertinoColors.activeBlue),
-                  if (androidBuildCount > 0) _SummaryItemData(AppConstants.androidBuildType, androidBuildCount, CupertinoIcons.hammer, CupertinoColors.systemGreen),
-                  if (iosBuildCount > 0) _SummaryItemData(AppConstants.iosBuildType, iosBuildCount, CupertinoIcons.hammer, CupertinoColors.systemGrey),
-                  if (nodeModulesCount > 0) _SummaryItemData(AppConstants.nodeModulesType, nodeModulesCount, CupertinoIcons.folder, CupertinoColors.systemOrange),
-                  if (archivesCount > 0) _SummaryItemData(AppConstants.archivesType, archivesCount, CupertinoIcons.archivebox, CupertinoColors.systemBrown),
+                  if (apkCount > 0) _SummaryItemData(AppConstants.apkType, apkCount, CupertinoIcons.device_phone_portrait, context.colors.success),
+                  if (aabCount > 0) _SummaryItemData(AppConstants.aabType, aabCount, CupertinoIcons.square_stack, context.colors.accent),
+                  if (ipaCount > 0) _SummaryItemData(AppConstants.ipaType, ipaCount, CupertinoIcons.device_phone_portrait, context.colors.highlight),
+                  if (flutterBuildCount > 0) _SummaryItemData(AppConstants.flutterBuildType, flutterBuildCount, CupertinoIcons.hammer, context.colors.accent),
+                  if (reactNativeBuildCount > 0) _SummaryItemData(AppConstants.reactNativeBuildType, reactNativeBuildCount, CupertinoIcons.hammer, context.colors.accent),
+                  if (androidBuildCount > 0) _SummaryItemData(AppConstants.androidBuildType, androidBuildCount, CupertinoIcons.hammer, context.colors.success),
+                  if (iosBuildCount > 0) _SummaryItemData(AppConstants.iosBuildType, iosBuildCount, CupertinoIcons.hammer, context.colors.grey),
+                  if (nodeModulesCount > 0) _SummaryItemData(AppConstants.nodeModulesType, nodeModulesCount, CupertinoIcons.folder, context.colors.warning),
+                  if (archivesCount > 0) _SummaryItemData(AppConstants.archivesType, archivesCount, CupertinoIcons.archivebox, context.colors.brown),
                 ];
                 final item = items[index];
                 return _buildSummaryItem(item.label, item.count, item.icon, item.color);
               },
             ),
-            
+
             const SizedBox(height: 12),
             // Subtle informational panel — not tappable. Reduced emphasis
             // so users don't think this is a primary action button.
@@ -119,53 +102,24 @@ extension _CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    CupertinoColors.systemRed.withOpacity(0.08),
-                    CupertinoColors.systemRed.withOpacity(0.04),
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(12),
+                color: context.colors.danger.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: CupertinoColors.systemRed.withOpacity(0.2),
-                  width: 1.5,
+                  color: context.colors.danger.withValues(alpha: 0.2),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: CupertinoColors.systemRed.withOpacity(0.05),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
               ),
               child: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          CupertinoColors.systemRed.withOpacity(0.15),
-                          CupertinoColors.systemRed.withOpacity(0.08),
-                        ],
-                      ),
+                      color: context.colors.danger.withValues(alpha: 0.12),
                       shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: CupertinoColors.systemRed.withOpacity(0.1),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
                     ),
-                    child: const Icon(
+                    child: MacosIcon(
                       CupertinoIcons.delete_solid,
                       size: 18,
-                      color: CupertinoColors.systemRed,
+                      color: context.colors.danger,
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -174,19 +128,16 @@ extension _CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
                     children: [
                       Text(
                         AppConstants.spaceToFreeUp,
-                        style: GoogleFonts.montserrat(
-                          fontSize: 12,
-                          color: CupertinoColors.secondaryLabel,
+                        style: typography.caption1.copyWith(
+                          color: context.colors.secondaryLabel,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         _formatFileSize(totalSize),
-                        style: GoogleFonts.montserrat(
-                          fontSize: 12,
-                          color: CupertinoColors.systemRed,
+                        style: typography.caption1.copyWith(
+                          color: context.colors.danger,
                           fontWeight: FontWeight.bold,
-                          letterSpacing: -0.2,
                         ),
                       ),
                     ],
@@ -195,9 +146,8 @@ extension _CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
                   // Small hint to clarify there's no immediate tap action here.
                   Text(
                     'Review items below to delete',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 12,
-                      color: CupertinoColors.secondaryLabel,
+                    style: typography.caption1.copyWith(
+                      color: context.colors.secondaryLabel,
                     ),
                   ),
                 ],
@@ -215,48 +165,32 @@ extension _CleanerHomePageWidgetsResultsSummary on _CleanerHomePageState {
     IconData icon,
     Color color,
   ) {
+    final typography = MacosTheme.of(context).typography;
     return Column(
       children: [
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                color.withOpacity(0.15),
-                color.withOpacity(0.08),
-              ],
-            ),
-            borderRadius: BorderRadius.circular(12),
+            color: color.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: color.withOpacity(0.2),
-              width: 1,
+              color: color.withValues(alpha: 0.2),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: color.withOpacity(0.1),
-                blurRadius: 6,
-                offset: const Offset(0, 2),
-              ),
-            ],
           ),
-          child: Icon(icon, size: 24, color: color),
+          child: MacosIcon(icon, size: 24, color: color),
         ),
         const SizedBox(height: 6),
         Text(
           count.toString(),
-          style: GoogleFonts.montserrat(
-            fontSize: 12,
+          style: typography.caption1.copyWith(
             fontWeight: FontWeight.bold,
             color: color,
           ),
         ),
         Text(
           label,
-          style: GoogleFonts.montserrat(
-            fontSize: 12,
-            color: CupertinoColors.secondaryLabel,
+          style: typography.caption1.copyWith(
+            color: context.colors.secondaryLabel,
           ),
         ),
       ],

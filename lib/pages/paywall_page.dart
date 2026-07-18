@@ -1,5 +1,7 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
+import 'package:macos_ui/macos_ui.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:flutter_cleaner/pages/main_view.dart';
 import 'package:flutter_cleaner/services/revenue_cat_service.dart';
 import 'package:flutter_cleaner/utils/purchase_utils.dart';
 import 'package:flutter_cleaner/widgets/paywall/paywall_success_view.dart';
@@ -30,6 +32,15 @@ class _PaywallPageState extends State<PaywallPage> {
   }
 
   Future<void> _checkSubscriptionStatus() async {
+    if (!RevenueCatService.isConfigured) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage =
+            'This build has no RevenueCat API key configured (.env). In-app purchases are disabled.';
+      });
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -38,14 +49,14 @@ class _PaywallPageState extends State<PaywallPage> {
     try {
       // First check if user is already subscribed
       final hasPro = await RevenueCatService.hasProAccess();
-      
+
       if (hasPro) {
         // User is already subscribed, get customer info for date
         try {
           final customerInfo = await RevenueCatService.getCustomerInfo();
           final entitlement = customerInfo.entitlements.active['lifetime_supporter'];
           final purchaseDate = PurchaseUtils.parsePurchaseDate(entitlement);
-          
+
           if (mounted) {
             setState(() {
               _showSuccess = true;
@@ -66,7 +77,7 @@ class _PaywallPageState extends State<PaywallPage> {
           }
         }
       }
-      
+
       // Not subscribed, fetch offerings for paywall
       await _fetchOfferings();
     } catch (e) {
@@ -114,15 +125,15 @@ class _PaywallPageState extends State<PaywallPage> {
 
     try {
       final customerInfo = await RevenueCatService.purchasePackage(_selectedPackage!);
-      
+
       // Check if purchase was successful
       final hasPro = customerInfo.entitlements.active.containsKey('lifetime_supporter');
-      
+
       if (hasPro && mounted) {
         // Get actual purchase date from entitlement
         final entitlement = customerInfo.entitlements.active['lifetime_supporter'];
         final purchaseDate = PurchaseUtils.parsePurchaseDate(entitlement);
-        
+
         // Show success view
         setState(() {
           _isPurchasing = false;
@@ -152,12 +163,12 @@ class _PaywallPageState extends State<PaywallPage> {
     try {
       final customerInfo = await RevenueCatService.restorePurchases();
       final hasPro = customerInfo.entitlements.active.containsKey('lifetime_supporter');
-      
+
       if (hasPro && mounted) {
         // Get actual purchase date from entitlement
         final entitlement = customerInfo.entitlements.active['lifetime_supporter'];
         final purchaseDate = PurchaseUtils.parsePurchaseDate(entitlement);
-        
+
         // Show success view
         setState(() {
           _isRestoring = false;
@@ -186,24 +197,21 @@ class _PaywallPageState extends State<PaywallPage> {
   }
 
   void _handleSuccessClose() {
-    Navigator.of(context).pop(true);
+    MainView.section.value = AppSection.home;
   }
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: const Text('Support Broomie'),
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          minSize: 0,
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Icon(CupertinoIcons.xmark, size: 20),
+    return MacosScaffold(
+      toolBar: const ToolBar(
+        title: Text('Support Broomie'),
+        centerTitle: false,
+      ),
+      children: [
+        ContentArea(
+          builder: (context, scrollController) => _buildContent(),
         ),
-      ),
-      child: SafeArea(
-        child: _buildContent(),
-      ),
+      ],
     );
   }
 
@@ -217,7 +225,7 @@ class _PaywallPageState extends State<PaywallPage> {
 
     if (_isLoading) {
       return const Center(
-        child: CupertinoActivityIndicator(radius: 15),
+        child: ProgressCircle(value: null),
       );
     }
 

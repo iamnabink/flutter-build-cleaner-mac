@@ -9,25 +9,10 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
       opacity: _fadeAnimation,
       child: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              CupertinoColors.systemGrey6,
-              CupertinoColors.systemGrey5,
-            ],
-          ),
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: CupertinoColors.black.withOpacity(0.06),
-              blurRadius: 20,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          color: context.colors.cardBackground,
+          borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: CupertinoColors.systemGrey4.withOpacity(0.3),
-            width: 1,
+            color: context.colors.separator,
           ),
         ),
         child: Column(
@@ -37,48 +22,38 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
               width: double.infinity,
               padding: const EdgeInsets.all(14.0),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    CupertinoColors.systemGrey5,
-                    CupertinoColors.systemGrey6,
-                  ],
-                ),
                 borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(16),
-                  topRight: Radius.circular(16),
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
                 ),
                 border: Border(
                   bottom: BorderSide(
-                    color: CupertinoColors.systemGrey4.withOpacity(0.3),
+                    color: context.colors.separator,
                     width: 1,
                   ),
                 ),
               ),
               child: Row(
                 children: [
-                  const Icon(
+                  MacosIcon(
                     CupertinoIcons.list_bullet,
-                    color: CupertinoColors.label,
+                    color: context.colors.label,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     'Found Items (${sortedResults.length})',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 12,
-                      color: CupertinoColors.label,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: -0.3,
-                    ),
+                    style: MacosTheme.of(context).typography.caption1.copyWith(
+                          color: context.colors.label,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: -0.3,
+                        ),
                   ),
                   const Spacer(),
                   Text(
                     'Sorted by size',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 12,
-                      color: CupertinoColors.secondaryLabel,
-                    ),
+                    style: MacosTheme.of(context).typography.caption1.copyWith(
+                          color: context.colors.secondaryLabel,
+                        ),
                   ),
                 ],
               ),
@@ -90,10 +65,9 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
                 child: Center(
                   child: Text(
                     AppConstants.noArtifactsFound,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 12,
-                      color: CupertinoColors.secondaryLabel,
-                    ),
+                    style: MacosTheme.of(context).typography.caption1.copyWith(
+                          color: context.colors.secondaryLabel,
+                        ),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -122,68 +96,60 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
     switch (result.type) {
       case 'apk':
         icon = CupertinoIcons.device_phone_portrait;
-        iconColor = CupertinoColors.systemGreen;
+        iconColor = context.colors.success;
         break;
       case 'aab':
         icon = CupertinoIcons.square_stack;
-        iconColor = CupertinoColors.systemBlue;
+        iconColor = context.colors.accent;
         break;
       case 'ipa':
         icon = CupertinoIcons.device_phone_portrait;
-        iconColor = CupertinoColors.systemPurple;
+        iconColor = context.colors.highlight;
         break;
       case AppConstants.flutterBuildIndicator:
         icon = CupertinoIcons.hammer;
-        iconColor = CupertinoColors.systemBlue;
+        iconColor = context.colors.accent;
         break;
       case AppConstants.reactNativeBuildIndicator:
         icon = CupertinoIcons.hammer;
-        iconColor = CupertinoColors.activeBlue;
+        iconColor = context.colors.accent;
         break;
       case AppConstants.androidBuildIndicator:
         icon = CupertinoIcons.hammer;
-        iconColor = CupertinoColors.systemGreen;
+        iconColor = context.colors.success;
         break;
       case AppConstants.iosBuildIndicator:
         icon = CupertinoIcons.hammer;
-        iconColor = CupertinoColors.systemGrey;
+        iconColor = context.colors.grey;
         break;
       case AppConstants.nodeModulesIndicator:
         icon = CupertinoIcons.folder;
-        iconColor = CupertinoColors.systemOrange;
+        iconColor = context.colors.warning;
         break;
       case AppConstants.archivesIndicator:
         icon = CupertinoIcons.archivebox;
-        iconColor = CupertinoColors.systemBrown;
+        iconColor = context.colors.brown;
         break;
       default:
         icon = CupertinoIcons.doc;
-        iconColor = CupertinoColors.systemGrey;
+        iconColor = context.colors.grey;
     }
 
     final relativePath = result.path.replaceFirst(_selectedPath, '~');
 
     return Container(
       decoration: BoxDecoration(
-        gradient: isLargest
-            ? LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  CupertinoColors.systemRed.withOpacity(0.12),
-                  CupertinoColors.systemRed.withOpacity(0.06),
-                ],
-              )
-            : null,
-        color: isLargest ? null : CupertinoColors.systemGrey6,
+        color: isLargest
+            ? context.colors.danger.withValues(alpha: 0.08)
+            : context.colors.cardBackground,
         border: isLargest
             ? Border.all(
-                color: CupertinoColors.systemRed.withOpacity(0.4),
+                color: context.colors.danger.withValues(alpha: 0.4),
                 width: 2,
               )
             : Border(
                 bottom: BorderSide(
-                  color: CupertinoColors.systemGrey4.withOpacity(0.3),
+                  color: context.colors.separator,
                   width: 1,
                 ),
               ),
@@ -200,28 +166,10 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      iconColor.withOpacity(0.2),
-                      iconColor.withOpacity(0.1),
-                    ],
-                  ),
+                  color: iconColor.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: iconColor.withOpacity(0.3),
-                    width: 1,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: iconColor.withOpacity(0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
                 ),
-                child: Icon(icon, color: iconColor, size: 20),
+                child: MacosIcon(icon, color: iconColor, size: 20),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -233,12 +181,14 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
                         Expanded(
                           child: Text(
                             path.basename(result.path),
-                            style: GoogleFonts.montserrat(
-                              fontWeight: isLargest
-                                  ? FontWeight.bold
-                                  : FontWeight.w500,
-                              fontSize: 12,
-                            ),
+                            style: MacosTheme.of(context)
+                                .typography
+                                .caption1
+                                .copyWith(
+                                  fontWeight: isLargest
+                                      ? FontWeight.bold
+                                      : FontWeight.w500,
+                                ),
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -249,31 +199,20 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
                               vertical: 3,
                             ),
                             decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: [
-                                  CupertinoColors.systemRed,
-                                  CupertinoColors.systemRed.darkColor,
-                                ],
-                              ),
+                              color: context.colors.danger
+                                  .withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(14),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: CupertinoColors.systemRed.withOpacity(0.4),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
                             ),
                             child: Text(
                               'LARGEST',
-                              style: GoogleFonts.montserrat(
-                                color: CupertinoColors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.5,
-                              ),
+                              style: MacosTheme.of(context)
+                                  .typography
+                                  .caption1
+                                  .copyWith(
+                                    color: context.colors.danger,
+                                    fontWeight: FontWeight.bold,
+                                    letterSpacing: 0.5,
+                                  ),
                             ),
                           ),
                       ],
@@ -281,10 +220,12 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
                     const SizedBox(height: 3),
                     Text(
                       relativePath,
-                      style: GoogleFonts.montserrat(
-                        fontSize: 12,
-                        color: CupertinoColors.secondaryLabel,
-                      ),
+                      style: MacosTheme.of(context)
+                          .typography
+                          .caption1
+                          .copyWith(
+                            color: context.colors.secondaryLabel,
+                          ),
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 3),
@@ -296,45 +237,40 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
                             vertical: 3,
                           ),
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                iconColor.withOpacity(0.25),
-                                iconColor.withOpacity(0.15),
-                              ],
-                            ),
+                            color: iconColor.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(5),
-                            border: Border.all(
-                              color: iconColor.withOpacity(0.3),
-                              width: 0.5,
-                            ),
                           ),
                           child: Text(
                             result.type.toUpperCase(),
-                            style: GoogleFonts.montserrat(
-                              color: iconColor,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                              letterSpacing: 0.3,
-                            ),
+                            style: MacosTheme.of(context)
+                                .typography
+                                .caption1
+                                .copyWith(
+                                  color: iconColor,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.3,
+                                ),
                           ),
                         ),
                         const SizedBox(width: 6),
                         Text(
                           result.isDirectory ? 'Folder' : 'File',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 12,
-                            color: CupertinoColors.secondaryLabel,
-                          ),
+                          style: MacosTheme.of(context)
+                              .typography
+                              .caption1
+                              .copyWith(
+                                color: context.colors.secondaryLabel,
+                              ),
                         ),
                         const SizedBox(width: 6),
                         Text(
                           '• Modified: ${_formatDate(result.lastModified)}',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 12,
-                            color: CupertinoColors.secondaryLabel,
-                          ),
+                          style: MacosTheme.of(context)
+                              .typography
+                              .caption1
+                              .copyWith(
+                                color: context.colors.secondaryLabel,
+                              ),
                         ),
                       ],
                     ),
@@ -350,28 +286,32 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
                     children: [
                       Text(
                         _formatFileSize(result.size),
-                        style: GoogleFonts.montserrat(
-                          fontWeight: FontWeight.bold,
-                          color: isLargest
-                              ? CupertinoColors.systemRed
-                              : CupertinoColors.systemBlue,
-                          fontSize: 12,
-                        ),
+                        style: MacosTheme.of(context)
+                            .typography
+                            .caption1
+                            .copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: isLargest
+                                  ? context.colors.danger
+                                  : context.colors.accent,
+                            ),
                       ),
                       const SizedBox(width: 6),
-                      const Icon(
+                      MacosIcon(
                         CupertinoIcons.ellipsis,
                         size: 14,
-                        color: CupertinoColors.secondaryLabel,
+                        color: context.colors.secondaryLabel,
                       ),
                     ],
                   ),
                   Text(
                     result.isDirectory ? 'FOLDER' : 'FILE',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 12,
-                      color: CupertinoColors.secondaryLabel,
-                    ),
+                    style: MacosTheme.of(context)
+                        .typography
+                        .caption1
+                        .copyWith(
+                          color: context.colors.secondaryLabel,
+                        ),
                   ),
                 ],
               ),
@@ -383,4 +323,3 @@ extension CleanerHomePageWidgetsResultsList on _CleanerHomePageState {
     );
   }
 }
-

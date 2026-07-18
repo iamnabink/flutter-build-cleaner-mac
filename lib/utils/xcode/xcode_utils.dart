@@ -15,23 +15,6 @@ extension XcodeCacheCleanerUtils on _XcodeCacheCleanerPageState {
     return '${size.toStringAsFixed(size < 10 && i > 0 ? 2 : 1)} ${suffixes[i]}';
   }
 
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final difference = now.difference(date);
-
-    if (difference.inDays > 365) {
-      return '${(difference.inDays / 365).floor()}y ago';
-    } else if (difference.inDays > 30) {
-      return '${(difference.inDays / 30).floor()}mo ago';
-    } else if (difference.inDays > 0) {
-      return '${difference.inDays}d ago';
-    } else if (difference.inHours > 0) {
-      return '${difference.inHours}h ago';
-    } else {
-      return '${difference.inMinutes}m ago';
-    }
-  }
-
   Future<int> _getDirectorySize(Directory directory) async {
     int totalSize = 0;
     try {
@@ -131,23 +114,6 @@ extension XcodeCacheCleanerUtils on _XcodeCacheCleanerPageState {
     return null;
   }
 
-  Future<void> _launchUrl(String url) async {
-    try {
-      final Uri uri = Uri.parse(url);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } else {
-        if (mounted) {
-          _showSnackBar('Could not launch $url', isError: true);
-        }
-      }
-    } catch (e) {
-      if (mounted) {
-        _showSnackBar('Error launching URL: $e', isError: true);
-      }
-    }
-  }
-
   Future<void> _openInFinder(String targetPath) async {
     try {
       if (Platform.isMacOS) {
@@ -166,18 +132,17 @@ extension XcodeCacheCleanerUtils on _XcodeCacheCleanerPageState {
 
   void _showSnackBar(String message, {required bool isError}) {
     HapticFeedback.mediumImpact();
-    showCupertinoDialog(
+    showMacosAlertDialog(
       context: context,
-      builder: (context) => CupertinoAlertDialog(
+      builder: (dialogContext) => MacosAlertDialog(
+        appIcon: Image.asset('assets/images/icon.png', width: 56, height: 56),
         title: Text(isError ? 'Error' : 'Success'),
-        content: Text(message),
-        actions: [
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
-          ),
-        ],
+        message: Text(message),
+        primaryButton: PushButton(
+          controlSize: ControlSize.large,
+          onPressed: () => Navigator.of(dialogContext).pop(),
+          child: const Text('OK'),
+        ),
       ),
     );
   }
