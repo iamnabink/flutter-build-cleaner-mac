@@ -32,10 +32,11 @@
 </div>
 
 <div align="center">
-  <img src="assets/images/screenshot1.png" alt="App Screenshot 1" width="25%">
-  <img src="assets/images/screenshot2.png" alt="App Screenshot 2" width="25%">
-  <img src="assets/images/screenshot3.png" alt="App Screenshot 3" width="25%">
-  <img src="assets/images/screenshot4.png" alt="App Screenshot 4" width="25%">
+  <img src="assets/images/appstore/broomie_appstore_1.png" alt="Broomie – clean up dev junk in one click" width="100%">
+  <img src="assets/images/appstore/broomie_appstore_2.png" alt="Broomie – see exactly what's eating your disk" width="100%">
+  <img src="assets/images/appstore/broomie_appstore_3.png" alt="Broomie – reclaim gigabytes of Xcode cache" width="100%">
+  <img src="assets/images/appstore/broomie_appstore_4.png" alt="Broomie – a safe, guided deep-clean routine" width="100%">
+  <img src="assets/images/appstore/broomie_appstore_5.png" alt="Broomie – know what's safe to delete" width="100%">
 </div>
 
 A powerful macOS desktop application built with Flutter that helps mobile developers clean up unnecessary build artifacts from their system to free up disk space.
