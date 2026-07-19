@@ -14,7 +14,7 @@ import 'package:upgrader/upgrader.dart';
 enum AppSection {
   home(CupertinoIcons.house_fill, 'Home'),
   xcode(CupertinoIcons.hammer_fill, 'Xcode Cleaner'),
-  guide(CupertinoIcons.checkmark_shield_fill, 'Manual Guide'),
+  guide(CupertinoIcons.checkmark_shield_fill, 'Deep Cleanup'),
   pro(CupertinoIcons.heart_fill, 'Support / Pro'),
   about(CupertinoIcons.info_circle_fill, 'About');
 
