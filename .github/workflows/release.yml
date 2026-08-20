@@ -18,8 +18,8 @@ name: Release
 # A tag push always runs both jobs and always publishes.
 #
 # ─── SECRETS ────────────────────────────────────────────────────────────────
-# Stored in the `secrets` ENVIRONMENT (not repository secrets), so each job
-# declares `environment: secrets` to read them.
+# Stored in the `release` ENVIRONMENT (not repository secrets), so each job
+# declares `environment: release` to read them.
 #
 #   ASC_KEY_P8             base64 of AuthKey_<ASC_KEY_ID>.p8 — App Store Connect
 #                          API key. Used for BOTH the TestFlight upload and DMG
@@ -74,7 +74,7 @@ jobs:
     name: TestFlight (.pkg → App Store Connect)
     if: github.event_name == 'push' || contains(fromJson('["both","testflight"]'), github.event.inputs.target)
     runs-on: macos-latest
-    environment: secrets
+    environment: release
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
@@ -214,7 +214,7 @@ jobs:
     name: DMG (Developer ID → GitHub Release)
     if: github.event_name == 'push' || contains(fromJson('["both","dmg"]'), github.event.inputs.target)
     runs-on: macos-latest
-    environment: secrets
+    environment: release
     permissions:
       contents: write
     timeout-minutes: 60

@@ -157,8 +157,8 @@ ID or app-specific password is involved.
 
 ### Required secrets
 
-Stored in the `secrets` **environment** (Settings → Environments → secrets),
-which each job declares with `environment: secrets`.
+Stored in the `release` **environment** (Settings → Environments → release),
+which each job declares with `environment: release`.
 
 | Secret | Used by |
 | --- | --- |
