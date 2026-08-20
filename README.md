@@ -174,6 +174,31 @@ Two different Apple credentials, for two different purposes:
 Notarization uses the same App Store Connect API key as the upload, so no Apple
 ID or app-specific password is involved.
 
+### How the upload works (no fastlane)
+
+Everything is done by tools that ship inside Xcode, authenticated by a single
+App Store Connect API key:
+
+| Step | Tool | What it does |
+| --- | --- | --- |
+| Sign the archive | `xcodebuild -allowProvisioningUpdates` | mints the Apple Distribution certificate and Mac App Store provisioning profile on demand — a clean runner has neither |
+| Upload to TestFlight | `xcrun altool --upload-app` | validates the `.pkg` and transfers it via Apple's Transporter engine |
+| Notarize the DMG | `xcrun notarytool submit` | submits for malware scanning, then `stapler` attaches the ticket |
+
+`altool` lives at
+`Xcode.app/Contents/SharedFrameworks/ContentDelivery.framework/Resources/altool`.
+It is passed the key *id*, not the key — it looks for
+`~/.appstoreconnect/private_keys/AuthKey_<ASC_KEY_ID>.p8` by convention, which
+is why the workflow writes it there. From that `.p8` it mints a short-lived
+ES256 JWT and uploads, returning a Delivery UUID as the receipt.
+
+fastlane's `upload_to_testflight` wraps this same binary. It adds changelogs,
+tester-group management and metadata upload — none of which this app needs, so
+there is no `Fastfile` here.
+
+The one key covers all three jobs, which is why no Apple ID or app-specific
+password appears anywhere in this pipeline.
+
 ### Required secrets
 
 Stored in the `release` **environment** (Settings → Environments → release),
