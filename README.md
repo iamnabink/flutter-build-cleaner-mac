@@ -1,94 +1,82 @@
-# MacOS Broomie - Mobile Development Artifact Cleaner
+<div align="center">
 
-## 📥 Download Broomie
+# 🧹 Broomie
 
-<div>
+**Reclaim gigabytes from mobile-dev build artifacts — in one click.**
 
-[![Download on the Mac App Store](https://tools.applemediaservices.com/api/badges/download-on-the-mac-app-store/black/en-us?size=250x83&releaseDate=1733011200)](https://apps.apple.com/us/app/broomie-appbuild-dev-cleaner/id6755060683?mt=12)
+A native macOS app that finds the `build/`, `node_modules/`, `.xcarchive` and
+`DerivedData` junk scattered across every project on your Mac, shows you exactly
+what it costs you, and cleans it safely.
 
-[![Download Broomie.dmg](https://img.shields.io/badge/⬇️%20Download-Broomie.dmg-blue?style=for-the-badge&logo=apple&logoColor=white)](https://raw.githubusercontent.com/iamnabink/flutter-build-cleaner-mac/main/Broomie.dmg)
+[![Mac App Store](https://img.shields.io/badge/Mac%20App%20Store-Download-0D96F6?style=for-the-badge&logo=apple&logoColor=white)](https://apps.apple.com/us/app/broomie-appbuild-dev-cleaner/id6755060683?mt=12)
+[![Download DMG](https://img.shields.io/badge/Direct%20Download-.dmg-555?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/iamnabink/macOs-mobile-dev-cleaner/releases/latest)
 
-**✅ Safety & Security Assurance:**
-- 🔒 **Code-Signed** - The DMG file is signed with an Apple Developer ID Application certificate
-- ✅ **Notarized by Apple** - The app has been notarized by Apple, ensuring it's free of malware
-- 🛡️ **100% Safe** - No security warnings, no malware, completely safe to install
-- ✨ **Verified** - The app bundle and DMG are both signed and verified
+![Platform](https://img.shields.io/badge/macOS-10.15%2B-lightgrey)
+![Built with Flutter](https://img.shields.io/badge/built%20with-Flutter-02569B?logo=flutter&logoColor=white)
+![Signed & Notarized](https://img.shields.io/badge/signed%20%26%20notarized-by%20Apple-success)
+[![Latest release](https://img.shields.io/github/v/release/iamnabink/macOs-mobile-dev-cleaner)](https://github.com/iamnabink/macOs-mobile-dev-cleaner/releases/latest)
+[![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial-blue)](LICENSE)
 
-**Quick Install:**
+<img src="assets/images/appstore/broomie_appstore_1.png" alt="Broomie scanning for build artifacts" width="90%">
 
-**Option 1 - Mac App Store (Recommended):**
-1. Click the "Download on the Mac App Store" button above
-2. Install directly from the App Store
-3. Launch from Applications or Spotlight
-
-**Option 2 - Direct Download (DMG):**
-1. Click the "Download Broomie.dmg" button above
-2. Open the downloaded DMG file
-3. Drag **Broomie** to your Applications folder
-4. Launch from Applications - **No security warnings!**
+</div>
 
 ---
 
-</div>
+## Why
+
+As a mobile developer you accumulate build output faster than you notice it:
+
+| Culprit | Typical damage |
+| --- | --- |
+| Flutter `build/` folders | hundreds of MB, times every project |
+| `node_modules/` | 200–800 MB each |
+| Xcode DerivedData & `.xcarchive` | several GB |
+| Stray APK / AAB / IPA files | steadily piling up |
+
+Cleaning it by hand means hunting through directories and hoping you don't
+delete something that matters. Broomie does the hunting, shows the totals, and
+**never touches source code**.
+
+## Install
+
+**Mac App Store** *(recommended — auto-updates)*
+→ [apps.apple.com](https://apps.apple.com/us/app/broomie-appbuild-dev-cleaner/id6755060683?mt=12)
+
+**Direct download**
+→ grab the `.dmg` from [Releases](https://github.com/iamnabink/macOs-mobile-dev-cleaner/releases/latest), open it, drag Broomie to Applications.
+
+Every release is **code-signed with an Apple Developer ID certificate and
+notarized by Apple**, so it opens with no security warning. On first launch
+macOS asks permission to access your home directory — Broomie needs it to scan
+your projects.
+
+## What it cleans
+
+- **Flutter** — `build/` directories
+- **React Native / Node** — `node_modules/`, `android/app/build/`, `ios/build/`
+- **iOS** — DerivedData and `.xcarchive` files
+- **Packages** — stray `.apk`, `.aab`, `.ipa`
+
+## Safety
+
+- **Never deletes source code** — build artifacts only
+- **Skips system directories**
+- **Preview before deleting** — see exactly what goes
+- **Open in Finder** — right-click any item to inspect it first
+
+## Requirements
+
+macOS 10.15 (Catalina) or later · Intel or Apple Silicon · ~50 MB free
+
+## Screenshots
 
 <div align="center">
-  <img src="assets/images/appstore/broomie_appstore_1.png" alt="Broomie – clean up dev junk in one click" width="100%">
-  <img src="assets/images/appstore/broomie_appstore_2.png" alt="Broomie – see exactly what's eating your disk" width="100%">
-  <img src="assets/images/appstore/broomie_appstore_3.png" alt="Broomie – reclaim gigabytes of Xcode cache" width="100%">
-  <img src="assets/images/appstore/broomie_appstore_4.png" alt="Broomie – a safe, guided deep-clean routine" width="100%">
-  <img src="assets/images/appstore/broomie_appstore_5.png" alt="Broomie – know what's safe to delete" width="100%">
+<img src="assets/images/appstore/broomie_appstore_2.png" width="49%">
+<img src="assets/images/appstore/broomie_appstore_3.png" width="49%">
+<img src="assets/images/appstore/broomie_appstore_4.png" width="49%">
+<img src="assets/images/appstore/broomie_appstore_5.png" width="49%">
 </div>
-
-A powerful macOS desktop application built with Flutter that helps mobile developers clean up unnecessary build artifacts from their system to free up disk space.
-
-## Why I Built This App
-
-As a mobile developer working with Flutter and React Native, I constantly faced the problem of **massive build artifacts consuming gigabytes of disk space**. This app automatically scans your system, identifies build artifacts, and safely removes them to free up space.
-
-### The Problem
-- **Flutter builds** accumulate quickly across multiple projects
-- **React Native node_modules** folders grow to hundreds of MBs each
-- **iOS Archives** in DerivedData can reach several GBs
-- **Android APK/AAB files** pile up in build folders
-- **Manual cleanup** is tedious and error-prone
-
-### The Solution
-Broomie automatically scans, identifies, and safely removes build artifacts (never source code), saving hours of manual cleanup work.
-
-## Installation
-
-**From Mac App Store (Recommended):**
-1. Click the "Download on the Mac App Store" button at the top
-2. Install directly from the App Store
-3. Launch from Applications or Spotlight
-4. **Grant permission** when prompted to access your home directory
-
-**Direct Download (DMG):**
-1. **Download the latest DMG** from the [Releases](https://github.com/iamnabink/flutter-build-cleaner-mac/releases) page or click the DMG download button at the top
-2. **Open the DMG file** and drag **Broomie** to your Applications folder
-3. **Launch** from Applications or Spotlight
-4. **Grant permission** when prompted to access your home directory
-
-## What It Cleans
-
-- **APK/AAB/IPA files** (Android/iOS packages)
-- **Flutter build folders** (`build/` directories)
-- **React Native build folders** (`android/app/build/`, `ios/build/`)
-- **iOS Archives** (DerivedData `.xcarchive` files)
-- **node_modules folders** (React Native dependencies)
-
-## Safety Features
-
-- ✅ **Never deletes source code** - Only targets build artifacts
-- ✅ **Skips system directories** - Protects important system files
-- ✅ **Preview before delete** - See exactly what will be removed
-- ✅ **Open in Finder** - Right-click any item to inspect it
-
-## System Requirements
-
-- **macOS 10.15** or later
-- **50MB** free disk space for the app
-- **File system access** permission (granted on first launch)
 
 ---
 
@@ -195,6 +183,18 @@ which each job declares with `environment: secrets`.
 `notarization.config` (gitignored: `APPLE_ID`, `APPLE_APP_PASSWORD`,
 `TEAM_ID`). CI is the normal path; the script is there for testing the pipeline
 without cutting a tag.
+
+## License
+
+[PolyForm Noncommercial 1.0.0](LICENSE) — free to use, modify and share for any
+**noncommercial** purpose: personal projects, study, research, hobby work, and
+use by charities, schools, and public institutions.
+
+**Selling it, or using it commercially, needs permission.** Broomie is a paid
+app on the Mac App Store, and this license keeps that intact while leaving the
+source open to read, learn from, fork and contribute to.
+
+Want to use it commercially? [Open an issue](https://github.com/iamnabink/macOs-mobile-dev-cleaner/issues/new) or get in touch.
 
 ## Contributing
 
