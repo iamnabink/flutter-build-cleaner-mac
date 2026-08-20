@@ -71,12 +71,12 @@ macOS 10.15 (Catalina) or later · Intel or Apple Silicon · ~50 MB free
 
 ## Screenshots
 
-<div align="center">
-<img src="assets/images/appstore/broomie_appstore_2.png" width="49%">
-<img src="assets/images/appstore/broomie_appstore_3.png" width="49%">
-<img src="assets/images/appstore/broomie_appstore_4.png" width="49%">
-<img src="assets/images/appstore/broomie_appstore_5.png" width="49%">
-</div>
+| | |
+| :---: | :---: |
+| <img src="assets/images/appstore/broomie_appstore_2.png" alt="Scan results with per-project sizes"> | <img src="assets/images/appstore/broomie_appstore_3.png" alt="Reclaiming Xcode DerivedData"> |
+| **See what's eating the disk** — every project, sorted by size | **Xcode caches** — usually the biggest single win |
+| <img src="assets/images/appstore/broomie_appstore_4.png" alt="Guided deep-clean routine"> | <img src="assets/images/appstore/broomie_appstore_5.png" alt="Detail view showing what is safe to delete"> |
+| **Guided deep clean** — step through it safely | **Know before you delete** — inspect anything first |
 
 ---
 
@@ -101,6 +101,16 @@ The UI is built entirely with [macos_ui](https://pub.dev/packages/macos_ui).
 See [CLAUDE.md](CLAUDE.md) for architecture notes and conventions.
 
 ---
+
+## CI/CD
+
+[![Release](https://github.com/iamnabink/macOs-mobile-dev-cleaner/actions/workflows/release.yml/badge.svg)](https://github.com/iamnabink/macOs-mobile-dev-cleaner/actions/workflows/release.yml)
+
+One tag ships both channels. GitHub Actions builds on `macos-latest`, signs and
+notarizes with Apple, uploads the `.pkg` to App Store Connect and attaches the
+notarized `.dmg` to a GitHub Release — no local Xcode step, and no fastlane
+(`xcrun altool` and `notarytool` do the work, authenticated with an App Store
+Connect API key).
 
 ## Releasing
 
