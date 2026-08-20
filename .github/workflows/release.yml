@@ -1,150 +1,390 @@
-name: Build and Release macOS App
+name: Release
+
+# Two independent jobs, both driven by a tag:
+#
+#   testflight  builds a Mac App Store .pkg and uploads it to App Store Connect
+#               (appears in TestFlight, then submit for review from there)
+#   dmg         builds a Developer ID .app, notarizes it, wraps it in a DMG and
+#               attaches it to a GitHub Release
+#
+# Broomie ships through both channels, so one tag produces both artifacts.
+#
+#   git tag v9.0.1 && git push origin v9.0.1
+#
+# Use `workflow_dispatch` to build without publishing anything — artifacts are
+# uploaded to the run, the GitHub Release and store upload are skipped.
+#
+# ─── SECRETS ────────────────────────────────────────────────────────────────
+# Stored in the `secrets` ENVIRONMENT (not repository secrets), so each job
+# declares `environment: secrets` to read them.
+#
+#   ASC_KEY_P8             base64 of AuthKey_<ASC_KEY_ID>.p8 — App Store Connect
+#                          API key. Used for BOTH the TestFlight upload and DMG
+#                          notarization, so no Apple ID or app-specific
+#                          password is needed anywhere.
+#   ASC_KEY_ID             App Store Connect key id
+#   ASC_ISSUER_ID          App Store Connect issuer id (UUID)
+#   APPLE_TEAM_ID          Developer team id
+#   REVENUECAT_API_KEY     RevenueCat public SDK key. `.env` is a declared asset
+#                          in pubspec.yaml but gitignored, so without this the
+#                          build fails: "No file or variants found for asset:
+#                          .env". Leave empty to ship without IAP — the paywall
+#                          hides itself (lib/config/env.dart).
+#   MACOS_CERTIFICATE      base64 of the "Developer ID Application" .p12
+#   MACOS_CERTIFICATE_PWD  password of that .p12
+#   KEYCHAIN_PASSWORD      optional; any string for the throwaway CI keychain
+# ────────────────────────────────────────────────────────────────────────────
 
 on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Version label for a dry run (nothing is published)"
+        required: true
+        default: v0.0.0-manual
+        type: string
+
+env:
+  APP_NAME: Broomie
+  BUNDLE_ID: com.whoamie.broomie
+  FLUTTER_VERSION: '3.44.8'
 
 jobs:
-  build-and-release:
+  # ===========================================================================
+  # Mac App Store → TestFlight
+  # ===========================================================================
+  testflight:
+    name: TestFlight (.pkg → App Store Connect)
     runs-on: macos-latest
-    permissions:
-      contents: write  # 👈 important
+    environment: secrets
+    timeout-minutes: 60
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # Fetch all history for git log
-    
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.x'
-        channel: 'stable'
-    
-    - name: Get dependencies
-      run: flutter pub get
-    
-    - name: Disable code signing
-      run: |
-        sed -i '' 's/CODE_SIGN_IDENTITY = "Apple Development";/CODE_SIGN_IDENTITY = "";/g' macos/Runner.xcodeproj/project.pbxproj
-        sed -i '' 's/"CODE_SIGN_IDENTITY\[sdk=macosx\*\]" = "Apple Development";/"CODE_SIGN_IDENTITY[sdk=macosx*]" = "";/g' macos/Runner.xcodeproj/project.pbxproj
-    
-    - name: Build macOS app
-      run: flutter build macos --release
-    
-    - name: Install create-dmg
-      run: brew install create-dmg
-    
-    - name: Get app name from pubspec
-      id: app_info
-      run: |
-        APP_NAME="Broomie"
-        echo "app_name=$APP_NAME" >> $GITHUB_OUTPUT
-        echo "App name: $APP_NAME"
-    
-    - name: Create DMG
-      run: |
-        APP_NAME="${{ steps.app_info.outputs.app_name }}"
-        VERSION=${{ github.ref_name }}
-        
-        create-dmg \
-          --volname "$APP_NAME" \
-          --window-pos 200 120 \
-          --window-size 600 400 \
-          --icon-size 100 \
-          --icon "$APP_NAME.app" 175 120 \
-          --hide-extension "$APP_NAME.app" \
-          --app-drop-link 425 120 \
-          "$APP_NAME-$VERSION.dmg" \
-          "build/macos/Build/Products/Release/"
-    
-    - name: Generate Release Notes
-      id: generate_notes
-      run: |
-        VERSION=${{ github.ref_name }}
-        APP_NAME="${{ steps.app_info.outputs.app_name }}"
-        
-        # Get the previous tag
-        PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
-        
-        echo "# 🚀 $APP_NAME $VERSION" > release_notes.md
-        echo "" >> release_notes.md
-        
-        if [ -z "$PREVIOUS_TAG" ]; then
-          echo "## 🎉 Initial Release" >> release_notes.md
-          echo "" >> release_notes.md
-          echo "This is the first release of $APP_NAME!" >> release_notes.md
-          echo "" >> release_notes.md
-          echo "### 📝 All Changes" >> release_notes.md
-          git log --pretty=format:"- %s" --reverse | head -20 >> release_notes.md
-        else
-          echo "## 📝 Changes since $PREVIOUS_TAG" >> release_notes.md
-          echo "" >> release_notes.md
-          
-          # Categorize commits
-          FEATURES=$(git log --pretty=format:"%s" $PREVIOUS_TAG..HEAD | grep -i "^feat\|^add\|^new" | sed 's/^/- /' || echo "")
-          FIXES=$(git log --pretty=format:"%s" $PREVIOUS_TAG..HEAD | grep -i "^fix\|^bug\|^patch" | sed 's/^/- /' || echo "")
-          OTHERS=$(git log --pretty=format:"%s" $PREVIOUS_TAG..HEAD | grep -iv "^feat\|^add\|^new\|^fix\|^bug\|^patch" | sed 's/^/- /' || echo "")
-          
-          if [ ! -z "$FEATURES" ]; then
-            echo "### ✨ New Features" >> release_notes.md
-            echo "$FEATURES" >> release_notes.md
-            echo "" >> release_notes.md
+      - uses: actions/checkout@v4
+
+      - name: Resolve version label
+        id: ver
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "version=${{ github.event.inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
           fi
-          
-          if [ ! -z "$FIXES" ]; then
-            echo "### 🐛 Bug Fixes" >> release_notes.md
-            echo "$FIXES" >> release_notes.md
-            echo "" >> release_notes.md
+
+      - name: Setup Flutter ${{ env.FLUTTER_VERSION }}
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Write .env
+        env:
+          REVENUECAT_API_KEY: ${{ secrets.REVENUECAT_API_KEY }}
+        run: printf 'REVENUECAT_API_KEY=%s\n' "${REVENUECAT_API_KEY:-}" > .env
+
+      - name: Install ASC API key
+        env:
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+        run: |
+          set -euo pipefail
+          # Both xcodebuild (cloud signing) and altool look for the key here.
+          mkdir -p "$HOME/.appstoreconnect/private_keys"
+          echo "$ASC_KEY_P8" | base64 --decode \
+            > "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
+          chmod 600 "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
+
+      - name: Build Flutter macOS bundle
+        # Produces the .app that the Xcode archive below wraps. Signing is left
+        # to xcodebuild, which needs the App Store certificate, not this step.
+        run: |
+          set -euo pipefail
+          flutter pub get
+          flutter build macos --release --no-codesign
+
+      - name: Archive for App Store
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          set -euo pipefail
+          P8="$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
+          # -allowProvisioningUpdates lets Xcode create the Apple Distribution
+          # certificate and Mac App Store provisioning profile on demand (cloud
+          # signing) — a clean runner has neither.
+          xcodebuild -workspace macos/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -destination 'generic/platform=macOS' \
+            -archivePath "$RUNNER_TEMP/${APP_NAME}.xcarchive" \
+            archive \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
+            CODE_SIGN_STYLE=Automatic \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$P8" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+
+      - name: Export .pkg
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          set -euo pipefail
+          P8="$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<PLIST
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store</string>
+            <key>teamID</key><string>${APPLE_TEAM_ID}</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>destination</key><string>export</string>
+          </dict>
+          </plist>
+          PLIST
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/${APP_NAME}.xcarchive" \
+            -exportPath "$RUNNER_TEMP/export" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$P8" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID"
+          ls -la "$RUNNER_TEMP/export"
+
+      - name: Upload to App Store Connect
+        if: github.event_name == 'push'
+        env:
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          PKG="$(find "$RUNNER_TEMP/export" -name '*.pkg' | head -1)"
+          if [[ -z "$PKG" ]]; then
+            echo "::error::No .pkg produced by exportArchive"; exit 1
           fi
-          
-          if [ ! -z "$OTHERS" ]; then
-            echo "### 🔧 Other Changes" >> release_notes.md
-            echo "$OTHERS" >> release_notes.md
-            echo "" >> release_notes.md
+          echo "Uploading $PKG"
+          # altool finds the key in ~/.appstoreconnect/private_keys by id.
+          xcrun altool --upload-app -f "$PKG" --type macos \
+            --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
+          echo "Uploaded — the build appears in TestFlight once Apple finishes processing."
+
+      - name: Upload .pkg artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pkg-${{ steps.ver.outputs.version }}
+          path: ${{ runner.temp }}/export/*.pkg
+          if-no-files-found: warn
+          retention-days: 30
+
+  # ===========================================================================
+  # Developer ID → notarized DMG → GitHub Release
+  # ===========================================================================
+  dmg:
+    name: DMG (Developer ID → GitHub Release)
+    runs-on: macos-latest
+    environment: secrets
+    permissions:
+      contents: write
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history for the release-notes diff
+
+      - name: Resolve version label
+        id: ver
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "version=${{ github.event.inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
           fi
-        fi
-        
-        # Add installation instructions
-        echo "## 📥 Installation" >> release_notes.md
-        echo "" >> release_notes.md
-        echo "1. **Download** the DMG file from the assets below" >> release_notes.md
-        echo "2. **Open** the downloaded DMG file" >> release_notes.md
-        echo "3. **Drag** the app to your Applications folder" >> release_notes.md
-        echo "4. **Right-click** the app and select \"Open\" (first time only)" >> release_notes.md
-        echo "" >> release_notes.md
-        echo "## ⚠️ Security Note" >> release_notes.md
-        echo "This app is not code-signed. macOS will show a security warning on first launch." >> release_notes.md
-        echo "This is normal - just right-click the app and choose \"Open\" to bypass the warning." >> release_notes.md
-        echo "" >> release_notes.md
-        echo "## 💻 System Requirements" >> release_notes.md
-        echo "- macOS 10.15 (Catalina) or later" >> release_notes.md
-        echo "- 64-bit Intel or Apple Silicon Mac" >> release_notes.md
-        echo "" >> release_notes.md
-        
-        if [ ! -z "$PREVIOUS_TAG" ]; then
-          echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREVIOUS_TAG...$VERSION" >> release_notes.md
-        fi
-        
-        echo "Generated release notes:"
-        cat release_notes.md
-    
-    - name: Create GitHub Release
-      uses: softprops/action-gh-release@v2
-      with:
-        files: "*.dmg"
-        name: "${{ steps.app_info.outputs.app_name }} ${{ github.ref_name }}"
-        body_path: release_notes.md
-        draft: false
-        prerelease: false
-        make_latest: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GH_PAT }}
-    
-    - name: Upload DMG as artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: "dmg-${{ github.ref_name }}"
-        path: "*.dmg"
-        retention-days: 30
+
+      - name: Setup Flutter ${{ env.FLUTTER_VERSION }}
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Write .env
+        env:
+          REVENUECAT_API_KEY: ${{ secrets.REVENUECAT_API_KEY }}
+        run: printf 'REVENUECAT_API_KEY=%s\n' "${REVENUECAT_API_KEY:-}" > .env
+
+      - name: Import Developer ID certificate
+        id: signing
+        env:
+          MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${MACOS_CERTIFICATE:-}" ]]; then
+            echo "::warning::MACOS_CERTIFICATE unset — building UNSIGNED."
+            echo "signed=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          CERT="$RUNNER_TEMP/developer_id.p12"
+          KC="$RUNNER_TEMP/app-signing.keychain-db"
+          KC_PASS="${KEYCHAIN_PASSWORD:-broomie-ci}"
+          echo "$MACOS_CERTIFICATE" | base64 --decode > "$CERT"
+          security create-keychain -p "$KC_PASS" "$KC"
+          security set-keychain-settings -lut 21600 "$KC"
+          security unlock-keychain -p "$KC_PASS" "$KC"
+          security import "$CERT" -P "$MACOS_CERTIFICATE_PWD" -A -t cert -f pkcs12 -k "$KC"
+          # Allow codesign to use the key without an interactive prompt.
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KC_PASS" "$KC" >/dev/null
+          security list-keychain -d user -s "$KC"
+          ID="$(security find-identity -v -p codesigning "$KC" | grep 'Developer ID Application' | head -1 | sed 's/.*"\(.*\)".*/\1/')"
+          if [[ -z "$ID" ]]; then
+            echo "::error::No 'Developer ID Application' identity in the .p12 — re-export WITH the private key."
+            exit 1
+          fi
+          echo "Identity: $ID"
+          echo "identity=$ID" >> "$GITHUB_OUTPUT"
+          echo "signed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Build macOS app
+        run: |
+          set -euo pipefail
+          flutter pub get
+          flutter build macos --release
+
+      - name: Sign app bundle
+        if: steps.signing.outputs.signed == 'true'
+        env:
+          IDENTITY: ${{ steps.signing.outputs.identity }}
+        run: |
+          set -euo pipefail
+          APP="build/macos/Build/Products/Release/${APP_NAME}.app"
+          xattr -cr "$APP"
+          # --options runtime (hardened runtime) is REQUIRED for notarization.
+          codesign --force --deep --sign "$IDENTITY" \
+                   --options runtime --timestamp \
+                   --entitlements macos/Runner/Release.entitlements "$APP"
+          codesign --verify --verbose "$APP"
+
+      - name: Notarize app
+        if: steps.signing.outputs.signed == 'true'
+        env:
+          ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          P8="$RUNNER_TEMP/asc.p8"
+          echo "$ASC_KEY_P8" | base64 --decode > "$P8"
+          APP="build/macos/Build/Products/Release/${APP_NAME}.app"
+          ZIP="$RUNNER_TEMP/${APP_NAME}.zip"
+          # notarytool takes an archive, not a .app directory.
+          ditto -c -k --keepParent "$APP" "$ZIP"
+          xcrun notarytool submit "$ZIP" \
+            --key "$P8" --key-id "$ASC_KEY_ID" --issuer "$ASC_ISSUER_ID" --wait
+          # Staple so Gatekeeper validates offline.
+          xcrun stapler staple "$APP"
+          xcrun stapler validate "$APP"
+
+      - name: Create DMG
+        id: dmg
+        run: |
+          set -euo pipefail
+          brew install create-dmg
+          DMG="${APP_NAME}-${{ steps.ver.outputs.version }}.dmg"
+          create-dmg \
+            --volname "$APP_NAME" \
+            --window-pos 200 120 --window-size 600 400 --icon-size 100 \
+            --icon "$APP_NAME.app" 175 120 \
+            --hide-extension "$APP_NAME.app" \
+            --app-drop-link 425 120 \
+            "$DMG" "build/macos/Build/Products/Release/"
+          echo "dmg=$DMG" >> "$GITHUB_OUTPUT"
+
+      - name: Sign and notarize DMG
+        if: steps.signing.outputs.signed == 'true'
+        env:
+          IDENTITY: ${{ steps.signing.outputs.identity }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          DMG="${{ steps.dmg.outputs.dmg }}"
+          codesign --force --sign "$IDENTITY" --timestamp "$DMG"
+          # The DMG is notarized separately from the .app inside it, so the
+          # download itself also passes Gatekeeper.
+          xcrun notarytool submit "$DMG" \
+            --key "$RUNNER_TEMP/asc.p8" --key-id "$ASC_KEY_ID" --issuer "$ASC_ISSUER_ID" --wait
+          xcrun stapler staple "$DMG"
+
+      - name: Generate release notes
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.ver.outputs.version }}"
+          SIGNED="${{ steps.signing.outputs.signed }}"
+          PREV="$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo '')"
+          {
+            echo "# 🚀 $APP_NAME $VERSION"
+            echo ""
+            if [[ -z "$PREV" ]]; then
+              echo "## 🎉 Initial Release"; echo ""
+              git log --pretty=format:"- %s" --reverse | head -20; echo ""
+            else
+              echo "## 📝 Changes since $PREV"; echo ""
+              F="$(git log --pretty=format:'%s' "$PREV"..HEAD | grep -iE '^(feat|add|new)' | sed 's/^/- /' || true)"
+              X="$(git log --pretty=format:'%s' "$PREV"..HEAD | grep -iE '^(fix|bug|patch)' | sed 's/^/- /' || true)"
+              O="$(git log --pretty=format:'%s' "$PREV"..HEAD | grep -ivE '^(feat|add|new|fix|bug|patch)' | sed 's/^/- /' || true)"
+              [[ -n "$F" ]] && { echo "### ✨ New Features"; echo "$F"; echo ""; }
+              [[ -n "$X" ]] && { echo "### 🐛 Bug Fixes";    echo "$X"; echo ""; }
+              [[ -n "$O" ]] && { echo "### 🔧 Other Changes"; echo "$O"; echo ""; }
+            fi
+            echo "## 📥 Install"
+            echo ""
+            echo "**Mac App Store:** https://apps.apple.com/us/app/broomie-appbuild-dev-cleaner/id6755060683?mt=12"
+            echo ""
+            echo "**Direct download:** grab the DMG below, open it, drag $APP_NAME to Applications."
+            if [[ "$SIGNED" == "true" ]]; then
+              echo ""
+              echo "Signed with a Developer ID certificate and notarized by Apple — opens with no security warning."
+            else
+              echo ""
+              echo "⚠️ This build is unsigned; macOS will warn on first launch (right-click → Open)."
+            fi
+            echo ""
+            echo "## 💻 Requirements"
+            echo "- macOS 10.15 (Catalina) or later"
+            echo "- Intel or Apple Silicon"
+            [[ -n "$PREV" ]] && { echo ""; echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/$PREV...$VERSION"; }
+          } > release_notes.md
+          cat release_notes.md
+
+      - name: Create GitHub Release
+        if: github.event_name == 'push'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: "*.dmg"
+          name: "${{ env.APP_NAME }} ${{ steps.ver.outputs.version }}"
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+
+      - name: Upload DMG artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dmg-${{ steps.ver.outputs.version }}
+          path: "*.dmg"
+          if-no-files-found: warn
+          retention-days: 30

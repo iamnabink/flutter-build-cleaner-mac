@@ -114,198 +114,87 @@ See [CLAUDE.md](CLAUDE.md) for architecture notes and conventions.
 
 ---
 
-## macOS Distribution & Code Signing Guide
+## Releasing
 
-### Distribution Formats
-
-| Format | Best For | Signing | Notarization |
-|--------|----------|---------|--------------|
-| **DMG** | Direct downloads | Recommended | Required (10.15+) |
-| **PKG** | Professional/Enterprise | Recommended | Required (10.15+) |
-| **App Store** | Consumer apps | Required | Not needed |
-
-### Code Signing Certificates
-
-**For Local Distribution (Outside App Store):**
-- ✅ **Developer ID Application** - Required for signing .app bundles (DMG files)
-- ✅ **Developer ID Installer** - Required for signing .pkg installers
-
-**For App Store Distribution:**
-- ✅ **Apple Distribution** - For .app bundles
-- ✅ **Mac Installer Distribution** - For .pkg installers
-
-**Certificate Types:**
-- 🍎 **Apple certificates** = App Store distribution
-- 🆔 **Developer ID certificates** = External distribution
-
-### How to Get Certificates
-
-**In Xcode:**
-1. Xcode → Preferences → Accounts
-2. Select your Apple ID → "Manage Certificates"
-3. Click "+" → Select:
-   - **Developer ID Application** (for DMG)
-   - **Developer ID Installer** (for PKG)
-
-### Signing Commands
+Both distribution channels are built by
+[`.github/workflows/release.yml`](.github/workflows/release.yml) from a single
+tag — no manual signing, notarizing or uploading.
 
 ```bash
-# Sign app (Developer ID)
-codesign --force --deep --sign "Developer ID Application: Your Name (TEAM_ID)" \
-         --options runtime --timestamp "YourApp.app"
-
-# Verify signature
-codesign --verify --verbose "YourApp.app"
-codesign -dvv "YourApp.app"  # Show detailed signing info
-
-# Check Gatekeeper
-spctl --assess --verbose "YourApp.app"
+git tag v9.0.1
+git push origin v9.0.1
 ```
 
-### Notarization (Required for External Distribution)
+| Job | Produces | Goes to |
+| --- | --- | --- |
+| `testflight` | signed `.pkg` | App Store Connect → TestFlight → Mac App Store |
+| `dmg` | signed + notarized `.dmg` | GitHub Release |
 
-```bash
-# 1. Sign app with Developer ID
-codesign --force --deep --sign "Developer ID Application: Your Name (TEAM_ID)" \
-         --options runtime --timestamp "YourApp.app"
+To build without publishing, run the workflow manually
+(Actions → Release → Run workflow). Artifacts attach to the run; the GitHub
+Release and the store upload are skipped.
 
-# 2. Create ZIP
-ditto -c -k --keepParent "YourApp.app" "YourApp.zip"
+**Bump the version first** — both stores reject a re-used build number:
 
-# 3. Submit for notarization
-xcrun notarytool submit YourApp.zip \
-      --apple-id your@email.com \
-      --team-id TEAM_ID \
-      --password app-specific-password \
-      --wait
-
-# 4. Staple ticket
-xcrun stapler staple "YourApp.app"
+```yaml
+# pubspec.yaml
+version: 9.0.1+13
 ```
 
-**App-Specific Password:** Create at appleid.apple.com → Security → App-Specific Passwords
+### How signing works
 
-### Creating DMG/PKG
+Two different Apple credentials, for two different purposes:
 
-**Using Scripts (Recommended):**
-```bash
-# Create DMG
-./create_dmg.sh
-```
+- **Mac App Store** — the archive is signed with an *Apple Distribution*
+  certificate and a Mac App Store provisioning profile, both created on demand
+  by Xcode cloud signing (`-allowProvisioningUpdates` authenticated with the
+  App Store Connect API key). Nothing has to exist on the machine beforehand.
+- **Direct download** — the app is signed with a *Developer ID Application*
+  certificate (hardened runtime, `--options runtime`), then notarized by Apple
+  and stapled, so Gatekeeper opens it offline with no warning. The `.dmg` is
+  signed and notarized separately from the `.app` inside it.
 
-**What `create_dmg.sh` Does Automatically:**
+Notarization uses the same App Store Connect API key as the upload, so no Apple
+ID or app-specific password is involved.
 
-Your `create_dmg.sh` script handles everything for you:
+### Required secrets
 
-- ✅ **Automatically notarizes each build** - If credentials are in `notarization.config`
-- ✅ **Signs the app** - With your Developer ID certificate
-- ✅ **Submits to Apple** - For automated notarization
-- ✅ **Staples the notarization ticket** - To the app bundle
-- ✅ **Creates the DMG** - With background text and proper layout
-- ✅ **Signs the DMG** - Final DMG is signed and ready
+Stored in the `secrets` **environment** (Settings → Environments → secrets),
+which each job declares with `environment: secrets`.
 
-**Each time you run `./create_dmg.sh`:**
+| Secret | Used by |
+| --- | --- |
+| `ASC_KEY_P8` | both — base64 of the App Store Connect `.p8` key |
+| `ASC_KEY_ID` | both |
+| `ASC_ISSUER_ID` | both |
+| `APPLE_TEAM_ID` | both |
+| `REVENUECAT_API_KEY` | both — see below |
+| `MACOS_CERTIFICATE` | dmg — base64 of the Developer ID `.p12` |
+| `MACOS_CERTIFICATE_PWD` | dmg |
+| `KEYCHAIN_PASSWORD` | dmg, optional (throwaway CI keychain) |
 
-1. It builds a new app
-2. Signs it with your Developer ID certificate
-3. Notarizes it (if credentials are configured in `notarization.config`)
-4. Creates the DMG with all customizations
-5. Signs the final DMG
+> [!IMPORTANT]
+> `.env` is a **declared asset** in `pubspec.yaml` but is gitignored, so CI must
+> recreate it or the build fails outright with
+> `No file or variants found for asset: .env`. That is what
+> `REVENUECAT_API_KEY` is for. Leave the secret empty to ship without in-app
+> purchases — the Pro/paywall UI hides itself (see `lib/config/env.dart`).
+>
+> The RevenueCat *public SDK key* ships inside the app bundle by design, like a
+> Firebase API key. The secret keeps it out of this public repo's history, not
+> out of the binary.
 
-**DMG Creation Process Flow:**
+> [!WARNING]
+> When exporting the Developer ID `.p12`, export **only that identity** and
+> **include its private key**. Exporting "all identities" from a shared login
+> keychain also exports every other developer's private key.
 
-The `create_dmg.sh` script automates the entire process:
+### Releasing locally
 
-1. **🔨 Build** - Compiles the Flutter app for macOS release
-2. **✍️ Sign** - Signs the app bundle with Developer ID certificate
-3. **✅ Verify** - Verifies the app signature is valid
-4. **📤 Notarize** - Submits app to Apple for automated notarization (2-5 minutes)
-   - Scans for malware and security issues
-   - Staples notarization ticket to app if accepted
-5. **💿 Create DMG** - Creates DMG with app bundle and Applications alias
-6. **🎨 Customize** - Adds background text with installation instructions
-7. **🔒 Convert** - Converts to read-only compressed format (UDZO)
-8. **✍️ Sign DMG** - Signs the final DMG file
-9. **✅ Ready** - DMG is ready for distribution!
-
-**Note:** Notarization is automated and requires no manual approval. Apple scans the app automatically (usually completes in 2-5 minutes). If notarization fails or times out, the script continues without it (app will still work but may show security warnings).
-
-**From Xcode:**
-1. Product → Archive
-2. Distribute App → Developer ID (for external) or App Store Connect
-3. Export signed .app bundle
-4. Use `create-dmg` or `pkgbuild` to create DMG/PKG
-
-**Manual DMG Creation:**
-```bash
-create-dmg \
-  --volname "Your App Name" \
-  --window-pos 200 120 \
-  --window-size 800 500 \
-  --icon-size 120 \
-  --icon "YourApp.app" 200 200 \
-  --hide-extension "YourApp.app" \
-  --app-drop-link 600 200 \
-  "YourApp.dmg" \
-  "/path/to/YourApp.app"
-```
-
-**Manual PKG Creation:**
-```bash
-pkgbuild --root "$STAGING_DIR" \
-         --identifier "com.yourcompany.yourapp" \
-         --version "1.0.0" \
-         --install-location "/Applications" \
-         --component-plist "$COMPONENT_PLIST" \
-         --sign "$SIGNING_IDENTITY" \
-         "YourApp.pkg"
-```
-
-### Common Signing Errors
-
-| Error | Cause | Fix |
-|-------|-------|-----|
-| "App is damaged" | Invalid signature | Re-sign the app |
-| "Unidentified developer" | Not signed with Developer ID | Sign with Developer ID and notarize |
-| "Certificate no longer valid" | Certificate expired | Renew certificate |
-| "No signing certificate found" | No certificate in Keychain | Create certificate in Xcode |
-| "Resource fork not allowed" | Extra metadata | Run `xattr -cr "YourApp.app"` |
-
-### External Distribution vs App Store
-
-**External Distribution (Developer ID):**
-- ✅ Full control, no review, no revenue cut
-- ❌ Must handle notarization, no auto-updates
-
-**App Store:**
-- ✅ Trusted, auto-updates, payment processing
-- ❌ 30% revenue cut, review process, sandbox restrictions
-
-### Quick Reference
-
-**Check Signing Info:**
-```bash
-codesign -dvv "YourApp.app"           # Detailed signing info
-codesign --verify --verbose "YourApp.app"  # Verify signature
-spctl --assess --verbose "YourApp.app"     # Check Gatekeeper
-```
-
-**Distribution Comparison:**
-| Feature | DMG | PKG | App Store |
-|---------|-----|-----|-----------|
-| User Experience | Good | Excellent | Excellent |
-| Signing Required | Recommended | Recommended | Required |
-| Notarization | Required | Required | Not needed |
-| Revenue Cut | None | None | 30% |
-
-### Resources
-
-- [Apple Developer Documentation](https://developer.apple.com/documentation/)
-- [Code Signing Guide](https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/)
-- [Notarization Guide](https://developer.apple.com/documentation/security/notarizing_macos_software_before_distribution)
-- [create-dmg Tool](https://github.com/create-dmg/create-dmg)
-
----
+`./create_dmg.sh` still builds, signs and notarizes a DMG from your Mac using
+`notarization.config` (gitignored: `APPLE_ID`, `APPLE_APP_PASSWORD`,
+`TEAM_ID`). CI is the normal path; the script is there for testing the pipeline
+without cutting a tag.
 
 ## Contributing
 

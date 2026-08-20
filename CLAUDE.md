@@ -26,7 +26,13 @@ flutter analyze             # lint — keep error-free
   `.env.example` when adding variables, and read them only via
   `EnvConfig` (`lib/config/env.dart`).
 - `notarization.config` (untracked) holds DMG notarization credentials used by
-  `./create_dmg.sh`.
+  `./create_dmg.sh` for LOCAL releases only.
+- Releases run from `.github/workflows/release.yml` on a `v*` tag: one job
+  uploads a `.pkg` to App Store Connect (TestFlight), another attaches a
+  signed + notarized DMG to a GitHub Release. Credentials come from the
+  `secrets` environment, not from `notarization.config`. CI recreates `.env`
+  from `REVENUECAT_API_KEY` — without it the build fails, because `.env` is a
+  declared asset in `pubspec.yaml`.
 
 ## Architecture
 

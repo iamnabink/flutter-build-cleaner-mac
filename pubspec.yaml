@@ -1,7 +1,7 @@
 name: flutter_cleaner
 description: "Broomie - Clean up mobile development artifacts for Flutter and React Native developers"
 
-version: 9.0.0+12
+version: 9.0.1+14
 
 environment:
   sdk: ^3.8.1
