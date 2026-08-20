@@ -50,3 +50,6 @@ notarization.config
 
 # Local environment secrets (sensitive) — copy .env.example to .env
 .env
+
+# Built artifacts — releases come from CI, never from a committed binary
+*.dmg

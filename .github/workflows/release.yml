@@ -415,7 +415,10 @@ jobs:
         if: github.event_name == 'push' || github.event.inputs.publish == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          files: "*.dmg"
+          # Name the built DMG explicitly: a bare "*.dmg" glob also picks up any
+          # stray DMG in the working tree and publishes it alongside the real
+          # one, which is how a stale Broomie.dmg ended up attached to v9.0.1.
+          files: ${{ steps.dmg.outputs.dmg }}
           name: "${{ env.APP_NAME }} ${{ steps.ver.outputs.version }}"
           body_path: release_notes.md
           draft: false
@@ -429,6 +432,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dmg-${{ steps.ver.outputs.version }}
-          path: "*.dmg"
+          path: ${{ steps.dmg.outputs.dmg }}
           if-no-files-found: warn
           retention-days: 30
