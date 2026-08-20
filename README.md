@@ -119,8 +119,7 @@ Both distribution channels are built by
 tag — no manual signing, notarizing or uploading.
 
 ```bash
-git tag v9.0.1
-git push origin v9.0.1
+git tag v9.0.1 && git push origin v9.0.1
 ```
 
 | Job | Produces | Goes to |
@@ -128,9 +127,29 @@ git push origin v9.0.1
 | `testflight` | signed `.pkg` | App Store Connect → TestFlight → Mac App Store |
 | `dmg` | signed + notarized `.dmg` | GitHub Release |
 
-To build without publishing, run the workflow manually
-(Actions → Release → Run workflow). Artifacts attach to the run; the GitHub
-Release and the store upload are skipped.
+### Releasing one channel only
+
+A suffix on the tag selects the channel:
+
+| Tag | TestFlight | GitHub Release |
+| --- | :---: | :---: |
+| `v9.0.1` | ✅ | ✅ |
+| `v9.0.1-testflight` | ✅ | — |
+| `v9.0.1-dmg` | — | ✅ |
+
+The suffix is stripped from the version label, so `v9.0.1-dmg` still produces
+`Broomie-v9.0.1.dmg`.
+
+### Building without publishing
+
+Actions → Release → **Run workflow**, then choose:
+
+- **target** — `both`, `testflight` or `dmg`
+- **publish** — `false` builds and attaches the artifacts to the run without
+  uploading to App Store Connect or creating a GitHub Release
+
+Useful for testing a pipeline change without burning a version number: both
+stores reject a re-used build number, so a failed publish costs you one.
 
 **Bump the version first** — both stores reject a re-used build number:
 

@@ -9,7 +9,12 @@ name: Release
 #
 # Broomie ships through both channels, so one tag produces both artifacts.
 #
-#   git tag v9.0.1 && git push origin v9.0.1
+#   git tag v9.0.1 && git push origin v9.0.1              both channels
+#   git tag v9.0.1-testflight && git push origin ...      TestFlight only
+#   git tag v9.0.1-dmg && git push origin ...             GitHub Release only
+#
+# The suffix only selects the channel — it is stripped from the version label,
+# so v9.0.1-dmg still produces Broomie-v9.0.1.dmg.
 #
 # `workflow_dispatch` runs either job on its own and only publishes when asked:
 #   target  = both | testflight | dmg
@@ -72,7 +77,10 @@ jobs:
   # ===========================================================================
   testflight:
     name: TestFlight (.pkg → App Store Connect)
-    if: github.event_name == 'push' || contains(fromJson('["both","testflight"]'), github.event.inputs.target)
+    # Tag suffix selects the channel: v1.2.3-dmg skips this job.
+    if: >-
+      (github.event_name == 'push' && !endsWith(github.ref_name, '-dmg')) ||
+      (github.event_name == 'workflow_dispatch' && contains(fromJson('["both","testflight"]'), github.event.inputs.target))
     runs-on: macos-latest
     environment: release
     timeout-minutes: 60
@@ -84,10 +92,15 @@ jobs:
         run: |
           set -euo pipefail
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "version=${{ github.event.inputs.tag }}" >> "$GITHUB_OUTPUT"
+            V="${{ github.event.inputs.tag }}"
           else
-            echo "version=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+            V="${{ github.ref_name }}"
           fi
+          # A channel suffix selects which job runs; it is not part of the
+          # version, so strip it before naming artifacts and the release.
+          V="${V%-testflight}"; V="${V%-dmg}"
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+          echo "Version: $V"
 
       - name: Setup Flutter ${{ env.FLUTTER_VERSION }}
         uses: subosito/flutter-action@v2
@@ -212,7 +225,10 @@ jobs:
   # ===========================================================================
   dmg:
     name: DMG (Developer ID → GitHub Release)
-    if: github.event_name == 'push' || contains(fromJson('["both","dmg"]'), github.event.inputs.target)
+    # Tag suffix selects the channel: v1.2.3-testflight skips this job.
+    if: >-
+      (github.event_name == 'push' && !endsWith(github.ref_name, '-testflight')) ||
+      (github.event_name == 'workflow_dispatch' && contains(fromJson('["both","dmg"]'), github.event.inputs.target))
     runs-on: macos-latest
     environment: release
     permissions:
@@ -228,10 +244,15 @@ jobs:
         run: |
           set -euo pipefail
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "version=${{ github.event.inputs.tag }}" >> "$GITHUB_OUTPUT"
+            V="${{ github.event.inputs.tag }}"
           else
-            echo "version=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+            V="${{ github.ref_name }}"
           fi
+          # A channel suffix selects which job runs; it is not part of the
+          # version, so strip it before naming artifacts and the release.
+          V="${V%-testflight}"; V="${V%-dmg}"
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+          echo "Version: $V"
 
       - name: Setup Flutter ${{ env.FLUTTER_VERSION }}
         uses: subosito/flutter-action@v2
