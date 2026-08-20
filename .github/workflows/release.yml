@@ -11,8 +11,11 @@ name: Release
 #
 #   git tag v9.0.1 && git push origin v9.0.1
 #
-# Use `workflow_dispatch` to build without publishing anything — artifacts are
-# uploaded to the run, the GitHub Release and store upload are skipped.
+# `workflow_dispatch` runs either job on its own and only publishes when asked:
+#   target  = both | testflight | dmg
+#   publish = false → build + attach artifacts to the run, publish nothing
+#             true  → also upload to App Store Connect / create the Release
+# A tag push always runs both jobs and always publishes.
 #
 # ─── SECRETS ────────────────────────────────────────────────────────────────
 # Stored in the `secrets` ENVIRONMENT (not repository secrets), so each job
@@ -42,10 +45,21 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Version label for a dry run (nothing is published)"
+        description: "Version label for this run (e.g. v9.0.1)"
         required: true
         default: v0.0.0-manual
         type: string
+      target:
+        description: "Which job(s) to run"
+        required: true
+        default: both
+        type: choice
+        options: [both, testflight, dmg]
+      publish:
+        description: "Actually upload/publish (false = build only)"
+        required: true
+        default: false
+        type: boolean
 
 env:
   APP_NAME: Broomie
@@ -58,6 +72,7 @@ jobs:
   # ===========================================================================
   testflight:
     name: TestFlight (.pkg → App Store Connect)
+    if: github.event_name == 'push' || contains(fromJson('["both","testflight"]'), github.event.inputs.target)
     runs-on: macos-latest
     environment: secrets
     timeout-minutes: 60
@@ -161,7 +176,7 @@ jobs:
           ls -la "$RUNNER_TEMP/export"
 
       - name: Upload to App Store Connect
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || github.event.inputs.publish == 'true'
         env:
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
@@ -191,6 +206,7 @@ jobs:
   # ===========================================================================
   dmg:
     name: DMG (Developer ID → GitHub Release)
+    if: github.event_name == 'push' || contains(fromJson('["both","dmg"]'), github.event.inputs.target)
     runs-on: macos-latest
     environment: secrets
     permissions:
@@ -368,7 +384,7 @@ jobs:
           cat release_notes.md
 
       - name: Create GitHub Release
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || github.event.inputs.publish == 'true'
         uses: softprops/action-gh-release@v2
         with:
           files: "*.dmg"
