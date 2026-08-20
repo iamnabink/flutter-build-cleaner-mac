@@ -114,12 +114,18 @@ jobs:
           chmod 600 "$HOME/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8"
 
       - name: Build Flutter macOS bundle
-        # Produces the .app that the Xcode archive below wraps. Signing is left
-        # to xcodebuild, which needs the App Store certificate, not this step.
+        # Produces the .app that the Xcode archive below wraps. `flutter build
+        # macos` has no --no-codesign flag (that is iOS-only), so it signs with
+        # whatever the project configures; the archive step below re-signs with
+        # the App Store certificate via cloud signing, which is what ships.
         run: |
           set -euo pipefail
           flutter pub get
-          flutter build macos --release --no-codesign
+          # --config-only updates the Xcode project without building: the
+          # `xcodebuild archive` step below does the actual build, so a full
+          # `flutter build macos` here would just be duplicate work. (There is
+          # no --no-codesign for macOS; that flag is iOS-only.)
+          flutter build macos --release --config-only
 
       - name: Archive for App Store
         env:
@@ -271,11 +277,33 @@ jobs:
           echo "identity=$ID" >> "$GITHUB_OUTPUT"
           echo "signed=true" >> "$GITHUB_OUTPUT"
 
-      - name: Build macOS app
+      # The project uses automatic signing, so `flutter build macos` asks Xcode
+      # for a "Mac Development" certificate that a CI keychain does not have:
+      #   No signing certificate "Mac Development" found ... with a private key
+      # Build unsigned and apply the Developer ID signature in the next step —
+      # that is the signature that actually ships, and it needs the hardened
+      # runtime and entitlements that only the explicit codesign call sets.
+      - name: Build macOS app (unsigned)
         run: |
           set -euo pipefail
           flutter pub get
-          flutter build macos --release
+          flutter build macos --release --config-only
+          xcodebuild -workspace macos/Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -destination 'generic/platform=macOS' \
+            -derivedDataPath "$RUNNER_TEMP/dd" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGN_ENTITLEMENTS="" \
+            build
+          # Put the .app where the later steps expect it.
+          mkdir -p build/macos/Build/Products/Release
+          rm -rf "build/macos/Build/Products/Release/${APP_NAME}.app"
+          cp -R "$RUNNER_TEMP/dd/Build/Products/Release/${APP_NAME}.app" \
+                "build/macos/Build/Products/Release/${APP_NAME}.app"
+          ls -la "build/macos/Build/Products/Release/"
 
       - name: Sign app bundle
         if: steps.signing.outputs.signed == 'true'
@@ -387,7 +415,10 @@ jobs:
         if: github.event_name == 'push' || github.event.inputs.publish == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          files: "*.dmg"
+          # Name the built DMG explicitly: a bare "*.dmg" glob also picks up any
+          # stray DMG in the working tree and publishes it alongside the real
+          # one, which is how a stale Broomie.dmg ended up attached to v9.0.1.
+          files: ${{ steps.dmg.outputs.dmg }}
           name: "${{ env.APP_NAME }} ${{ steps.ver.outputs.version }}"
           body_path: release_notes.md
           draft: false
@@ -401,6 +432,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dmg-${{ steps.ver.outputs.version }}
-          path: "*.dmg"
+          path: ${{ steps.dmg.outputs.dmg }}
           if-no-files-found: warn
           retention-days: 30
